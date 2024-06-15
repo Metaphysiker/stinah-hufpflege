@@ -3161,19 +3161,19 @@
     ]
   },
   "packageFolders": {
-    "/root/.nuget/packages/": {}
+    "/home/sandro/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/app/WebApi/WebApi.csproj",
+      "projectUniqueName": "/home/sandro/workspace/stinah-hufpflege/WebApi/WebApi.csproj",
       "projectName": "WebApi",
-      "projectPath": "/app/WebApi/WebApi.csproj",
-      "packagesPath": "/root/.nuget/packages/",
-      "outputPath": "/app/WebApi/obj/",
+      "projectPath": "/home/sandro/workspace/stinah-hufpflege/WebApi/WebApi.csproj",
+      "packagesPath": "/home/sandro/.nuget/packages/",
+      "outputPath": "/home/sandro/workspace/stinah-hufpflege/WebApi/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/root/.nuget/NuGet/NuGet.Config"
+        "/home/sandro/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -3191,11 +3191,6 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -3244,7 +3239,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.302/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.105/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
