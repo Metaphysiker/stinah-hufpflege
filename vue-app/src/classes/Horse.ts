@@ -10,6 +10,7 @@ export class Horse implements IHorse {
   createdAt: Date;
   updatedAt: Date;
   beschlagen: boolean;
+  fileKeys: string[];
 
   constructor() {
     this.id = 0;
@@ -21,6 +22,7 @@ export class Horse implements IHorse {
     this.createdAt = new Date();
     this.updatedAt = new Date();
     this.beschlagen = false;
+    this.fileKeys = [];
   }
 
   clone(original: IHorse): IHorse {
@@ -35,6 +37,7 @@ export class Horse implements IHorse {
     horse.createdAt = new Date(original.createdAt);
     horse.updatedAt = new Date(original.updatedAt);
     horse.beschlagen = original.beschlagen;
+    horse.fileKeys = original.fileKeys;
     return horse;
   }
 
@@ -49,6 +52,7 @@ export class Horse implements IHorse {
     this.createdAt = new Date(horse.createdAt);
     this.updatedAt = new Date(horse.updatedAt);
     this.beschlagen = horse.beschlagen;
+    this.fileKeys = horse.fileKeys;
     return this;
   }
 

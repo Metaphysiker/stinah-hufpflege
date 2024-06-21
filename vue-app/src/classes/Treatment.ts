@@ -7,6 +7,7 @@ export class Treatment implements ITreatment {
   horseId: number;
   createdAt: Date;
   updatedAt: Date;
+  fileKeys: string[];
 
   constructor() {
     this.id = 0;
@@ -15,5 +16,6 @@ export class Treatment implements ITreatment {
     this.horseId = 0;
     this.createdAt = new Date();
     this.updatedAt = new Date();
+    this.fileKeys = [];
   }
 }

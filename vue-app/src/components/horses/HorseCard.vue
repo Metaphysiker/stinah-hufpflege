@@ -6,6 +6,7 @@ import { ITreatmentSearch } from "@/interfaces/ITreatmentSearch";
 import { TreatmentService } from "@/services/TreatmentService";
 import { AxiosStatic } from "axios";
 import { Ref, inject, onMounted, ref } from "vue";
+import NewFile from "../files/NewFile.vue";
 const dateFormatter = new DateFormatter();
 const axios: AxiosStatic | undefined = inject("axios");
 const treatments: Ref<ITreatment[]> = ref([]);
@@ -29,6 +30,10 @@ onMounted(() => {
     treatments.value = response;
   });
 });
+
+const addFileKeys = (fileKeys: string[]) => {
+  console.log(fileKeys);
+};
 </script>
 <template>
   <h1>{{ horse.name }}</h1>
@@ -48,4 +53,6 @@ onMounted(() => {
       </v-card-text>
     </v-card>
   </div>
+
+  <NewFile @files-uploaded="(fileKeys) => addFileKeys(fileKeys)"></NewFile>
 </template>

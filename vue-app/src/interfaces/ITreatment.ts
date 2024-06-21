@@ -5,4 +5,5 @@ export interface ITreatment {
   horseId: number;
   createdAt: Date;
   updatedAt: Date;
+  fileKeys: string[];
 }
