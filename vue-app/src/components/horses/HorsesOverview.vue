@@ -161,7 +161,7 @@ const treatmentCreated = () => {
   <v-dialog max-width="500" v-model="horseCardDialog">
     <v-card>
       <v-card-text v-if="horseForHorseCard">
-        <HorseCard :horse="horseForHorseCard"></HorseCard>
+        <HorseCard v-model="horseForHorseCard"></HorseCard>
       </v-card-text>
 
       <v-card-actions>

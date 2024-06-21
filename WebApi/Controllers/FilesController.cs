@@ -15,19 +15,23 @@ public class FilesController : ControllerBase
     [HttpPost("upload")]
     public async Task<IActionResult> UploadFileAsync(IFormFile file)
     {
-        var prefix = Guid.NewGuid().ToString();
+
+        long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
+        string timeStamp = timeNow.ToString();
+        //var prefix = Guid.NewGuid().ToString();
+        var prefix = timeStamp;
         var bucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME");
         var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(s3Client: _s3Client, bucketName: bucketName);
         if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
         var request = new PutObjectRequest()
         {
             BucketName = bucketName,
-            Key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}/{file.FileName}",
+            Key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}-{file.FileName}",
             InputStream = file.OpenReadStream()
         };
         request.Metadata.Add("Content-Type", file.ContentType);
         await _s3Client.PutObjectAsync(request);
-        return Ok($"{prefix}/{file.FileName}");
+        return Ok($"{prefix}-{file.FileName}");
     }
 
     [HttpGet("get-all")]

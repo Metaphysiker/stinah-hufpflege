@@ -7,4 +7,6 @@ public class Treatment : IModel
     public Horse? Horse { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
+    public string FileKeysString { get; set; } = string.Empty;
+
 }

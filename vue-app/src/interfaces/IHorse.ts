@@ -8,5 +8,5 @@ export interface IHorse {
   createdAt: Date;
   updatedAt: Date;
   beschlagen: boolean;
-  fileKeys: string[];
+  fileKeysString: string;
 }

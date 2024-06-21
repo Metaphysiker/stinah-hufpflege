@@ -13,7 +13,6 @@ const uploadFile = () => {
   });
 
   Promise.all(promisesToUpload).then((responses) => {
-    console.log(responses);
     fileKeys.value.push(...responses);
     filesToUpload.value = [];
     emit("filesUploaded", responses);
@@ -21,7 +20,6 @@ const uploadFile = () => {
 
   for (const file of filesToUpload.value) {
     fileService.uploadFile(file).then((response) => {
-      console.log(response);
       fileKeys.value.push(response);
     });
   }
@@ -29,13 +27,9 @@ const uploadFile = () => {
 
 const filesToUpload = ref<File[]>([]);
 const fileKeys = ref<string[]>([]);
-
-const getFileUrl = (key: string) => {
-  return fileService.getFileUrl(key);
-};
 </script>
 <template>
-  <v-card>
+  <v-card variant="outlined">
     <v-card-title>Upload</v-card-title>
     <v-card-text>
       <v-file-input
@@ -47,12 +41,4 @@ const getFileUrl = (key: string) => {
       <v-btn @click="uploadFile()">Hochladen</v-btn>
     </v-card-text>
   </v-card>
-  <div v-for="file of filesToUpload">
-    {{ file.name }}
-  </div>
-  <div v-for="key of fileKeys">
-    <img :src="getFileUrl(key)" />
-    <br />
-    {{ key }}
-  </div>
 </template>
