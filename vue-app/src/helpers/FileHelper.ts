@@ -8,4 +8,12 @@ export class FileHelper {
     const newFileKeysString = newFileKeys.join(",");
     horse.fileKeysString = newFileKeysString;
   }
+
+  removeFileKeyFromHorse(fileKey: string, horse: IHorse) {
+    const oldFileKeysString = horse.fileKeysString;
+    const oldFileKeys = oldFileKeysString.split(",");
+    const newFileKeys = oldFileKeys.filter((key) => key !== fileKey);
+    const newFileKeysString = newFileKeys.join(",");
+    horse.fileKeysString = newFileKeysString;
+  }
 }

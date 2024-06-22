@@ -7,6 +7,6 @@ const treatments: Ref<ITreatment[]> = ref([]);
 
 <template>
   <div v-for="treatment of treatments" :key="treatment.id">
-    <TreatmentCard :treatmentInput="treatment"></TreatmentCard>
+    <TreatmentCard v-model="treatment"></TreatmentCard>
   </div>
 </template>

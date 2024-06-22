@@ -18,4 +18,13 @@ export class TreatmentHelper {
     treatment.noteForNextTreatment = input.noteForNextTreatment;
     return treatment;
   }
+
+  cloneTreatment(treatment: ITreatment): ITreatment {
+    const clonedTreatment: ITreatment = new Treatment();
+    clonedTreatment.id = treatment.id;
+    clonedTreatment.horseId = treatment.horseId;
+    clonedTreatment.note = treatment.note;
+    clonedTreatment.noteForNextTreatment = treatment.noteForNextTreatment;
+    return clonedTreatment;
+  }
 }
