@@ -1,6 +1,8 @@
+import { HorseHelper } from "@/helpers/HorseHelper";
 import { IHorse } from "../interfaces/IHorse";
 
 export class Horse implements IHorse {
+  horseHelper = new HorseHelper();
   id: number;
   name: string;
   lastTimeTreated: Date;
@@ -11,6 +13,14 @@ export class Horse implements IHorse {
   updatedAt: Date;
   beschlagen: boolean;
   fileKeysString: string;
+
+  nextTreatmentDate(): Date {
+    return this.horseHelper.calculateNextTreatmentDate(this);
+  }
+
+  nextTreatmentDateString(): string {
+    return this.horseHelper.getNextTreatmentDateString(this);
+  }
 
   constructor() {
     this.id = 0;

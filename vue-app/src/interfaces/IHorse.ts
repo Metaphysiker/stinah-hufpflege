@@ -9,4 +9,6 @@ export interface IHorse {
   updatedAt: Date;
   beschlagen: boolean;
   fileKeysString: string;
+  nextTreatmentDate: () => Date;
+  nextTreatmentDateString: () => string;
 }

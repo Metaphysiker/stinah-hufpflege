@@ -9,8 +9,22 @@ const urgencyHelper = new UrgencyHelper();
 const dateFormatter = new DateFormatter();
 const availableTableDataHeaders = ref([
   { key: "name", title: "Name", selected: true },
-  { key: "lastTimeTreated", title: "Letze Behandlung", selected: true },
-  { key: "nextTreatmentDate", title: "nächstes Mal", selected: true },
+  {
+    key: "lastTimeTreated",
+    title: "Letze Behandlung",
+    selected: true,
+    sortRaw(a: IHorse, b: IHorse) {
+      return a.lastTimeTreated.getTime() - b.lastTimeTreated.getTime();
+    },
+  },
+  {
+    key: "nextTreatmentDate",
+    title: "nächstes Mal",
+    selected: true,
+    sortRaw(a: IHorse, b: IHorse) {
+      return a.nextTreatmentDate().getTime() - b.nextTreatmentDate().getTime();
+    },
+  },
   { key: "birthYear", title: "Alter", selected: true },
   {
     key: "numberOfWeeksUntilNextTreatment",
@@ -21,13 +35,9 @@ const availableTableDataHeaders = ref([
 ]);
 
 const isSpecialColumn = (header: string) => {
-  return [
-    "name",
-    "lastTimeTreated",
-    "birthYear",
-    "nextTreatmentDate",
-    "action",
-  ].includes(header);
+  return ["name", "lastTimeTreated", "birthYear", "nextTreatmentDate", "action"].includes(
+    header
+  );
 };
 
 defineProps({
@@ -85,9 +95,7 @@ const emit = defineEmits([
               {{ new Date().getFullYear() - row.item["birthYear"] }}
             </template>
             <template v-if="header.key === 'name'">
-              <v-btn @click="clickOnName(row.item)">{{
-                row.item["name"]
-              }}</v-btn>
+              <v-btn @click="clickOnName(row.item)">{{ row.item["name"] }}</v-btn>
             </template>
           </div>
           <template v-if="header.key === 'nextTreatmentDate'">
@@ -95,17 +103,14 @@ const emit = defineEmits([
               class="rounded pa-1 text-center"
               :class="urgencyHelper.getClassForUrgency(row.item)"
             >
-              {{ horseHelper.getNextTreatmentDateString(row.item) }}
+              {{ row.item.nextTreatmentDateString() }}
             </div>
           </template>
           <template v-if="header.key === 'action'">
             <div class="d-flex">
-              <v-btn
-                color="primary"
-                class="me-2"
-                @click="clickOnBehandelt(row.item)"
-                >{{ horseHelper.getLabelForBehandeltButton(row.item) }}</v-btn
-              >
+              <v-btn color="primary" class="me-2" @click="clickOnBehandelt(row.item)">{{
+                horseHelper.getLabelForBehandeltButton(row.item)
+              }}</v-btn>
               <v-btn color="green" class="me-2" @click="clickOnEdit(row.item)"
                 ><v-icon> mdi-pencil </v-icon></v-btn
               >
