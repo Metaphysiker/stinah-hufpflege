@@ -85,7 +85,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet, Authorize]
-    [Route("check-if-logged-in")]
+    [Route("is-logged-in")]
     public ActionResult<AuthResponse> CheckIfLoggedIn()
     {
         return Ok();
