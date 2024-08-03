@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FileService } from "@/services/FileService";
 import { AxiosStatic } from "axios";
-import { computed, inject, ref } from "vue";
+import { computed, inject, onMounted, ref } from "vue";
 const emit = defineEmits(["removeFileKey"]);
 const axios: AxiosStatic | undefined = inject("axios");
 const fileService = new FileService(axios);
@@ -30,17 +30,25 @@ const removeFileKeyDialog = ref(false);
 const removeFileKey = () => {
   emit("removeFileKey", props.fileKey);
 };
+
+const presignedUrl = ref("");
+
+onMounted(() => {
+  fileService.getPresignedUrl(props.fileKey).then((response) => {
+    presignedUrl.value = response;
+  });
+});
 </script>
 
 <template>
   <div>
     <div class="text-center" v-if="isFileNameImage">
-      <v-img cover :src="fileService.getFileUrl(fileKey)"></v-img>
+      <v-img cover :src="presignedUrl"></v-img>
       <div class="d-flex justify-end">
         <v-btn
           class="ma-2"
           outlined
-          :href="fileService.getFileUrl(fileKey)"
+          :href="presignedUrl"
           target="_blank"
           download
         >
@@ -55,7 +63,7 @@ const removeFileKey = () => {
       <v-btn
         class="ma-2"
         outlined
-        :href="fileService.getFileUrl(fileKey)"
+        :href="presignedUrl"
         target="_blank"
         download
       >
