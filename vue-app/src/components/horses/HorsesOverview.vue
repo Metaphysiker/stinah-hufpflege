@@ -140,6 +140,10 @@ const treatmentCreated = () => {
 
   <v-dialog fullscreen v-model="newTreatmentDialog">
     <v-card>
+      <StandardToolbar
+        title="Neuer Behandlungs-Eintrag"
+        @close="newTreatmentDialog = false"
+      ></StandardToolbar>
       <v-card-text>
         <div v-if="currentHorse">
           <NewTreatment
@@ -147,11 +151,6 @@ const treatmentCreated = () => {
             @created="treatmentCreated()"
           ></NewTreatment>
         </div>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text="Schliessen" @click="newTreatmentDialog = false"></v-btn>
-        </v-card-actions>
       </v-card-text>
     </v-card>
   </v-dialog>

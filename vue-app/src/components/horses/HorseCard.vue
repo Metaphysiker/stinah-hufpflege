@@ -108,6 +108,7 @@ const emits = defineEmits(["close"]);
         class="mb-2"
         :key="treatment.id"
       >
+        <v-divider class="my-2"></v-divider>
         <TreatmentCard
           v-model="treatments[index]"
           @deleted="treatmentDelete()"

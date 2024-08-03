@@ -29,9 +29,6 @@ onBeforeMount(() => {
 });
 </script>
 <template>
-  <v-card-title>Neuer Behandlungs-Eintrag</v-card-title>
-  <v-card-text>
-    <TreatmentForm v-model="newTreatment"></TreatmentForm>
-    <v-btn @click="create()">Speichern</v-btn>
-  </v-card-text>
+  <TreatmentForm v-model="newTreatment"></TreatmentForm>
+  <v-btn @click="create()">Speichern</v-btn>
 </template>
