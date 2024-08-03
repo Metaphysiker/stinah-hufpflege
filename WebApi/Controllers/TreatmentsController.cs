@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TreatmentsController : ControllerBase
@@ -73,7 +75,7 @@ public class TreatmentsController : ControllerBase
     public List<Treatment> Search([FromBody] TreatmentSearch search)
     {
         return _db.Treatments
-            .Where(t => t.Horse.Id == search.HorseId)
+            .Where(t => t.Horse != null && t.Horse.Id == search.HorseId)
             .Skip(search.Page * search.PageSize)
             .Take(search.PageSize)
             .ToList();

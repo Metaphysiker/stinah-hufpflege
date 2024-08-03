@@ -35,7 +35,7 @@ public class SetupController : ControllerBase
         }
 
         var admin = await _userManager.FindByEmailAsync("s.raess@me.com");
-        if (admin != null)
+        if (admin != null && adminRole != null && adminRole.Name != null)
         {
             await _userManager.AddToRoleAsync(admin, adminRole.Name);
         }
