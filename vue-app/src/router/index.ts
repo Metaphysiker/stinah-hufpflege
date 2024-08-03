@@ -4,6 +4,7 @@ import { inject } from "vue";
 import { AxiosStatic } from "axios";
 import { AuthenticationService } from "@/services/AuthenticationService";
 import LoginView from "@/views/LoginView.vue";
+
 const routes = [
   { path: "/", name: "home", component: HorsesOverviewView },
   { path: "/horses-overview", component: HorsesOverviewView },
