@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin, Stinah")]
 [ApiController]
 [Route("api/[controller]")]
 public class HorsesController : ControllerBase
