@@ -66,7 +66,6 @@ public class FilesController : ControllerBase
         return Ok(s3Objects);
     }
 
-    [AllowAnonymous]
     [HttpGet("get-by-key")]
     public async Task<IActionResult> GetFileByKeyAsync(string key)
     {
@@ -74,8 +73,27 @@ public class FilesController : ControllerBase
 
         var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(s3Client: _s3Client, bucketName: bucketName);
         if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
+
         var s3Object = await _s3Client.GetObjectAsync(bucketName, key);
         return File(s3Object.ResponseStream, s3Object.Headers.ContentType);
+    }
+
+    [HttpGet("get-presigned-url-by-key")]
+    public async Task<IActionResult> GetPresignedUrlByKeyAsync(string key)
+    {
+        var bucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME");
+
+        var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(s3Client: _s3Client, bucketName: bucketName);
+        if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
+
+        var urlRequest = new GetPreSignedUrlRequest()
+        {
+            BucketName = bucketName,
+            Key = key,
+            Expires = DateTime.UtcNow.AddMinutes(5)
+        };
+
+        return Ok(_s3Client.GetPreSignedURL(urlRequest));
     }
 
     [HttpDelete("delete")]
