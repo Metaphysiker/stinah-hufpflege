@@ -1,7 +1,9 @@
 using Amazon.S3;
 using Amazon.S3.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+[Authorize]
 [Route("api/files")]
 [ApiController]
 public class FilesController : ControllerBase
