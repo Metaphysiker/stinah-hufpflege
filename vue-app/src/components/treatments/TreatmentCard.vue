@@ -6,6 +6,7 @@ import { ITreatment } from "@/interfaces/ITreatment";
 import { inject, ref } from "vue";
 import { AxiosStatic } from "axios";
 import { TreatmentService } from "@/services/TreatmentService";
+import StandardToolbar from "../StandardToolbar.vue";
 const emit = defineEmits(["deleted"]);
 const axios: AxiosStatic | undefined = inject("axios");
 const treatmentService = new TreatmentService(axios);
@@ -48,36 +49,32 @@ const deleteTreatment = () => {
     </v-card-text>
   </v-card>
 
-  <v-dialog max-width="500" v-model="editTreatmentDialog">
+  <v-dialog fullscreen v-model="editTreatmentDialog">
     <v-card>
+      <StandardToolbar
+        title="Behandlungs-Eintrag bearbeiten"
+        @close="closeEditTreatmentWithoutSaving()"
+      ></StandardToolbar>
       <v-card-text>
         <EditTreatment
           v-model="treatment"
           @updated="editTreatmentDialog = false"
         ></EditTreatment>
       </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          text="Schliessen"
-          @click="closeEditTreatmentWithoutSaving()"
-        ></v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 
-  <v-dialog max-width="400" v-model="deleteTreatmentDialog">
+  <v-dialog fullscreen v-model="deleteTreatmentDialog">
     <v-card>
+      <StandardToolbar
+        title="Eintrag entfernen"
+        @close="deleteTreatmentDialog = false"
+      ></StandardToolbar>
       <v-card-text>
-        <div>Eintrag wirklich entfernen?</div>
+        <div class="mb-3">Eintrag wirklich entfernen?</div>
 
         <v-btn @click="deleteTreatment()">Ja, entfernen</v-btn>
       </v-card-text>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text="Schliessen" @click="deleteTreatmentDialog = false"></v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

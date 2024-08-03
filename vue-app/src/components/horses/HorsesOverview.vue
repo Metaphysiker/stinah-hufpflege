@@ -100,7 +100,7 @@ const treatmentCreated = () => {
     </div>
   </v-container>
 
-  <v-dialog max-width="500" v-model="newHorseDialog">
+  <v-dialog fullscreen v-model="newHorseDialog">
     <v-card>
       <StandardToolbar
         title="Neues Pferd"
@@ -112,7 +112,7 @@ const treatmentCreated = () => {
     </v-card>
   </v-dialog>
 
-  <v-dialog max-width="500" v-model="editHorseDialog">
+  <v-dialog fullscreen v-model="editHorseDialog">
     <v-card>
       <StandardToolbar
         title="Pferd bearbeiten"
@@ -124,7 +124,7 @@ const treatmentCreated = () => {
     </v-card>
   </v-dialog>
 
-  <v-dialog max-width="400" v-model="deleteHorseDialog">
+  <v-dialog fullscreen v-model="deleteHorseDialog">
     <v-card>
       <StandardToolbar
         title="Pferd entfernen"
@@ -138,7 +138,7 @@ const treatmentCreated = () => {
     </v-card>
   </v-dialog>
 
-  <v-dialog max-width="500" v-model="newTreatmentDialog">
+  <v-dialog fullscreen v-model="newTreatmentDialog">
     <v-card>
       <v-card-text>
         <div v-if="currentHorse">
@@ -156,7 +156,7 @@ const treatmentCreated = () => {
     </v-card>
   </v-dialog>
 
-  <v-dialog max-width="500" v-model="horseCardDialog">
+  <v-dialog fullscreen v-model="horseCardDialog">
     <v-card v-if="horseForHorseCard">
       <HorseCard
         v-model="horseForHorseCard"

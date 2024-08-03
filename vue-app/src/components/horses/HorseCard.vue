@@ -84,7 +84,7 @@ const emits = defineEmits(["close"]);
   <div class="pa-2">
     <v-btn
       @click="toggleShowTreatments()"
-      class="mb-3"
+      class="mb-3 me-3"
       elevation="3"
       :class="{ 'bg-green': showTreatments }"
       >Behandlungen anschauen</v-btn
