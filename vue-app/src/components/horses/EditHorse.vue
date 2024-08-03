@@ -33,9 +33,6 @@ const create = () => {
 };
 </script>
 <template>
-  <v-card-title>Pferd bearbeiten </v-card-title>
-  <v-card-text>
-    <HorseForm v-model="horseToBeEdited"></HorseForm>
-    <v-btn @click="create()">Aktualisieren</v-btn>
-  </v-card-text>
+  <HorseForm v-model="horseToBeEdited"></HorseForm>
+  <v-btn @click="create()">Aktualisieren</v-btn>
 </template>
