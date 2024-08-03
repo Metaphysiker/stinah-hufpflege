@@ -1,4 +1,5 @@
 import { AxiosInstanceFactory } from "@/factories/AxiosInstanceFactory";
+import { LocalStorageHelper } from "@/helpers/LocalStorageHelper";
 import { IAuthRequest } from "@/interfaces/IAuthRequest";
 import { IAuthResponse } from "@/interfaces/IAuthResponse";
 import { IService } from "@/interfaces/IService";
@@ -25,6 +26,16 @@ export class AuthenticationService implements IService {
 
   isLoggedIn() {
     return new Promise<boolean>((resolve) => {
+      const localStorageHelper = new LocalStorageHelper();
+      const jwtToken = localStorageHelper.getJWTToken();
+      if (!jwtToken) {
+        resolve(false);
+      }
+
+      this.axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${jwtToken}`;
+
       this.axiosInstance
         .get("api/auth/is-logged-in")
         .then(() => {
