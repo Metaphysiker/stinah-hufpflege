@@ -9,6 +9,7 @@ import { IHorse } from "../../interfaces/IHorse";
 import { HorseHelper } from "../../helpers/HorseHelper";
 import NewTreatment from "../treatments/NewTreatment.vue";
 import HorseCard from "./HorseCard.vue";
+import StandardToolbar from "../StandardToolbar.vue";
 const currentHorse: Ref<IHorse | undefined> = ref(undefined);
 const horseForHorseCard: Ref<IHorse | undefined> = ref(undefined);
 
@@ -101,42 +102,39 @@ const treatmentCreated = () => {
 
   <v-dialog max-width="500" v-model="newHorseDialog">
     <v-card>
+      <StandardToolbar
+        title="Neues Pferd"
+        @close="newHorseDialog = false"
+      ></StandardToolbar>
       <v-card-text>
         <NewHorse @created="reload()"></NewHorse>
       </v-card-text>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text="Schliessen" @click="newHorseDialog = false"></v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 
   <v-dialog max-width="500" v-model="editHorseDialog">
     <v-card>
+      <StandardToolbar
+        title="Pferd bearbeiten"
+        @close="editHorseDialog = false"
+      ></StandardToolbar>
       <v-card-text v-if="horseToEdit">
         <EditHorse :horse-input="horseToEdit" @updated="reload()"></EditHorse>
       </v-card-text>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text="Schliessen" @click="editHorseDialog = false"></v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 
   <v-dialog max-width="400" v-model="deleteHorseDialog">
     <v-card>
+      <StandardToolbar
+        title="Pferd entfernen"
+        @close="deleteHorseDialog = false"
+      ></StandardToolbar>
       <v-card-text>
-        <div>Pferd wirklich entfernen?</div>
+        <div class="mb-5">Pferd wirklich entfernen?</div>
 
         <v-btn @click="deleteHorse()">Ja, entfernen</v-btn>
       </v-card-text>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text="Schliessen" @click="deleteHorseDialog = false"></v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 
@@ -159,15 +157,11 @@ const treatmentCreated = () => {
   </v-dialog>
 
   <v-dialog max-width="500" v-model="horseCardDialog">
-    <v-card>
-      <v-card-text v-if="horseForHorseCard">
-        <HorseCard v-model="horseForHorseCard"></HorseCard>
-      </v-card-text>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text="Schliessen" @click="horseCardDialog = false"></v-btn>
-      </v-card-actions>
+    <v-card v-if="horseForHorseCard">
+      <HorseCard
+        v-model="horseForHorseCard"
+        @close="horseCardDialog = false"
+      ></HorseCard>
     </v-card>
   </v-dialog>
 </template>
