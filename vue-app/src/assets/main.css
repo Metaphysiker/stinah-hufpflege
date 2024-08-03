@@ -1,0 +1,14 @@
+.standard-toolbar {
+  background-color: white !important;
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+}
+
+.standard-toolbar-close-button {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-right: 1.1rem;
+  padding-left: 1.1rem;
+  border-left: 0.1rem solid lightgray;
+}
