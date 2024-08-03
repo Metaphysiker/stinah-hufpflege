@@ -66,6 +66,7 @@ public class FilesController : ControllerBase
         return Ok(s3Objects);
     }
 
+    [AllowAnonymous]
     [HttpGet("get-by-key")]
     public async Task<IActionResult> GetFileByKeyAsync(string key)
     {
