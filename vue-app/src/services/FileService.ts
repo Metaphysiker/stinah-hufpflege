@@ -78,4 +78,17 @@ export class FileService implements IService {
       fileKey
     );
   }
+
+  getPresignedUrl(fileKey: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.axiosInstance
+        .get("api/files/get-presigned-url-by-key?key=" + fileKey)
+        .then((response: any) => {
+          resolve(response.data);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
 }
