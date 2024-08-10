@@ -28,6 +28,7 @@ onMounted(() => {
 });
 
 const getTreatments = () => {
+  loading.value = true;
   const treatmentSearch: ITreatmentSearch = {
     horseId: horse.value.id,
     page: 0,
@@ -36,6 +37,7 @@ const getTreatments = () => {
 
   treatmentService.search(treatmentSearch).then((response) => {
     treatments.value = response;
+    loading.value = false;
     treatments.value.sort((a, b) => {
       return a.createdAt < b.createdAt ? 1 : -1;
     });
@@ -74,6 +76,7 @@ const toggleShowFiles = () => {
 };
 
 const emits = defineEmits(["close"]);
+const loading = ref(false);
 </script>
 <template>
   <StandardToolbar
@@ -103,6 +106,8 @@ const emits = defineEmits(["close"]);
         :horse-input="horse"
         @created="getTreatments()"
       ></NewTreatment>
+      <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
+
       <div
         v-for="(treatment, index) of treatments"
         class="mb-2"
