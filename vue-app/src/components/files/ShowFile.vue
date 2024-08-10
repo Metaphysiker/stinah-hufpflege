@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FileService } from "@/services/FileService";
 import { AxiosStatic } from "axios";
-import { computed, inject, onMounted, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 const emit = defineEmits(["removeFileKey"]);
 const axios: AxiosStatic | undefined = inject("axios");
 const fileService = new FileService(axios);
@@ -29,21 +29,35 @@ const removeFileKeyDialog = ref(false);
 
 const removeFileKey = () => {
   emit("removeFileKey", props.fileKey);
+  removeFileKeyDialog.value = false;
 };
 
 const presignedUrl = ref("");
 
-onMounted(() => {
-  fileService.getPresignedUrl(props.fileKey).then((response) => {
-    presignedUrl.value = response;
-  });
-});
+const imageLoaded = () => {
+  loading.value = false;
+};
+
+const loading = ref(true);
+
+watch(
+  () => props.fileKey,
+  () => {
+    loading.value = true;
+    fileService.getPresignedUrl(props.fileKey).then((response) => {
+      presignedUrl.value = response;
+    });
+  },
+  { immediate: true, deep: true }
+);
 </script>
 
 <template>
   <div>
-    <div class="text-center" v-if="isFileNameImage">
-      <v-img cover :src="presignedUrl"></v-img>
+    <div class="text-center mb-3" v-if="isFileNameImage">
+      <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
+      <strong>{{ props.fileKey }}</strong>
+      <v-img cover :src="presignedUrl" @load="imageLoaded()"></v-img>
       <div class="d-flex justify-end">
         <v-btn
           class="ma-2"
@@ -68,6 +82,9 @@ onMounted(() => {
         download
       >
         {{ props.fileKey }}
+      </v-btn>
+      <v-btn color="red" class="ma-2" @click="removeFileKeyDialog = true">
+        <v-icon> mdi-close-circle-outline </v-icon>
       </v-btn>
     </div>
   </div>
