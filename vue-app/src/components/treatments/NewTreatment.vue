@@ -17,8 +17,11 @@ const axios: AxiosStatic | undefined = inject("axios");
 const treatmentService = new TreatmentService(axios);
 const newTreatment: Ref<ITreatment> = ref(new Treatment());
 const create = () => {
+  loading.value = true;
   treatmentService.create(newTreatment.value).then(() => {
     emit("created");
+    newTreatment.value = new Treatment();
+    loading.value = false;
   });
 };
 
@@ -27,8 +30,11 @@ onBeforeMount(() => {
   newTreatment.value.noteForNextTreatment =
     props.horseInput.noteForNextTreatment;
 });
+
+const loading = ref(false);
 </script>
 <template>
   <TreatmentForm v-model="newTreatment"></TreatmentForm>
+  <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
   <v-btn @click="create()">Speichern</v-btn>
 </template>
