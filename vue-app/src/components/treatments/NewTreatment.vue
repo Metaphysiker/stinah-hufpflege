@@ -21,6 +21,7 @@ const create = () => {
   treatmentService.create(newTreatment.value).then(() => {
     emit("created");
     newTreatment.value = new Treatment();
+    newTreatment.value.horseId = props.horseInput.id;
     loading.value = false;
   });
 };
