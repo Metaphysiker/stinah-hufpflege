@@ -80,6 +80,24 @@ public class SetupController : ControllerBase
         }
         await _userManager.AddToRoleAsync(stinahuser, "Stinah");
 
+        // Create Regular User
+        var regularuser = await _userManager.FindByEmailAsync("user@stinah.ch");
+        if (regularuser != null && stinahRole != null && stinahRole.Name != null)
+        {
+            await _userManager.AddToRoleAsync(regularuser, stinahRole.Name);
+        }
+        else
+        {
+            regularuser = new IdentityUser { UserName = "user@stinah.ch", Email = "user@stinah.ch" };
+            string? password = Environment.GetEnvironmentVariable("REGULAR_USER_PASSWORD");
+            if (password == null)
+            {
+                password = "password";
+            }
+            _userManager.CreateAsync(regularuser, password).Wait();
+        }
+        await _userManager.AddToRoleAsync(regularuser, "Stinah");
+
         return Ok();
     }
 }
