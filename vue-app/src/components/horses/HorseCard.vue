@@ -28,6 +28,7 @@ onMounted(() => {
 });
 
 const getTreatments = () => {
+  noteForNextTreatmentToBeCopied.value = "";
   loading.value = true;
   const treatmentSearch: ITreatmentSearch = {
     horseId: horse.value.id,
@@ -64,19 +65,42 @@ const removeFileKey = (fileKey: string) => {
 
 const showTreatments = ref(true);
 const showFiles = ref(false);
+const showNextTime = ref(false);
 
 const toggleShowTreatments = () => {
   showFiles.value = false;
+  showNextTime.value = false;
   showTreatments.value = !showTreatments.value;
 };
 
 const toggleShowFiles = () => {
   showTreatments.value = false;
+  showNextTime.value = false;
   showFiles.value = !showFiles.value;
+};
+
+const toggleShowNextTime = () => {
+  showTreatments.value = false;
+  showFiles.value = false;
+  showNextTime.value = !showNextTime.value;
 };
 
 const emits = defineEmits(["close"]);
 const loading = ref(false);
+
+const saveNoteForNextTreatment = () => {
+  console.log(horse.value.noteForNextTreatment);
+  horseService.update(horse.value).then((newHorse) => {
+    horse.value = newHorse;
+  });
+};
+
+const copyNoteForNextTreatmentToTreatment = () => {
+  noteForNextTreatmentToBeCopied.value = horse.value.noteForNextTreatment;
+  toggleShowTreatments();
+};
+
+const noteForNextTreatmentToBeCopied = ref("");
 </script>
 <template>
   <StandardToolbar
@@ -93,6 +117,14 @@ const loading = ref(false);
       >Behandlungen anschauen</v-btn
     >
     <v-btn
+      @click="toggleShowNextTime()"
+      class="mb-3 me-3"
+      elevation="3"
+      :class="{ 'bg-green': showNextTime }"
+    >
+      Zu beachten beim nächsten Mal
+    </v-btn>
+    <v-btn
       @click="toggleShowFiles()"
       class="mb-3"
       elevation="3"
@@ -101,10 +133,26 @@ const loading = ref(false);
     >
     <v-divider class="my-2"></v-divider>
 
+    <div v-if="showNextTime">
+      <v-textarea
+        label="Zu beachten beim nächsten Mal"
+        v-model="horse.noteForNextTreatment"
+        variant="outlined"
+      ></v-textarea>
+      <v-btn @click="saveNoteForNextTreatment()" class="mb-3 me-3"
+        >Speichern</v-btn
+      >
+      <v-btn @click="copyNoteForNextTreatmentToTreatment()" class="mb-3 me-3"
+        >Zu Behandlung kopieren</v-btn
+      >
+    </div>
+
     <div v-if="showTreatments">
       <NewTreatment
         :horse-input="horse"
+        :content-input="noteForNextTreatmentToBeCopied"
         @created="getTreatments()"
+        @clear-content-input="noteForNextTreatmentToBeCopied = ''"
       ></NewTreatment>
       <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 
