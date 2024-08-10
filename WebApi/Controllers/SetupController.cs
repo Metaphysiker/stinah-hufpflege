@@ -24,9 +24,18 @@ public class SetupController : ControllerBase
         return _db.Users.ToList();
     }
 
-    [HttpGet("CreateAdmin")]
-    public async Task<ActionResult<IdentityUser>> CreateAdmin()
+    [HttpGet("setup")]
+    public async Task<ActionResult> Setup()
     {
+        // Create Stinah Role
+        var stinahRole = await _roleManager.FindByNameAsync("Stinah");
+        if (stinahRole == null)
+        {
+            stinahRole = new IdentityRole { Name = "Stinah" };
+            await _roleManager.CreateAsync(stinahRole);
+        }
+
+        // Create Admin Role
         var adminRole = await _roleManager.FindByNameAsync("Admin");
         if (adminRole == null)
         {
@@ -34,8 +43,9 @@ public class SetupController : ControllerBase
             await _roleManager.CreateAsync(adminRole);
         }
 
+        // Create Admin User
         var admin = await _userManager.FindByEmailAsync("s.raess@me.com");
-        if (admin != null)
+        if (admin != null && adminRole != null && adminRole.Name != null)
         {
             await _userManager.AddToRoleAsync(admin, adminRole.Name);
         }
@@ -50,7 +60,26 @@ public class SetupController : ControllerBase
             _userManager.CreateAsync(admin, adminPassword).Wait();
         }
         await _userManager.AddToRoleAsync(admin, "Admin");
+        await _userManager.AddToRoleAsync(admin, "Stinah");
 
-        return admin;
+        // Create Stinah User
+        var stinahuser = await _userManager.FindByEmailAsync("info@stinah.ch");
+        if (stinahuser != null && stinahRole != null && stinahRole.Name != null)
+        {
+            await _userManager.AddToRoleAsync(stinahuser, stinahRole.Name);
+        }
+        else
+        {
+            stinahuser = new IdentityUser { UserName = "info@stinah.ch", Email = "info@stinah.ch" };
+            string? password = Environment.GetEnvironmentVariable("STINAH_PASSWORD");
+            if (password == null)
+            {
+                password = "password";
+            }
+            _userManager.CreateAsync(stinahuser, password).Wait();
+        }
+        await _userManager.AddToRoleAsync(stinahuser, "Stinah");
+
+        return Ok();
     }
 }

@@ -11,6 +11,7 @@ import { HorseService } from "@/services/HorseService";
 import ShowFiles from "../files/ShowFiles.vue";
 import NewTreatment from "../treatments/NewTreatment.vue";
 import TreatmentCard from "../treatments/TreatmentCard.vue";
+import StandardToolbar from "../StandardToolbar.vue";
 const fileHelper = new FileHelper();
 const axios: AxiosStatic | undefined = inject("axios");
 const treatments: Ref<ITreatment[]> = ref([]);
@@ -48,8 +49,6 @@ const addFileKeys = (fileKeys: string[]) => {
   });
 };
 
-const tab = ref("behandlungen");
-
 const treatmentDelete = () => {
   getTreatments();
 };
@@ -60,18 +59,46 @@ const removeFileKey = (fileKey: string) => {
     horse.value = newHorse;
   });
 };
+
+const showTreatments = ref(true);
+const showFiles = ref(false);
+
+const toggleShowTreatments = () => {
+  showFiles.value = false;
+  showTreatments.value = !showTreatments.value;
+};
+
+const toggleShowFiles = () => {
+  showTreatments.value = false;
+  showFiles.value = !showFiles.value;
+};
+
+const emits = defineEmits(["close"]);
 </script>
 <template>
-  <h1>{{ horse.name }}</h1>
+  <StandardToolbar
+    :title="horse.name"
+    @close="emits('close')"
+  ></StandardToolbar>
 
-  <v-tabs v-model="tab" bg-color="gray">
-    <v-tab value="zubeachten">Zu beachten</v-tab>
-    <v-tab value="behandlungen">Behandlungen</v-tab>
-    <v-tab value="dokumente">Dokumente</v-tab>
-  </v-tabs>
+  <div class="pa-2">
+    <v-btn
+      @click="toggleShowTreatments()"
+      class="mb-3 me-3"
+      elevation="3"
+      :class="{ 'bg-green': showTreatments }"
+      >Behandlungen anschauen</v-btn
+    >
+    <v-btn
+      @click="toggleShowFiles()"
+      class="mb-3"
+      elevation="3"
+      :class="{ 'bg-green': showFiles }"
+      >Dokumente anschauen</v-btn
+    >
+    <v-divider class="my-2"></v-divider>
 
-  <v-tabs-window v-model="tab">
-    <v-tabs-window-item value="behandlungen">
+    <div v-if="showTreatments">
       <NewTreatment
         :horse-input="horse"
         @created="getTreatments()"
@@ -81,14 +108,15 @@ const removeFileKey = (fileKey: string) => {
         class="mb-2"
         :key="treatment.id"
       >
+        <v-divider class="my-2"></v-divider>
         <TreatmentCard
           v-model="treatments[index]"
           @deleted="treatmentDelete()"
         ></TreatmentCard>
       </div>
-    </v-tabs-window-item>
+    </div>
 
-    <v-tabs-window-item value="dokumente">
+    <div v-if="showFiles">
       <NewFile @files-uploaded="(fileKeys) => addFileKeys(fileKeys)"></NewFile>
       <v-divider class="my-2"></v-divider>
       <ShowFiles
@@ -96,13 +124,7 @@ const removeFileKey = (fileKey: string) => {
         :reverse="true"
         @remove-file-key="(fileKey) => removeFileKey(fileKey)"
       ></ShowFiles>
-    </v-tabs-window-item>
-
-    <v-tabs-window-item value="zubeachten">
-      <div>
-        <h3>Zu beachten beim nächsten Mal</h3>
-        <div>{{ horse.noteForNextTreatment }}</div>
-      </div>
-    </v-tabs-window-item>
-  </v-tabs-window>
+    </div>
+  </div>
 </template>
+div

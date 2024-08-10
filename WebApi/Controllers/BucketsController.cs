@@ -1,7 +1,9 @@
 using Amazon.S3;
 using Amazon.S3.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+[Authorize(Roles = "Admin")]
 [Route("api/buckets")]
 [ApiController]
 public class BucketsController : ControllerBase
