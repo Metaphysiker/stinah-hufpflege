@@ -40,7 +40,7 @@ const getTreatments = () => {
     treatments.value = response;
     loading.value = false;
     treatments.value.sort((a, b) => {
-      return a.createdAt < b.createdAt ? 1 : -1;
+      return a.date < b.date ? 1 : -1;
     });
   });
 };
