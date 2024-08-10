@@ -11,8 +11,12 @@ const props = defineProps({
     required: true,
     type: Object as () => IHorse,
   },
+  contentInput: {
+    required: false,
+    type: String,
+  },
 });
-const emit = defineEmits(["created"]);
+const emit = defineEmits(["created", "clearContentInput"]);
 const axios: AxiosStatic | undefined = inject("axios");
 const treatmentService = new TreatmentService(axios);
 const newTreatment: Ref<ITreatment> = ref(new Treatment());
@@ -30,6 +34,11 @@ onBeforeMount(() => {
   newTreatment.value.horseId = props.horseInput.id;
   newTreatment.value.noteForNextTreatment =
     props.horseInput.noteForNextTreatment;
+
+  if (props.contentInput) {
+    newTreatment.value.note = props.contentInput;
+  }
+  emit("clearContentInput");
 });
 
 const loading = ref(false);
