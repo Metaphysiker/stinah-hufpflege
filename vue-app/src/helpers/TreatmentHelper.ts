@@ -16,6 +16,7 @@ export class TreatmentHelper {
     treatment.horseId = input.horseId;
     treatment.note = input.note;
     treatment.noteForNextTreatment = input.noteForNextTreatment;
+    treatment.date = new Date(input.date);
     return treatment;
   }
 
@@ -25,6 +26,7 @@ export class TreatmentHelper {
     clonedTreatment.horseId = treatment.horseId;
     clonedTreatment.note = treatment.note;
     clonedTreatment.noteForNextTreatment = treatment.noteForNextTreatment;
+    clonedTreatment.date = new Date(treatment.date);
     return clonedTreatment;
   }
 }

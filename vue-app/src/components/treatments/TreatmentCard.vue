@@ -35,7 +35,7 @@ const deleteTreatment = () => {
   <v-card variant="outlined">
     <v-card-text>
       <div>
-        <h3>{{ dateFormatter.dddotmmdotyyyy(treatment.createdAt) }}</h3>
+        <h3>{{ dateFormatter.dddotmmdotyyyy(treatment.date) }}</h3>
       </div>
       <div style="white-space: pre-line">{{ treatment.note }}</div>
       <div class="d-flex justify-end">

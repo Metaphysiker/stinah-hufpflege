@@ -5,6 +5,7 @@ public class Treatment : IModel
     public string NoteForNextTreatment { get; set; } = string.Empty;
     public int? HorseId { get; set; }
     public Horse? Horse { get; set; }
+    public DateTime Date { get; set; } = DateTime.Now;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
     public string FileKeysString { get; set; } = string.Empty;

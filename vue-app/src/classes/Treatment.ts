@@ -5,6 +5,7 @@ export class Treatment implements ITreatment {
   note: string;
   noteForNextTreatment: string;
   horseId: number;
+  date: Date;
   createdAt: Date;
   updatedAt: Date;
   fileKeysString: string;
@@ -14,6 +15,7 @@ export class Treatment implements ITreatment {
     this.note = "";
     this.noteForNextTreatment = "";
     this.horseId = 0;
+    this.date = new Date();
     this.createdAt = new Date();
     this.updatedAt = new Date();
     this.fileKeysString = "";
