@@ -9,7 +9,10 @@ const errorMessages = ref<string[]>([]);
 
 const emit = defineEmits(["filesUploaded"]);
 
+const loading = ref(false);
+
 const uploadFile = () => {
+  loading.value = true;
   const promisesToUpload = filesToUpload.value.map((file) => {
     return fileService.uploadFile(file);
   });
@@ -22,6 +25,9 @@ const uploadFile = () => {
     })
     .catch((error) => {
       errorMessages.value.push(error);
+    })
+    .finally(() => {
+      loading.value = false;
     });
 };
 
@@ -42,6 +48,7 @@ const clearErrorMessages = () => {
         v-model="filesToUpload"
         @change="clearErrorMessages()"
       ></v-file-input>
+      <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 
       <v-btn @click="uploadFile()">Hochladen</v-btn>
       <div class="my-2 text-h5 text-red" v-for="errorMessage of errorMessages">
