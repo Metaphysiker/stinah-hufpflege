@@ -3,14 +3,25 @@ public class TreatmentDTOConverter
 
     private readonly AutoMapperService _mapperService;
 
-    public TreatmentDTOConverter(AutoMapperService mapperService)
+    private readonly DatabaseContext _db;
+
+    public TreatmentDTOConverter(AutoMapperService mapperService, DatabaseContext db)
     {
         _mapperService = mapperService;
+        _db = db;
     }
 
     public Treatment Convert(TreatmentDTO treatmentDTO)
     {
         Treatment treatment = _mapperService.mapper.Map<Treatment>(treatmentDTO);
+
+        Horse? horse = _db.Horses.Find(treatment.HorseId);
+        if (horse != null)
+        {
+            treatment.Horse = horse;
+            horse.Treatments.Add(treatment);
+        }
+
         return treatment;
     }
 
