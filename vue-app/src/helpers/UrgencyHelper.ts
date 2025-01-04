@@ -3,20 +3,25 @@ import { HorseHelper } from "./HorseHelper";
 
 export class UrgencyHelper {
   horseHelper = new HorseHelper();
-  calculateUrgency(horse: IHorse) {
+  calculateUrgencyInDays(horse: IHorse) {
     const now = new Date();
-    const nextTreatmentDate =
-      this.horseHelper.calculateNextTreatmentDate(horse);
-    const difference = nextTreatmentDate.getTime() - now.getTime();
-    return difference / (1000 * 60 * 60 * 24);
+    const nextTreatmentDate = this.horseHelper.calculateNextTreatmentDate(
+      horse,
+      "hoofcare"
+    );
+    if (nextTreatmentDate) {
+      const difference = nextTreatmentDate.getTime() - now.getTime();
+      return difference / (1000 * 60 * 60 * 24);
+    }
+    return 0;
   }
 
   isNextWeek(horse: IHorse) {
-    return this.calculateUrgency(horse) < 7;
+    return this.calculateUrgencyInDays(horse) < 7;
   }
 
   isNextMonth(horse: IHorse) {
-    return this.calculateUrgency(horse) < 30;
+    return this.calculateUrgencyInDays(horse) < 30;
   }
 
   getColorForUrgency(horse: IHorse) {
