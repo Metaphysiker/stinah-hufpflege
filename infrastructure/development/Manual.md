@@ -19,3 +19,15 @@ dotnet ef migrations add NAME_OF_MIGRATIONS
 After:
 
 dotnet ef database update
+
+# Swagger
+
+http://localhost:8081/swagger/index.html
+
+# Add nuget package
+
+docker compose run dotnet bash
+
+cd WebApi
+
+dotnet add package AutoMapper --version 13.0.1
