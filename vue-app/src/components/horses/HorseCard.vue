@@ -154,7 +154,7 @@ const noteForNextTreatmentToBeCopied = ref("");
         :content-input="noteForNextTreatmentToBeCopied"
         @created="getTreatments()"
         @clear-content-input="noteForNextTreatmentToBeCopied = ''"
-        :treatment-category="'hoof'"
+        :treatment-category="'hoofcare'"
       ></NewTreatment>
       <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 
@@ -171,7 +171,10 @@ const noteForNextTreatmentToBeCopied = ref("");
       </div>
       <hr />
       <h5>Hufpflege</h5>
-      <TreatmentCards :horse="horse" :categories="['hoof']"></TreatmentCards>
+      <TreatmentCards
+        :horse="horse"
+        :categories="['hoofcare']"
+      ></TreatmentCards>
     </div>
 
     <div v-if="showFiles">
