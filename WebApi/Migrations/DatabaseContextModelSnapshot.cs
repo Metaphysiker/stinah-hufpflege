@@ -66,7 +66,7 @@ namespace WebApi.Migrations
 
                     b.HasIndex("HorseId");
 
-                    b.ToTable("Horses");
+                    b.ToTable("Horses", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -305,7 +305,7 @@ namespace WebApi.Migrations
 
                     b.HasIndex("HorseId");
 
-                    b.ToTable("Treatments");
+                    b.ToTable("Treatments", (string)null);
                 });
 
             modelBuilder.Entity("Horse", b =>
