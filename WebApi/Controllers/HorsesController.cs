@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Controllers;
 
@@ -9,45 +11,57 @@ namespace WebApi.Controllers;
 public class HorsesController : ControllerBase
 {
     private readonly DatabaseContext _db;
+    private readonly HorseDTOConveter _horseDTOConveter;
 
-    public HorsesController(DatabaseContext db)
+    public HorsesController(DatabaseContext db, HorseDTOConveter horseDTOConveter)
     {
         _db = db;
+        _horseDTOConveter = horseDTOConveter;
     }
 
     [HttpGet]
-    public List<Horse> Get()
+    public async Task<List<HorseDTO>> Get()
     {
-        return _db.Horses.ToList();
+        var horses = await _db.Horses.Include(a => a.Treatments).ToListAsync();
+        foreach (var horse in horses)
+        {
+            Console.WriteLine("Horse: " + horse.Id);
+            Console.WriteLine("Treatments: " + horse.Treatments.Count);
+        }
+        return _horseDTOConveter.Convert(horses);
     }
 
     [HttpGet("protected")]
     [Authorize]
-    public List<Horse> ProtectedGet()
+    public List<HorseDTO> ProtectedGet()
     {
-        return _db.Horses.ToList();
+        var horses = _db.Horses.ToList();
+        return _horseDTOConveter.Convert(horses);
     }
 
     [HttpGet("protectedadmin")]
     [Authorize(Roles = "Admin")]
-    public List<Horse> ProtectedAdminGet()
+    public List<HorseDTO> ProtectedAdminGet()
     {
-        return _db.Horses.ToList();
+        var horses = _db.Horses.ToList();
+
+        return _horseDTOConveter.Convert(horses);
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Horse> GetById(int id)
+    public ActionResult<HorseDTO> GetById(int id)
     {
         var horse = _db.Horses.Find(id);
         if (horse == null)
         {
             return NotFound();
         }
-        return horse;
+
+        return _horseDTOConveter.Convert(horse);
     }
 
     [HttpPost]
-    public ActionResult<Horse> Post([FromBody] Horse horse)
+    public ActionResult<HorseDTO> Post([FromBody] Horse horse)
     {
         _db.Add(horse);
         _db.SaveChanges();
@@ -56,12 +70,13 @@ public class HorsesController : ControllerBase
         {
             return BadRequest();
         }
-        return createdHorse;
+        return _horseDTOConveter.Convert(createdHorse);
     }
 
     [HttpPut]
-    public ActionResult<Horse> Put([FromBody] Horse horse)
+    public ActionResult<HorseDTO> Put([FromBody] HorseDTO horseDTO)
     {
+        var horse = _horseDTOConveter.Convert(horseDTO);
         _db.Update(horse);
         _db.SaveChanges();
         var updatedHorse = _db.Horses.Find(horse.Id);
@@ -69,7 +84,7 @@ public class HorsesController : ControllerBase
         {
             return BadRequest();
         }
-        return updatedHorse;
+        return _horseDTOConveter.Convert(updatedHorse);
     }
 
     [HttpDelete("{id}")]
@@ -81,7 +96,7 @@ public class HorsesController : ControllerBase
             return NotFound();
         }
 
-        var treatments = _db.Treatments.Where(t => t.HorseId == id);
+        var treatments = _db.Treatments.Where(t => t.Horse != null && t.Horse.Id == id);
         _db.RemoveRange(treatments);
 
         _db.Remove(horse);

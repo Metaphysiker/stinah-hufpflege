@@ -19,7 +19,7 @@ public class MigrationController : ControllerBase
         var treatments = _db.Treatments.ToList();
         foreach (var treatment in treatments)
         {
-            treatment.Category = "hoof";
+            treatment.Category = "hoofcare";
         }
 
         await _db.SaveChangesAsync();

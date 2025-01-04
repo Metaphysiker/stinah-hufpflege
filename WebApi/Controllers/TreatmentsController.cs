@@ -8,46 +8,72 @@ namespace WebApi.Controllers;
 [Route("api/[controller]")]
 public class TreatmentsController : ControllerBase
 {
+    private readonly TreatmentDTOConverter _treatmentDTOConverter;
     private readonly DatabaseContext _db;
 
-    public TreatmentsController(DatabaseContext db)
+    public TreatmentsController(DatabaseContext db, TreatmentDTOConverter treatmentDTOConverter)
     {
+        _treatmentDTOConverter = treatmentDTOConverter;
         _db = db;
     }
 
     [HttpGet]
-    public List<Treatment> Get()
+    public List<TreatmentDTO> Get()
     {
-        return _db.Treatments.ToList(); ;
+        var treatments = _db.Treatments.ToList();
+
+        foreach (var treatment in treatments)
+        {
+            Console.WriteLine("Treatment: " + treatment.Id);
+            Console.WriteLine("Horse: " + treatment.Horse?.Name);
+        }
+
+        return _treatmentDTOConverter.Convert(treatments);
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Treatment> GetById(int id)
+    public async Task<ActionResult<TreatmentDTO>> GetById(int id)
     {
-        var treatment = _db.Treatments.Find(id);
+        var treatment = await _db.Treatments.FindAsync(id);
         if (treatment == null)
         {
             return NotFound();
         }
-        return treatment;
+        return _treatmentDTOConverter.Convert(treatment);
     }
 
     [HttpPost]
-    public ActionResult<Treatment> Post([FromBody] Treatment treatment)
+    public async Task<ActionResult<TreatmentDTO>> Post([FromBody] TreatmentDTO treatmentDto)
     {
-        _db.Add(treatment);
-        _db.SaveChanges();
-        var createdTreatment = _db.Treatments.Find(treatment.Id);
+        var treatment = _treatmentDTOConverter.Convert(treatmentDto);
+
+        Horse? horse = _db.Horses.Find(treatment.HorseId);
+        if (horse != null)
+        {
+            treatment.Horse = horse;
+            horse.Treatments.Add(treatment);
+        }
+
+        await _db.AddAsync(treatment);
+        await _db.SaveChangesAsync();
+
+
+        var createdTreatment = await _db.Treatments.FindAsync(treatment.Id);
         if (createdTreatment == null)
         {
             return BadRequest();
         }
-        return createdTreatment;
+
+        Console.WriteLine("zzCreated: " + createdTreatment.Id);
+        Console.WriteLine("zzHorse: " + createdTreatment.Horse?.Name);
+
+        return _treatmentDTOConverter.Convert(createdTreatment);
     }
 
     [HttpPut]
-    public ActionResult<Treatment> Put([FromBody] Treatment treatment)
+    public ActionResult<TreatmentDTO> Put([FromBody] TreatmentDTO treatmentDto)
     {
+        var treatment = _treatmentDTOConverter.Convert(treatmentDto);
         _db.Update(treatment);
         _db.SaveChanges();
         var updatedTreatment = _db.Treatments.Find(treatment.Id);
@@ -55,7 +81,7 @@ public class TreatmentsController : ControllerBase
         {
             return BadRequest();
         }
-        return updatedTreatment;
+        return _treatmentDTOConverter.Convert(updatedTreatment);
     }
 
     [HttpDelete("{id}")]
@@ -72,7 +98,7 @@ public class TreatmentsController : ControllerBase
     }
 
     [HttpPost("search")]
-    public List<Treatment> Search([FromBody] TreatmentSearch search)
+    public List<TreatmentDTO> Search([FromBody] TreatmentSearch search)
     {
         var query = _db.Treatments.AsQueryable();
 
@@ -86,9 +112,11 @@ public class TreatmentsController : ControllerBase
             query = query.Where(t => search.Categories.Contains(t.Category));
         }
 
-        return query
+        var results = query
             .Skip(search.Page * search.PageSize)
             .Take(search.PageSize)
             .ToList();
+
+        return _treatmentDTOConverter.Convert(results);
     }
 }
