@@ -7,4 +7,5 @@ export interface ITreatment {
   createdAt: Date;
   updatedAt: Date;
   fileKeysString: string;
+  category: string;
 }

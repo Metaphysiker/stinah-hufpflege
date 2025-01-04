@@ -9,6 +9,7 @@ export class Treatment implements ITreatment {
   createdAt: Date;
   updatedAt: Date;
   fileKeysString: string;
+  category: string;
 
   constructor() {
     this.id = 0;
@@ -19,5 +20,6 @@ export class Treatment implements ITreatment {
     this.createdAt = new Date();
     this.updatedAt = new Date();
     this.fileKeysString = "";
+    this.category = "";
   }
 }

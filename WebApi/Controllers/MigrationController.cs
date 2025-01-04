@@ -12,8 +12,23 @@ public class MigrationController : ControllerBase
         _db = db;
     }
 
+
     [HttpGet("migrate")]
-    public async Task<HttpStatusCode> Get()
+    public async Task<HttpStatusCode> migrate()
+    {
+        var treatments = _db.Treatments.ToList();
+        foreach (var treatment in treatments)
+        {
+            treatment.Category = "hoof";
+        }
+
+        await _db.SaveChangesAsync();
+
+        return HttpStatusCode.OK;
+    }
+
+    [HttpGet("migrateOld")]
+    public async Task<HttpStatusCode> migrateOld()
     {
         var treatments = _db.Treatments.ToList();
         foreach (var treatment in treatments)

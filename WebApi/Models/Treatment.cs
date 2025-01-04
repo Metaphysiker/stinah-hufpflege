@@ -8,6 +8,7 @@ public class Treatment : IModel
     public DateTime Date { get; set; } = DateTime.Now;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
+    public string Category { get; set; } = string.Empty;
     public string FileKeysString { get; set; } = string.Empty;
 
 }

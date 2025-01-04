@@ -40,7 +40,7 @@ const update = () => {
 </script>
 
 <template>
-  <v-card-text>
+  <v-card-text v-if="copyOfTreatmentToBeEdited">
     <TreatmentForm v-model="copyOfTreatmentToBeEdited"></TreatmentForm>
     <v-btn @click="update()">Aktualisieren</v-btn>
   </v-card-text>

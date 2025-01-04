@@ -15,6 +15,10 @@ const props = defineProps({
     required: false,
     type: String,
   },
+  treatmentCategory: {
+    required: true,
+    type: String,
+  },
 });
 const emit = defineEmits(["created", "clearContentInput"]);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -22,6 +26,7 @@ const treatmentService = new TreatmentService(axios);
 const newTreatment: Ref<ITreatment> = ref(new Treatment());
 const create = () => {
   loading.value = true;
+  newTreatment.value.category = props.treatmentCategory;
   treatmentService.create(newTreatment.value).then(() => {
     emit("created");
     newTreatment.value = new Treatment();

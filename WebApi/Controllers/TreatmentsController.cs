@@ -74,8 +74,19 @@ public class TreatmentsController : ControllerBase
     [HttpPost("search")]
     public List<Treatment> Search([FromBody] TreatmentSearch search)
     {
-        return _db.Treatments
-            .Where(t => t.Horse != null && t.Horse.Id == search.HorseId)
+        var query = _db.Treatments.AsQueryable();
+
+        if (search.HorseId != null)
+        {
+            query = query.Where(t => t.Horse != null && t.Horse.Id == search.HorseId);
+        }
+
+        if (search.Categories.Count > 0)
+        {
+            query = query.Where(t => search.Categories.Contains(t.Category));
+        }
+
+        return query
             .Skip(search.Page * search.PageSize)
             .Take(search.PageSize)
             .ToList();

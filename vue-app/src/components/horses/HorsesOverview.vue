@@ -149,6 +149,7 @@ const treatmentCreated = () => {
           <NewTreatment
             :horse-input="currentHorse"
             @created="treatmentCreated()"
+            :treatment-category="'hoof'"
           ></NewTreatment>
         </div>
       </v-card-text>
