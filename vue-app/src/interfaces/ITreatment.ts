@@ -6,6 +6,6 @@ export interface ITreatment {
   date: Date;
   createdAt: Date;
   updatedAt: Date;
-  fileKeysString: string;
   category: string;
+  fileKeysString: string;
 }

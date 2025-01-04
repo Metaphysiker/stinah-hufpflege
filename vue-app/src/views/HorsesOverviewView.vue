@@ -2,5 +2,5 @@
 import HorseOverview from "../components/horses/HorsesOverview.vue";
 </script>
 <template>
-  <HorseOverview></HorseOverview>
+  <HorseOverview treatment-category="hoofcare"></HorseOverview>
 </template>

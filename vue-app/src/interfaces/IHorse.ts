@@ -1,7 +1,8 @@
+import { ITreatment } from "./ITreatment";
+
 export interface IHorse {
   id: number;
   name: string;
-  lastTimeTreated: Date;
   numberOfWeeksUntilNextTreatment: number;
   birthYear: number;
   noteForNextTreatment: string;
@@ -9,6 +10,5 @@ export interface IHorse {
   updatedAt: Date;
   beschlagen: boolean;
   fileKeysString: string;
-  nextTreatmentDate: () => Date;
-  nextTreatmentDateString: () => string;
+  treatments: ITreatment[];
 }
