@@ -21,13 +21,6 @@ public class TreatmentsController : ControllerBase
     public List<TreatmentDTO> Get()
     {
         var treatments = _db.Treatments.ToList();
-
-        foreach (var treatment in treatments)
-        {
-            Console.WriteLine("Treatment: " + treatment.Id);
-            Console.WriteLine("Horse: " + treatment.Horse?.Name);
-        }
-
         return _treatmentDTOConverter.Convert(treatments);
     }
 
@@ -47,25 +40,14 @@ public class TreatmentsController : ControllerBase
     {
         var treatment = _treatmentDTOConverter.Convert(treatmentDto);
 
-        Horse? horse = _db.Horses.Find(treatment.HorseId);
-        if (horse != null)
-        {
-            treatment.Horse = horse;
-            horse.Treatments.Add(treatment);
-        }
-
         await _db.AddAsync(treatment);
         await _db.SaveChangesAsync();
-
 
         var createdTreatment = await _db.Treatments.FindAsync(treatment.Id);
         if (createdTreatment == null)
         {
             return BadRequest();
         }
-
-        Console.WriteLine("zzCreated: " + createdTreatment.Id);
-        Console.WriteLine("zzHorse: " + createdTreatment.Horse?.Name);
 
         return _treatmentDTOConverter.Convert(createdTreatment);
     }

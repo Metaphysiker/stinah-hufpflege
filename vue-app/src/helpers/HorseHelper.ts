@@ -33,7 +33,6 @@ export class HorseHelper {
       a.date > b.date ? a : b
     );
 
-    console.log("lastTreatment", lastTreatment);
     return lastTreatment.date;
   }
 

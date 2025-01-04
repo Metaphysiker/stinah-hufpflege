@@ -90,7 +90,6 @@ const emits = defineEmits(["close"]);
 const loading = ref(false);
 
 const saveNoteForNextTreatment = () => {
-  console.log(horse.value.noteForNextTreatment);
   horseService.update(horse.value).then((newHorse) => {
     horse.value = newHorse;
   });

@@ -23,11 +23,6 @@ public class HorsesController : ControllerBase
     public async Task<List<HorseDTO>> Get()
     {
         var horses = await _db.Horses.Include(a => a.Treatments).ToListAsync();
-        foreach (var horse in horses)
-        {
-            Console.WriteLine("Horse: " + horse.Id);
-            Console.WriteLine("Treatments: " + horse.Treatments.Count);
-        }
         return _horseDTOConveter.Convert(horses);
     }
 
