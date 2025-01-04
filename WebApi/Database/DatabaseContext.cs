@@ -13,5 +13,19 @@ public class DatabaseContext : IdentityDbContext<IdentityUser>
         var Password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
         var Database = Environment.GetEnvironmentVariable("POSTGRES_DB");
         optionsBuilder.UseNpgsql($"Host=postgres;Username={Username};Password={Password};Database={Database}");
+
+
+
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Horse>()
+            .HasMany(e => e.Treatments);
+
+        modelBuilder.Entity<Treatment>()
+            .HasOne(e => e.Horse);
     }
 }
