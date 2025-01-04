@@ -6,14 +6,11 @@ import { HorseService } from "../../services/HorseService";
 import type { AxiosStatic } from "axios";
 import { Ref, inject, onMounted, ref } from "vue";
 import { IHorse } from "../../interfaces/IHorse";
-import { HorseHelper } from "../../helpers/HorseHelper";
 import NewTreatment from "../treatments/NewTreatment.vue";
 import HorseCard from "./HorseCard.vue";
 import StandardToolbar from "../StandardToolbar.vue";
 const currentHorse: Ref<IHorse | undefined> = ref(undefined);
 const horseForHorseCard: Ref<IHorse | undefined> = ref(undefined);
-
-const horseHelper = new HorseHelper();
 const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
 const horses: Ref<IHorse[]> = ref([]);
@@ -26,12 +23,18 @@ const reload = () => {
   });
 };
 
+defineProps({
+  treatmentCategory: {
+    required: true,
+    type: String,
+  },
+});
+
 onMounted(() => {
   reload();
 });
 
 const horseTreated = (horse: IHorse) => {
-  horseHelper.treated(horse);
   horseService.update(horse).then(() => {
     reload();
   });
@@ -149,7 +152,7 @@ const treatmentCreated = () => {
           <NewTreatment
             :horse-input="currentHorse"
             @created="treatmentCreated()"
-            :treatment-category="'hoof'"
+            :treatment-category="'hoofcare'"
           ></NewTreatment>
         </div>
       </v-card-text>

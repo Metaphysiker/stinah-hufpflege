@@ -14,7 +14,11 @@ const availableTableDataHeaders = ref([
     title: "Letze Behandlung",
     selected: true,
     sortRaw(a: IHorse, b: IHorse) {
-      return a.lastTimeTreated.getTime() - b.lastTimeTreated.getTime();
+      const aDate =
+        horseHelper.getLastTimeTreated(a, "hoofcare")?.getTime() || 0;
+      const bDate =
+        horseHelper.getLastTimeTreated(b, "hoofcare")?.getTime() || 0;
+      return aDate - bDate;
     },
   },
   {
@@ -22,7 +26,12 @@ const availableTableDataHeaders = ref([
     title: "nächstes Mal",
     selected: true,
     sortRaw(a: IHorse, b: IHorse) {
-      return a.nextTreatmentDate().getTime() - b.nextTreatmentDate().getTime();
+      const aDate =
+        horseHelper.getNextTreatmentDate(a, "hoofcare")?.getTime() || 0;
+      const bDate =
+        horseHelper.getNextTreatmentDate(b, "hoofcare")?.getTime() || 0;
+
+      return aDate - bDate;
     },
   },
   { key: "birthYear", title: "Alter", selected: true },
@@ -35,9 +44,13 @@ const availableTableDataHeaders = ref([
 ]);
 
 const isSpecialColumn = (header: string) => {
-  return ["name", "lastTimeTreated", "birthYear", "nextTreatmentDate", "action"].includes(
-    header
-  );
+  return [
+    "name",
+    "lastTimeTreated",
+    "birthYear",
+    "nextTreatmentDate",
+    "action",
+  ].includes(header);
 };
 
 defineProps({
@@ -69,6 +82,19 @@ const emit = defineEmits([
   "clickOnEdit",
   "clickOnName",
 ]);
+
+const lastTimeTreatedForHoofcare = (horse: IHorse) => {
+  const lastTimeTreatedDate =
+    horseHelper.getLastTimeTreated(horse, "hoofcare") || "";
+  if (!lastTimeTreatedDate) return "";
+  return dateFormatter.dddotmmdotyyyy(lastTimeTreatedDate);
+};
+
+const nextTreatmentDateForHoofcare = (horse: IHorse) => {
+  const nextTreatmentDate = horseHelper.getNextTreatmentDate(horse, "hoofcare");
+  if (!nextTreatmentDate) return "";
+  return dateFormatter.dddotmmdotyyyy(nextTreatmentDate);
+};
 </script>
 
 <template>
@@ -88,29 +114,35 @@ const emit = defineEmits([
             <template v-if="!isSpecialColumn(header.key)">
               {{ row.item[header.key as keyof IHorse] }}
             </template>
-            <template v-if="header.key === 'lastTimeTreated'">
-              {{ dateFormatter.dddotmmdotyyyy(row.item["lastTimeTreated"]) }}
-            </template>
+
             <template v-if="header.key === 'birthYear'">
               {{ new Date().getFullYear() - row.item["birthYear"] }}
             </template>
             <template v-if="header.key === 'name'">
-              <v-btn @click="clickOnName(row.item)">{{ row.item["name"] }}</v-btn>
+              <v-btn @click="clickOnName(row.item)">{{
+                row.item["name"]
+              }}</v-btn>
             </template>
           </div>
+          <template v-if="header.key === 'lastTimeTreated'">
+            {{ lastTimeTreatedForHoofcare(row.item) }}
+          </template>
           <template v-if="header.key === 'nextTreatmentDate'">
             <div
               class="rounded pa-1 text-center"
               :class="urgencyHelper.getClassForUrgency(row.item)"
             >
-              {{ row.item.nextTreatmentDateString() }}
+              {{ nextTreatmentDateForHoofcare(row.item) }}
             </div>
           </template>
           <template v-if="header.key === 'action'">
             <div class="d-flex">
-              <v-btn color="primary" class="me-2" @click="clickOnBehandelt(row.item)">{{
-                horseHelper.getLabelForBehandeltButton(row.item)
-              }}</v-btn>
+              <v-btn
+                color="primary"
+                class="me-2"
+                @click="clickOnBehandelt(row.item)"
+                >{{ horseHelper.getLabelForBehandeltButton(row.item) }}</v-btn
+              >
               <v-btn color="green" class="me-2" @click="clickOnEdit(row.item)"
                 ><v-icon> mdi-pencil </v-icon></v-btn
               >

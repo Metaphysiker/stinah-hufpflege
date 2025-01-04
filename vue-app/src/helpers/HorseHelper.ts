@@ -4,25 +4,46 @@ import { DateHelper } from "./DateHelper";
 export class HorseHelper {
   dateHelper = new DateHelper();
   dateFormatter = new DateFormatter();
-  treated(horse: IHorse) {
-    horse.lastTimeTreated = new Date();
-  }
 
-  calculateNextTreatmentDate(horse: IHorse) {
+  calculateNextTreatmentDate(
+    horse: IHorse,
+    category: string
+  ): Date | undefined {
+    const lastTimeTreated = this.getLastTimeTreated(horse, category);
+    if (!lastTimeTreated) return undefined;
+
     return this.dateHelper.addDays(
-      horse.lastTimeTreated,
+      lastTimeTreated,
       horse.numberOfWeeksUntilNextTreatment * 7
-    );
-  }
-
-  getNextTreatmentDateString(horse: IHorse) {
-    return this.dateFormatter.dddotmmdotyyyy(
-      this.calculateNextTreatmentDate(horse)
     );
   }
 
   getLabelForBehandeltButton(horse: IHorse) {
     if (horse.beschlagen) return "Beschlagen";
     return "Behandelt";
+  }
+
+  getLastTimeTreated(horse: IHorse, category: string): Date | undefined {
+    const treatmentsInCategory = horse.treatments.filter(
+      (treatment) => treatment.category === category
+    );
+    if (treatmentsInCategory.length === 0) return undefined;
+
+    const lastTreatment = treatmentsInCategory.reduce((a, b) =>
+      a.date > b.date ? a : b
+    );
+
+    console.log("lastTreatment", lastTreatment);
+    return lastTreatment.date;
+  }
+
+  getNextTreatmentDate(horse: IHorse, category: string): Date | undefined {
+    const lastTimeTreated = this.getLastTimeTreated(horse, category);
+    if (!lastTimeTreated) return undefined;
+
+    return this.dateHelper.addDays(
+      lastTimeTreated,
+      horse.numberOfWeeksUntilNextTreatment * 7
+    );
   }
 }
