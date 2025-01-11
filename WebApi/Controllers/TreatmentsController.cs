@@ -97,6 +97,18 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
             query = query.Where(t => search.Categories.Contains(t.Category));
         }
 
+        if (search.SortBy != null && search.SortBy == "Date")
+        {
+            query = query.OrderBy(t => t.Date);
+
+            if (search.SortOrder != null && search.SortOrder == "descending")
+            {
+                query = query.Reverse();
+            }
+        }
+
+
+
         var results = await query
             .Skip(search.Page * search.PageSize)
             .Take(search.PageSize)
