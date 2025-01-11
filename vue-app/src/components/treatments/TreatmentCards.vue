@@ -38,7 +38,7 @@ const getTreatments = () => {
     treatmentSearch.categories = props.categories;
   }
 
-  treatmentService.search(treatmentSearch).then((response) => {
+  treatmentService.Search(treatmentSearch).then((response) => {
     treatments.value = response;
     loading.value = false;
     treatments.value.sort((a, b) => {

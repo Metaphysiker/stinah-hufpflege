@@ -27,7 +27,7 @@ const newTreatment: Ref<ITreatment> = ref(new Treatment());
 const create = () => {
   loading.value = true;
   newTreatment.value.category = props.treatmentCategory;
-  treatmentService.create(newTreatment.value).then(() => {
+  treatmentService.Create(newTreatment.value).then(() => {
     emit("created");
     newTreatment.value = new Treatment();
     newTreatment.value.horseId = props.horseInput.id;

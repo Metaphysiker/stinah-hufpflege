@@ -25,7 +25,7 @@ const closeEditTreatmentWithoutSaving = () => {
 const deleteTreatmentDialog = ref(false);
 
 const deleteTreatment = () => {
-  treatmentService.delete(treatment.value).then(() => {
+  treatmentService.Delete(treatment.value.id).then(() => {
     emit("deleted");
   });
 };

@@ -30,7 +30,7 @@ watch(
 const update = () => {
   if (copyOfTreatmentToBeEdited.value) {
     treatmentService
-      .update(copyOfTreatmentToBeEdited.value)
+      .Update(copyOfTreatmentToBeEdited.value)
       .then((newTreatment) => {
         treatmentToBeEdited.value = newTreatment;
         emit("updated");
