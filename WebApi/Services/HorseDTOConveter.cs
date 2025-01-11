@@ -1,4 +1,4 @@
-public class HorseDTOConveter
+public class HorseDTOConveter : IDtoConverter<Horse, HorseDTO>
 {
 
     private readonly AutoMapperService _mapperService;
@@ -17,6 +17,7 @@ public class HorseDTOConveter
     public HorseDTO Convert(Horse horse)
     {
         HorseDTO horseDTO = _mapperService.mapper.Map<HorseDTO>(horse);
+        horseDTO.TreatmentIds = horse.Treatments.Select(t => t.Id).ToList();
         return horseDTO;
     }
 

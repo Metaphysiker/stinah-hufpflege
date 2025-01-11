@@ -1,4 +1,4 @@
-public class TreatmentDTOConverter
+public class TreatmentDTOConverter : IDtoConverter<Treatment, TreatmentDTO>
 {
 
     private readonly AutoMapperService _mapperService;
