@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Controllers;
 
 [Authorize(Roles = "Admin, Stinah")]
 [ApiController]
 [Route("api/[controller]")]
-public class TreatmentsController : ControllerBase
+public class TreatmentsController : ControllerBase, IModelController<TreatmentDTO, TreatmentSearch>
 {
     private readonly TreatmentDTOConverter _treatmentDTOConverter;
     private readonly DatabaseContext _db;
@@ -18,14 +19,14 @@ public class TreatmentsController : ControllerBase
     }
 
     [HttpGet]
-    public List<TreatmentDTO> Get()
+    public async Task<ActionResult<List<TreatmentDTO>>> ReadAll()
     {
-        var treatments = _db.Treatments.ToList();
+        var treatments = await _db.Treatments.ToListAsync();
         return _treatmentDTOConverter.Convert(treatments);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<TreatmentDTO>> GetById(int id)
+    public async Task<ActionResult<TreatmentDTO>> Read(int id)
     {
         var treatment = await _db.Treatments.FindAsync(id);
         if (treatment == null)
@@ -36,7 +37,7 @@ public class TreatmentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<TreatmentDTO>> Post([FromBody] TreatmentDTO treatmentDto)
+    public async Task<ActionResult<TreatmentDTO>> Create([FromBody] TreatmentDTO treatmentDto)
     {
         var treatment = _treatmentDTOConverter.Convert(treatmentDto);
 
@@ -53,11 +54,11 @@ public class TreatmentsController : ControllerBase
     }
 
     [HttpPut]
-    public ActionResult<TreatmentDTO> Put([FromBody] TreatmentDTO treatmentDto)
+    public async Task<ActionResult<TreatmentDTO>> Update([FromBody] TreatmentDTO treatmentDto)
     {
         var treatment = _treatmentDTOConverter.Convert(treatmentDto);
         _db.Update(treatment);
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
         var updatedTreatment = _db.Treatments.Find(treatment.Id);
         if (updatedTreatment == null)
         {
@@ -67,20 +68,22 @@ public class TreatmentsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public ActionResult Delete(int id)
+
+    public async Task<ActionResult> Delete(int id)
     {
-        var treatment = _db.Treatments.Find(id);
+        var treatment = await _db.Treatments.FindAsync(id);
         if (treatment == null)
         {
             return NotFound();
         }
         _db.Remove(treatment);
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
         return NoContent();
     }
 
     [HttpPost("search")]
-    public List<TreatmentDTO> Search([FromBody] TreatmentSearch search)
+
+    public async Task<ActionResult<List<TreatmentDTO>>> Search([FromBody] TreatmentSearch search)
     {
         var query = _db.Treatments.AsQueryable();
 
@@ -94,10 +97,10 @@ public class TreatmentsController : ControllerBase
             query = query.Where(t => search.Categories.Contains(t.Category));
         }
 
-        var results = query
+        var results = await query
             .Skip(search.Page * search.PageSize)
             .Take(search.PageSize)
-            .ToList();
+            .ToListAsync();
 
         return _treatmentDTOConverter.Convert(results);
     }

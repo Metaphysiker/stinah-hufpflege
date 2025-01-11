@@ -8,7 +8,7 @@ namespace WebApi.Controllers;
 [Authorize(Roles = "Admin, Stinah")]
 [ApiController]
 [Route("api/[controller]")]
-public class HorsesController : ControllerBase
+public class HorsesController : ControllerBase, IModelController<HorseDTO, HorseSearch>
 {
     private readonly DatabaseContext _db;
     private readonly HorseDTOConveter _horseDTOConveter;
@@ -17,13 +17,6 @@ public class HorsesController : ControllerBase
     {
         _db = db;
         _horseDTOConveter = horseDTOConveter;
-    }
-
-    [HttpGet]
-    public async Task<List<HorseDTO>> Get()
-    {
-        var horses = await _db.Horses.Include(a => a.Treatments).ToListAsync();
-        return _horseDTOConveter.Convert(horses);
     }
 
     [HttpGet("protected")]
@@ -43,62 +36,6 @@ public class HorsesController : ControllerBase
         return _horseDTOConveter.Convert(horses);
     }
 
-    [HttpGet("{id}")]
-    public ActionResult<HorseDTO> GetById(int id)
-    {
-        var horse = _db.Horses.Find(id);
-        if (horse == null)
-        {
-            return NotFound();
-        }
-
-        return _horseDTOConveter.Convert(horse);
-    }
-
-    [HttpPost]
-    public ActionResult<HorseDTO> Post([FromBody] Horse horse)
-    {
-        _db.Add(horse);
-        _db.SaveChanges();
-        var createdHorse = _db.Horses.Find(horse.Id);
-        if (createdHorse == null)
-        {
-            return BadRequest();
-        }
-        return _horseDTOConveter.Convert(createdHorse);
-    }
-
-    [HttpPut]
-    public ActionResult<HorseDTO> Put([FromBody] HorseDTO horseDTO)
-    {
-        var horse = _horseDTOConveter.Convert(horseDTO);
-        _db.Update(horse);
-        _db.SaveChanges();
-        var updatedHorse = _db.Horses.Find(horse.Id);
-        if (updatedHorse == null)
-        {
-            return BadRequest();
-        }
-        return _horseDTOConveter.Convert(updatedHorse);
-    }
-
-    [HttpDelete("{id}")]
-    public ActionResult Delete(int id)
-    {
-        var horse = _db.Horses.Find(id);
-        if (horse == null)
-        {
-            return NotFound();
-        }
-
-        var treatments = _db.Treatments.Where(t => t.Horse != null && t.Horse.Id == id);
-        _db.RemoveRange(treatments);
-
-        _db.Remove(horse);
-        _db.SaveChanges();
-        return NoContent();
-    }
-
     [HttpGet("CreateHorses")]
     public string CreateHorses()
     {
@@ -112,5 +49,83 @@ public class HorsesController : ControllerBase
     public string GetEnv()
     {
         return "success";
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<HorseDTO>>> ReadAll()
+    {
+        var horses = await _db.Horses.Include(a => a.Treatments).ToListAsync();
+        return _horseDTOConveter.Convert(horses);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<HorseDTO>> Read(int id)
+    {
+        var horse = await _db.Horses.FindAsync(id);
+        if (horse == null)
+        {
+            return NotFound();
+        }
+
+        return _horseDTOConveter.Convert(horse);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<HorseDTO>> Create([FromBody] HorseDTO dto)
+    {
+        await _db.AddAsync(dto);
+        _db.SaveChanges();
+        var createdHorse = await _db.Horses.FindAsync(dto.Id);
+        if (createdHorse == null)
+        {
+            return BadRequest();
+        }
+        return _horseDTOConveter.Convert(createdHorse);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<HorseDTO>> Update([FromBody] HorseDTO dto)
+    {
+        var horse = _horseDTOConveter.Convert(dto);
+        _db.Update(horse);
+        await _db.SaveChangesAsync();
+        var updatedHorse = await _db.Horses.FindAsync(horse.Id);
+        if (updatedHorse == null)
+        {
+            return BadRequest();
+        }
+        return _horseDTOConveter.Convert(updatedHorse);
+    }
+
+    [HttpDelete("{id}")]
+
+    public async Task<ActionResult> Delete(int id)
+    {
+        var horse = await _db.Horses.FindAsync(id);
+        if (horse == null)
+        {
+            return NotFound();
+        }
+
+        var treatments = _db.Treatments.Where(t => t.Horse != null && t.Horse.Id == id);
+        _db.RemoveRange(treatments);
+
+        _db.Remove(horse);
+        await _db.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpPost("search")]
+    public async Task<ActionResult<List<HorseDTO>>> Search([FromBody] HorseSearch search)
+    {
+        var query = _db.Horses.AsQueryable();
+
+        var results = await query
+            .Skip(search.Page * search.PageSize)
+            .Take(search.PageSize)
+            .Include(a => a.Treatments)
+            .ToListAsync();
+
+        return _horseDTOConveter.Convert(results);
     }
 }
