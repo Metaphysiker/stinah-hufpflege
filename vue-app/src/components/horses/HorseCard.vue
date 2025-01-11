@@ -37,7 +37,7 @@ const getTreatments = () => {
     pageSize: 20,
   };
 
-  treatmentService.search(treatmentSearch).then((response) => {
+  treatmentService.Search(treatmentSearch).then((response) => {
     treatments.value = response;
     loading.value = false;
     treatments.value.sort((a, b) => {
@@ -48,7 +48,7 @@ const getTreatments = () => {
 
 const addFileKeys = (fileKeys: string[]) => {
   fileHelper.addFileKeysToHorse(fileKeys, horse.value);
-  horseService.update(horse.value).then((newHorse) => {
+  horseService.Update(horse.value).then((newHorse) => {
     horse.value = newHorse;
   });
 };
@@ -59,7 +59,7 @@ const treatmentDelete = () => {
 
 const removeFileKey = (fileKey: string) => {
   fileHelper.removeFileKeyFromHorse(fileKey, horse.value);
-  horseService.update(horse.value).then((newHorse) => {
+  horseService.Update(horse.value).then((newHorse) => {
     horse.value = newHorse;
   });
 };
@@ -90,7 +90,7 @@ const emits = defineEmits(["close"]);
 const loading = ref(false);
 
 const saveNoteForNextTreatment = () => {
-  horseService.update(horse.value).then((newHorse) => {
+  horseService.Update(horse.value).then((newHorse) => {
     horse.value = newHorse;
   });
 };

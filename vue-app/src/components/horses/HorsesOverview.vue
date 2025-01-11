@@ -9,6 +9,7 @@ import { IHorse } from "../../interfaces/IHorse";
 import NewTreatment from "../treatments/NewTreatment.vue";
 import HorseCard from "./HorseCard.vue";
 import StandardToolbar from "../StandardToolbar.vue";
+import { IHorseSearch } from "@/interfaces/IHorseSearch";
 const currentHorse: Ref<IHorse | undefined> = ref(undefined);
 const horseForHorseCard: Ref<IHorse | undefined> = ref(undefined);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -18,7 +19,12 @@ const reload = () => {
   newHorseDialog.value = false;
   editHorseDialog.value = false;
   deleteHorseDialog.value = false;
-  horseService.findAll().then((response) => {
+  const horseSearch: IHorseSearch = {
+    page: 0,
+    pageSize: 1000,
+  };
+
+  horseService.Search(horseSearch).then((response) => {
     horses.value = response;
   });
 };
@@ -35,7 +41,7 @@ onMounted(() => {
 });
 
 const horseTreated = (horse: IHorse) => {
-  horseService.update(horse).then(() => {
+  horseService.Update(horse).then(() => {
     reload();
   });
 };
@@ -46,7 +52,7 @@ const horseToDelete = ref<IHorse | undefined>(undefined);
 const horseToEdit = ref<IHorse | undefined>(undefined);
 const deleteHorse = () => {
   if (horseToDelete.value) {
-    horseService.delete(horseToDelete.value).then(() => {
+    horseService.Delete(horseToDelete.value.id).then(() => {
       reload();
       deleteHorseDialog.value = false;
     });

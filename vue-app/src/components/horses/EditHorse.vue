@@ -26,13 +26,13 @@ watch(
 );
 const create = () => {
   if (horseToBeEdited.value) {
-    horseService.update(horseToBeEdited.value).then(() => {
+    horseService.Update(horseToBeEdited.value).then(() => {
       emit("updated");
     });
   }
 };
 </script>
 <template>
-  <HorseForm v-model="horseToBeEdited"></HorseForm>
+  <HorseForm v-if="horseToBeEdited" v-model="horseToBeEdited"></HorseForm>
   <v-btn @click="create()">Aktualisieren</v-btn>
 </template>

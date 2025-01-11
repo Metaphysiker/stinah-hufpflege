@@ -10,7 +10,7 @@ const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
 const newHorse: Ref<IHorse> = ref(new Horse());
 const create = () => {
-  horseService.create(newHorse.value).then(() => {
+  horseService.Create(newHorse.value).then(() => {
     emit("created");
   });
 };

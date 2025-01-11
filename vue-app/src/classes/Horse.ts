@@ -55,7 +55,11 @@ export class Horse implements IHorse {
     this.updatedAt = new Date(horse.updatedAt);
     this.beschlagen = horse.beschlagen;
     this.fileKeysString = horse.fileKeysString;
-    this.treatments = horse.treatments;
+    if (horse.treatments) {
+      this.treatments = horse.treatments;
+    } else {
+      this.treatments = [];
+    }
     return this;
   }
 
