@@ -1,4 +1,3 @@
-public class TreatmentDTO : Treatment
+public class TreatmentDTO : Treatment, IDTO
 {
-
 }
