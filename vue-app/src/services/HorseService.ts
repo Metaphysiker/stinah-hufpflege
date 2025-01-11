@@ -1,17 +1,32 @@
 import { AxiosStatic } from "axios";
-import { IService } from "../interfaces/IService";
 import { AxiosInstanceFactory } from "../factories/AxiosInstanceFactory";
 import { IHorse } from "../interfaces/IHorse";
 import { Horse } from "../classes/Horse";
+import { IHorseSearch } from "@/interfaces/IHorseSearch";
+import { IModelController } from "@/interfaces/IModelController";
 
-export class HorseService implements IService {
+export class HorseService implements IModelController<IHorse, IHorseSearch> {
   horse: Horse = new Horse();
   axiosInstance: AxiosStatic;
   constructor(axios: AxiosStatic | undefined) {
     this.axiosInstance = AxiosInstanceFactory.createAxiosInstance(axios);
   }
 
-  findAll() {
+  Read(id: number) {
+    return new Promise<IHorse>((resolve, reject) => {
+      this.axiosInstance
+        .get("api/horses/" + id)
+        .then((response: any) => {
+          const horse = this.horse.convertToHorse(response.data);
+          resolve(horse);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
+  ReadAll() {
     return new Promise<IHorse[]>((resolve, reject) => {
       this.axiosInstance
         .get("api/horses")
@@ -25,7 +40,7 @@ export class HorseService implements IService {
     });
   }
 
-  create(horse: IHorse) {
+  Create(horse: IHorse) {
     return new Promise<IHorse>((resolve, reject) => {
       this.axiosInstance
         .post("api/horses", horse)
@@ -39,7 +54,7 @@ export class HorseService implements IService {
     });
   }
 
-  update(horse: IHorse) {
+  Update(horse: IHorse) {
     return new Promise<IHorse>((resolve, reject) => {
       this.axiosInstance
         .put("api/horses", horse)
@@ -53,12 +68,26 @@ export class HorseService implements IService {
     });
   }
 
-  delete(horse: IHorse) {
+  Delete(id: number) {
     return new Promise<void>((resolve, reject) => {
       this.axiosInstance
-        .delete("api/horses/" + horse.id)
+        .delete("api/horses/" + id)
         .then((response: any) => {
           resolve();
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
+  Search(search: IHorseSearch) {
+    return new Promise<IHorse[]>((resolve, reject) => {
+      this.axiosInstance
+        .post("api/horses/search", search)
+        .then((response: any) => {
+          const horses = this.horse.convertToHorses(response.data);
+          resolve(horses);
         })
         .catch((e: any) => {
           reject(e);

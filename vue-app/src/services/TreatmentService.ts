@@ -1,18 +1,20 @@
 import { AxiosStatic } from "axios";
-import { IService } from "../interfaces/IService";
 import { AxiosInstanceFactory } from "../factories/AxiosInstanceFactory";
 import { ITreatment } from "@/interfaces/ITreatment";
 import { TreatmentHelper } from "@/helpers/TreatmentHelper";
 import { ITreatmentSearch } from "@/interfaces/ITreatmentSearch";
+import { IModelController } from "@/interfaces/IModelController";
 
-export class TreatmentService implements IService {
+export class TreatmentService
+  implements IModelController<ITreatment, ITreatmentSearch>
+{
   treatmentHelper = new TreatmentHelper();
   axiosInstance: AxiosStatic;
   constructor(axios: AxiosStatic | undefined) {
     this.axiosInstance = AxiosInstanceFactory.createAxiosInstance(axios);
   }
 
-  findAll() {
+  ReadAll() {
     return new Promise<ITreatment[]>((resolve, reject) => {
       this.axiosInstance
         .get("api/treatments")
@@ -28,7 +30,23 @@ export class TreatmentService implements IService {
     });
   }
 
-  create(treatment: ITreatment) {
+  Read(id: number) {
+    return new Promise<ITreatment>((resolve, reject) => {
+      this.axiosInstance
+        .get("api/treatments/" + id)
+        .then((response: any) => {
+          const treatment = this.treatmentHelper.convertToTreatment(
+            response.data
+          );
+          resolve(treatment);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
+  Create(treatment: ITreatment) {
     return new Promise<ITreatment>((resolve, reject) => {
       this.axiosInstance
         .post("api/treatments", treatment)
@@ -44,7 +62,7 @@ export class TreatmentService implements IService {
     });
   }
 
-  update(treatment: ITreatment) {
+  Update(treatment: ITreatment) {
     return new Promise<ITreatment>((resolve, reject) => {
       this.axiosInstance
         .put("api/treatments", treatment)
@@ -60,10 +78,10 @@ export class TreatmentService implements IService {
     });
   }
 
-  delete(treatment: ITreatment) {
+  Delete(id: number) {
     return new Promise<void>((resolve, reject) => {
       this.axiosInstance
-        .delete("api/treatments/" + treatment.id)
+        .delete("api/treatments/" + id)
         .then((response: any) => {
           resolve();
         })
@@ -73,7 +91,7 @@ export class TreatmentService implements IService {
     });
   }
 
-  search(treatmentSearch: ITreatmentSearch) {
+  Search(treatmentSearch: ITreatmentSearch) {
     return new Promise<ITreatment[]>((resolve, reject) => {
       this.axiosInstance
         .post("api/treatments/search", treatmentSearch)
