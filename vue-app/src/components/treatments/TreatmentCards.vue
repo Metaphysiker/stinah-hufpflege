@@ -32,6 +32,8 @@ const getTreatments = () => {
     horseId: props.horse.id,
     page: 0,
     pageSize: 20,
+    sortBy: "Date",
+    sortOrder: "descending",
   };
 
   if (props.categories) {
@@ -41,9 +43,6 @@ const getTreatments = () => {
   treatmentService.Search(treatmentSearch).then((response) => {
     treatments.value = response;
     loading.value = false;
-    treatments.value.sort((a, b) => {
-      return a.date < b.date ? 1 : -1;
-    });
   });
 };
 
@@ -55,10 +54,9 @@ const treatmentDelete = () => {
 <template>
   <div
     v-for="(treatment, index) of treatments"
-    class="mb-2"
+    class="mb-3"
     :key="treatment.id"
   >
-    <v-divider class="my-2"></v-divider>
     <TreatmentCard
       v-model="treatments[index]"
       @deleted="treatmentDelete()"

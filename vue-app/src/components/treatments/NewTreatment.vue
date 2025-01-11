@@ -51,5 +51,6 @@ const loading = ref(false);
 <template>
   <TreatmentForm v-model="newTreatment"></TreatmentForm>
   <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
-  <v-btn @click="create()">Speichern</v-btn>
+  <v-btn class="mb-2" @click="create()">Speichern</v-btn>
+  <v-divider class="mb-2"></v-divider>
 </template>

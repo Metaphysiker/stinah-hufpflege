@@ -157,19 +157,7 @@ const noteForNextTreatmentToBeCopied = ref("");
       ></NewTreatment>
       <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 
-      <div
-        v-for="(treatment, index) of treatments"
-        class="mb-2"
-        :key="treatment.id"
-      >
-        <v-divider class="my-2"></v-divider>
-        <TreatmentCard
-          v-model="treatments[index]"
-          @deleted="treatmentDelete()"
-        ></TreatmentCard>
-      </div>
-      <hr />
-      <h5>Hufpflege</h5>
+      <h5 class="my-2">Hufpflege</h5>
       <TreatmentCards
         :horse="horse"
         :categories="['hoofcare']"
