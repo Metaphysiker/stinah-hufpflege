@@ -1,6 +1,7 @@
+import { IDto } from "./IDto";
 import { ITreatment } from "./ITreatment";
 
-export interface IHorse {
+export interface IHorse extends IDto {
   id: number;
   name: string;
   numberOfWeeksUntilNextTreatment: number;

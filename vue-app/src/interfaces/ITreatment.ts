@@ -1,4 +1,6 @@
-export interface ITreatment {
+import { IDto } from "./IDto";
+
+export interface ITreatment extends IDto {
   id: number;
   note: string;
   noteForNextTreatment: string;

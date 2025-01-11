@@ -1,6 +1,6 @@
-export interface ITreatmentSearch {
+import { ISearch } from "./ISearch";
+
+export interface ITreatmentSearch extends ISearch {
   horseId?: number;
-  page: number;
-  pageSize: number;
   categories?: string[];
 }
