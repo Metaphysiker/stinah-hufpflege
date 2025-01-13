@@ -10,6 +10,7 @@ import NewTreatment from "../treatments/NewTreatment.vue";
 import HorseCard from "./HorseCard.vue";
 import StandardToolbar from "../StandardToolbar.vue";
 import { IHorseSearch } from "@/interfaces/IHorseSearch";
+import ModelCards from "../generics/ModelCards.vue";
 const currentHorse: Ref<IHorse | undefined> = ref(undefined);
 const horseForHorseCard: Ref<IHorse | undefined> = ref(undefined);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -81,6 +82,10 @@ const treatmentCreated = () => {
 </script>
 
 <template>
+  <v-container v-if="false">
+    <ModelCards interface="IHorse"></ModelCards>
+  </v-container>
+
   <v-container fluid>
     <HorsesTable
       :horses="horses"
