@@ -1,9 +1,10 @@
 <script setup lang="ts">
-const axios: AxiosStatic | undefined = inject("axios");
-const fileService = new FileService(axios);
 import { FileService } from "@/services/FileService";
 import { AxiosStatic } from "axios";
 import { inject, ref } from "vue";
+
+const axios: AxiosStatic | undefined = inject("axios");
+const fileService = new FileService(axios);
 
 const errorMessages = ref<string[]>([]);
 
