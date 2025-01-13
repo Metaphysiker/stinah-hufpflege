@@ -10,7 +10,6 @@ import { FileHelper } from "@/helpers/FileHelper";
 import { HorseService } from "@/services/HorseService";
 import ShowFiles from "../files/ShowFiles.vue";
 import NewTreatment from "../treatments/NewTreatment.vue";
-import TreatmentCard from "../treatments/TreatmentCard.vue";
 import StandardToolbar from "../StandardToolbar.vue";
 import TreatmentCards from "../treatments/TreatmentCards.vue";
 const fileHelper = new FileHelper();
@@ -51,10 +50,6 @@ const addFileKeys = (fileKeys: string[]) => {
   horseService.Update(horse.value).then((newHorse) => {
     horse.value = newHorse;
   });
-};
-
-const treatmentDelete = () => {
-  getTreatments();
 };
 
 const removeFileKey = (fileKey: string) => {
