@@ -7,8 +7,23 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    EditHorse: typeof import('./src/components/horses/EditHorse.vue')['default']
+    EditTreatment: typeof import('./src/components/treatments/EditTreatment.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    HorseCard: typeof import('./src/components/horses/HorseCard.vue')['default']
+    HorseForm: typeof import('./src/components/horses/HorseForm.vue')['default']
+    HorsesOverview: typeof import('./src/components/horses/HorsesOverview.vue')['default']
+    HorsesTable: typeof import('./src/components/horses/HorsesTable.vue')['default']
+    NewFile: typeof import('./src/components/files/NewFile.vue')['default']
+    NewHorse: typeof import('./src/components/horses/NewHorse.vue')['default']
+    NewTreatment: typeof import('./src/components/treatments/NewTreatment.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ShowFile: typeof import('./src/components/files/ShowFile.vue')['default']
+    ShowFiles: typeof import('./src/components/files/ShowFiles.vue')['default']
+    StandardToolbar: typeof import('./src/components/StandardToolbar.vue')['default']
+    TreatmentCard: typeof import('./src/components/treatments/TreatmentCard.vue')['default']
+    TreatmentCards: typeof import('./src/components/treatments/TreatmentCards.vue')['default']
+    TreatmentForm: typeof import('./src/components/treatments/TreatmentForm.vue')['default']
   }
 }
