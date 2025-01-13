@@ -11,7 +11,7 @@ const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
 const component: Ref<any | undefined> = ref(undefined);
 
 const props = defineProps({
-  interface: {
+  interfaceName: {
     required: true,
     type: String,
   },
@@ -36,11 +36,11 @@ onBeforeMount(() => {
     throw new Error("axios not injected");
   }
   service.value = ServiceFactory.createService(
-    props.interface,
+    props.interfaceName,
     axios
   ) as IModelController<T, ISearch>;
 
-  component.value = ModelCardFactory.createComponent(props.interface);
+  component.value = ModelCardFactory.createComponent(props.interfaceName);
 });
 
 onMounted(() => {
