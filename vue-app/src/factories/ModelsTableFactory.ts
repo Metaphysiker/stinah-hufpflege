@@ -1,11 +1,11 @@
-import HorseCard from "@/components/horses/HorseCard.vue";
+import HorsesTable from "@/components/horses/HorsesTable.vue";
 import { Component } from "vue";
 
-export class ModelCardFactory {
+export class ModelsTableFactory {
   static createComponent(interfaceName: string): Component {
     switch (interfaceName) {
       case "IHorse":
-        return HorseCard;
+        return HorsesTable;
       default:
         throw new Error("Unknown type");
     }

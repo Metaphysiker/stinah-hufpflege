@@ -6,10 +6,10 @@ import { ISearch } from "@/interfaces/ISearch";
 
 export class ServiceFactory {
   static createService(
-    type: string,
+    interfaceName: string,
     axios: AxiosStatic
   ): IModelController<IDto, ISearch> {
-    switch (type) {
+    switch (interfaceName) {
       case "IHorse":
         return new HorseService(axios);
       default:
