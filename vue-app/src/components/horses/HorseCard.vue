@@ -170,4 +170,3 @@ const noteForNextTreatmentToBeCopied = ref("");
     </div>
   </div>
 </template>
-div

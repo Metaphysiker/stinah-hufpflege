@@ -11,12 +11,12 @@ const emits = defineEmits(["close"]);
 
 <template>
   <v-toolbar class="standard-toolbar">
-    <v-toolbar-title>{{ title }}</v-toolbar-title>
-    <div class="standard-toolbar-close-button">
-      <v-btn icon @click="emits('close')">
+    <div class="standard-toolbar-close-button" @click="emits('close')">
+      <v-btn icon>
         <v-icon size="large">mdi-close</v-icon>
       </v-btn>
     </div>
+    <v-toolbar-title>{{ title }}</v-toolbar-title>
   </v-toolbar>
   <v-divider></v-divider>
 </template>

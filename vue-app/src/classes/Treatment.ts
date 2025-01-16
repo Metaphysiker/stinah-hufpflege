@@ -1,3 +1,4 @@
+import { IFile } from "@/interfaces/IFile";
 import { ITreatment } from "@/interfaces/ITreatment";
 
 export class Treatment implements ITreatment {
@@ -10,6 +11,8 @@ export class Treatment implements ITreatment {
   updatedAt: Date;
   fileKeysString: string;
   category: string;
+  name: string;
+  files: IFile[];
 
   constructor() {
     this.id = 0;
@@ -21,5 +24,7 @@ export class Treatment implements ITreatment {
     this.updatedAt = new Date();
     this.fileKeysString = "";
     this.category = "";
+    this.name = "";
+    this.files = [];
   }
 }

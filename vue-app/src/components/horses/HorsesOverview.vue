@@ -5,12 +5,12 @@ import HorsesTable from "./HorsesTable.vue";
 import { HorseService } from "../../services/HorseService";
 import type { AxiosStatic } from "axios";
 import { Ref, inject, onMounted, ref } from "vue";
-import { IHorse } from "../../interfaces/IHorse";
 import NewTreatment from "../treatments/NewTreatment.vue";
 import HorseCard from "./HorseCard.vue";
 import StandardToolbar from "../StandardToolbar.vue";
 import { IHorseSearch } from "@/interfaces/IHorseSearch";
-import ModelCards from "../generics/ModelCards.vue";
+import type { IHorse } from "@/interfaces/IHorse";
+import ModelBox from "../generics/ModelBox.vue";
 const currentHorse: Ref<IHorse | undefined> = ref(undefined);
 const horseForHorseCard: Ref<IHorse | undefined> = ref(undefined);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -82,8 +82,13 @@ const treatmentCreated = () => {
 </script>
 
 <template>
-  <v-container v-if="false">
-    <ModelCards interface="IHorse"></ModelCards>
+  <v-container v-if="horses.length > 0">
+    <ModelBox
+      :model="horses[0]"
+      interface-name="IHorse"
+      @reload="reload()"
+      @delete="reload()"
+    ></ModelBox>
   </v-container>
 
   <v-container fluid>
@@ -122,18 +127,6 @@ const treatmentCreated = () => {
       ></StandardToolbar>
       <v-card-text>
         <NewHorse @created="reload()"></NewHorse>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
-
-  <v-dialog fullscreen v-model="editHorseDialog">
-    <v-card>
-      <StandardToolbar
-        title="Pferd bearbeiten"
-        @close="editHorseDialog = false"
-      ></StandardToolbar>
-      <v-card-text v-if="horseToEdit">
-        <EditHorse :horse-input="horseToEdit" @updated="reload()"></EditHorse>
       </v-card-text>
     </v-card>
   </v-dialog>

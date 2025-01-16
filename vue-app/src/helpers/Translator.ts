@@ -6,6 +6,8 @@ export class Translator {
     tooth: "Zahn",
     hoofcare: "Hufpflege",
     toothcare: "Zahnpflege",
+    IHorse: "Pferd",
+    ITreatment: "Behandlung",
   };
 
   translate(key: string): string {

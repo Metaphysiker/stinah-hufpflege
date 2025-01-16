@@ -73,9 +73,10 @@ public class HorsesController : ControllerBase, IModelController<HorseDTO, Horse
     [HttpPost]
     public async Task<ActionResult<HorseDTO>> Create([FromBody] HorseDTO dto)
     {
-        await _db.AddAsync(dto);
+        var horse = _horseDTOConveter.Convert(dto);
+        await _db.AddAsync(horse);
         _db.SaveChanges();
-        var createdHorse = await _db.Horses.FindAsync(dto.Id);
+        var createdHorse = await _db.Horses.FindAsync(horse.Id);
         if (createdHorse == null)
         {
             return BadRequest();
