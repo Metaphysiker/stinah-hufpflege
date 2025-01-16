@@ -1,4 +1,4 @@
-public class Treatment : IModel
+public class Treatment : IModel, IEnityWithFiles
 {
     public int Id { get; set; }
     public string Note { get; set; } = string.Empty;
@@ -10,5 +10,6 @@ public class Treatment : IModel
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public string Category { get; set; } = string.Empty;
     public string FileKeysString { get; set; } = string.Empty;
+    public ICollection<File> Files { get; set; } = new List<File>();
 
 }

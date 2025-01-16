@@ -6,5 +6,6 @@ public class TreatmentSearch : ISearch
     public int PageSize { get; set; } = 10;
     public string? SortBy { get; set; }
     public string? SortOrder { get; set; }
+    public List<int> Ids { get; set; } = new List<int>();
 
 }

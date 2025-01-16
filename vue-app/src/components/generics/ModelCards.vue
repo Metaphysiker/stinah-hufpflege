@@ -1,7 +1,7 @@
-<script setup lang="ts" generic="T extends IDto">
+<script setup lang="ts" generic="T extends IModel">
 import { ModelCardFactory } from "@/factories/ModelCardFactory";
 import { ServiceFactory } from "@/factories/ServiceFactory";
-import { IDto } from "@/interfaces/IDto";
+import { IModel } from "@/interfaces/IModel";
 import { IModelController } from "@/interfaces/IModelController";
 import { ISearch } from "@/interfaces/ISearch";
 import { AxiosStatic } from "axios";

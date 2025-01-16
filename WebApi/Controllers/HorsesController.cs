@@ -120,6 +120,11 @@ public class HorsesController : ControllerBase, IModelController<HorseDTO, Horse
     {
         var query = _db.Horses.AsQueryable();
 
+        if (search.Ids.Count > 0)
+        {
+            query = query.Where(t => search.Ids.Contains(t.Id));
+        }
+
         var results = await query
             .Skip(search.Page * search.PageSize)
             .Take(search.PageSize)

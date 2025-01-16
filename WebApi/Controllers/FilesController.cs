@@ -1,109 +1,100 @@
-using Amazon.S3;
-using Amazon.S3.Model;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace WebApi.Controllers;
 
 [Authorize(Roles = "Admin, Stinah")]
-[Route("api/files")]
 [ApiController]
-public class FilesController : ControllerBase
+[Route("api/[controller]")]
+public class FilesController : ControllerBase, IModelController<FileDTO, FileSearch>
 {
-    private readonly IAmazonS3 _s3Client;
-    public FilesController(IAmazonS3 s3Client)
+    private readonly DatabaseContext _db;
+    private readonly FileDTOConverter _fileDTOConverter;
+
+    public FilesController(DatabaseContext db, FileDTOConverter fileDTOConverter)
     {
-        _s3Client = s3Client;
+        _db = db;
+        _fileDTOConverter = fileDTOConverter;
     }
 
-    [HttpPost("upload")]
-    public async Task<IActionResult> UploadFileAsync(IFormFile file)
+    [HttpGet]
+    public async Task<ActionResult<List<FileDTO>>> ReadAll()
     {
+        var files = await _db.Files.ToListAsync();
+        return _fileDTOConverter.Convert(files);
+    }
 
-        long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
-        string timeStamp = timeNow.ToString();
-        //var prefix = Guid.NewGuid().ToString();
-        var prefix = timeStamp;
-        var bucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME");
-        var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(s3Client: _s3Client, bucketName: bucketName);
-        if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
-        var request = new PutObjectRequest()
+    [HttpGet("{id}")]
+    public async Task<ActionResult<FileDTO>> Read(int id)
+    {
+        var file = await _db.Files.FindAsync(id);
+        if (file == null)
         {
-            BucketName = bucketName,
-            Key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}-{file.FileName}",
-            InputStream = file.OpenReadStream()
-        };
-        request.Metadata.Add("Content-Type", file.ContentType);
-        await _s3Client.PutObjectAsync(request);
-        return Ok($"{prefix}-{file.FileName}");
+            return NotFound();
+        }
+
+        return _fileDTOConverter.Convert(file);
     }
 
-    [HttpGet("get-all")]
-    public async Task<IActionResult> GetAllFilesAsync(string? prefix)
+    [HttpPost]
+    public async Task<ActionResult<FileDTO>> Create([FromBody] FileDTO dto)
     {
-        var bucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME");
-
-        var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(s3Client: _s3Client, bucketName: bucketName);
-        if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
-        var request = new ListObjectsV2Request()
+        await _db.AddAsync(dto);
+        _db.SaveChanges();
+        var createdFile = await _db.Files.FindAsync(dto.Id);
+        if (createdFile == null)
         {
-            BucketName = bucketName,
-            Prefix = prefix
-        };
-        var result = await _s3Client.ListObjectsV2Async(request);
-        var s3Objects = result.S3Objects.Select(s =>
+            return BadRequest();
+        }
+        return _fileDTOConverter.Convert(createdFile);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<FileDTO>> Update([FromBody] FileDTO dto)
+    {
+        var file = _fileDTOConverter.Convert(dto);
+        _db.Update(file);
+        await _db.SaveChangesAsync();
+        var updatedFile = await _db.Files.FindAsync(file.Id);
+        if (updatedFile == null)
         {
-            var urlRequest = new GetPreSignedUrlRequest()
-            {
-                BucketName = bucketName,
-                Key = s.Key,
-                Expires = DateTime.UtcNow.AddMinutes(1)
-            };
-            return new S3ObjectDto()
-            {
-                Name = s.Key.ToString(),
-                PresignedUrl = _s3Client.GetPreSignedURL(urlRequest),
-            };
-        });
-        return Ok(s3Objects);
+            return BadRequest();
+        }
+        return _fileDTOConverter.Convert(updatedFile);
     }
 
-    [HttpGet("get-by-key")]
-    public async Task<IActionResult> GetFileByKeyAsync(string key)
+    [HttpDelete("{id}")]
+
+    public async Task<ActionResult> Delete(int id)
     {
-        var bucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME");
-
-        var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(s3Client: _s3Client, bucketName: bucketName);
-        if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
-
-        var s3Object = await _s3Client.GetObjectAsync(bucketName, key);
-        return File(s3Object.ResponseStream, s3Object.Headers.ContentType);
-    }
-
-    [HttpGet("get-presigned-url-by-key")]
-    public async Task<IActionResult> GetPresignedUrlByKeyAsync(string key)
-    {
-        var bucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME");
-
-        var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(s3Client: _s3Client, bucketName: bucketName);
-        if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
-
-        var urlRequest = new GetPreSignedUrlRequest()
+        var file = await _db.Files.FindAsync(id);
+        if (file == null)
         {
-            BucketName = bucketName,
-            Key = key,
-            Expires = DateTime.UtcNow.AddMinutes(5)
-        };
+            return NotFound();
+        }
 
-        return Ok(_s3Client.GetPreSignedURL(urlRequest));
-    }
-
-    [HttpDelete("delete")]
-    public async Task<IActionResult> DeleteFileAsync(string key)
-    {
-        var bucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME");
-
-        var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(s3Client: _s3Client, bucketName: bucketName);
-        if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist");
-        await _s3Client.DeleteObjectAsync(bucketName, key);
+        _db.Remove(file);
+        await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    [HttpPost("search")]
+    public async Task<ActionResult<List<FileDTO>>> Search([FromBody] FileSearch search)
+    {
+        var query = _db.Files.AsQueryable();
+
+        if (search.Ids.Count > 0)
+        {
+            query = query.Where(t => search.Ids.Contains(t.Id));
+        }
+
+        var results = await query
+            .Skip(search.Page * search.PageSize)
+            .Take(search.PageSize)
+            .ToListAsync();
+
+        return _fileDTOConverter.Convert(results);
     }
 }

@@ -87,6 +87,11 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
     {
         var query = _db.Treatments.AsQueryable();
 
+        if (search.Ids.Count > 0)
+        {
+            query = query.Where(t => search.Ids.Contains(t.Id));
+        }
+
         if (search.HorseId != null)
         {
             query = query.Where(t => t.Horse != null && t.Horse.Id == search.HorseId);

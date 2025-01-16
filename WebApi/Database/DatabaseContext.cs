@@ -6,6 +6,7 @@ public class DatabaseContext : IdentityDbContext<IdentityUser>
 {
     public DbSet<Horse> Horses { get; set; }
     public DbSet<Treatment> Treatments { get; set; }
+    public DbSet<File> Files { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
