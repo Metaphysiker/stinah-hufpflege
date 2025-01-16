@@ -1,6 +1,7 @@
-import { IDto } from "./IDto";
+import { IEntityWithFiles } from "./IEntityWithFiles";
+import { IModel } from "./IModel";
 
-export interface ITreatment extends IDto {
+export interface ITreatment extends IModel, IEntityWithFiles {
   id: number;
   note: string;
   noteForNextTreatment: string;

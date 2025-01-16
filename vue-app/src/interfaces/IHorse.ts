@@ -1,7 +1,8 @@
-import { IDto } from "./IDto";
+import { IEntityWithFiles } from "./IEntityWithFiles";
+import { IModel } from "./IModel";
 import { ITreatment } from "./ITreatment";
 
-export interface IHorse extends IDto {
+export interface IHorse extends IModel, IEntityWithFiles {
   id: number;
   name: string;
   numberOfWeeksUntilNextTreatment: number;
