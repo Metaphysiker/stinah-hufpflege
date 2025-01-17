@@ -1,10 +1,13 @@
 import { HorseHelper } from "@/helpers/HorseHelper";
 import { IHorse } from "../interfaces/IHorse";
 import { ITreatment } from "@/interfaces/ITreatment";
+import { LocalIDFactory } from "@/helpers/LocalIDFactory";
+import { IFile } from "@/interfaces/IFile";
 
 export class Horse implements IHorse {
+  localID?: string;
+  id?: number;
   horseHelper = new HorseHelper();
-  id: number;
   name: string;
   numberOfWeeksUntilNextTreatment: number;
   birthYear: number;
@@ -14,9 +17,10 @@ export class Horse implements IHorse {
   beschlagen: boolean;
   fileKeysString: string;
   treatments: ITreatment[];
+  files: IFile[];
 
   constructor() {
-    this.id = 0;
+    this.localID = LocalIDFactory.createLocalID();
     this.name = "";
     this.numberOfWeeksUntilNextTreatment = 8;
     this.birthYear = 0;
@@ -26,6 +30,7 @@ export class Horse implements IHorse {
     this.beschlagen = false;
     this.fileKeysString = "";
     this.treatments = [];
+    this.files = [];
   }
 
   clone(original: IHorse): IHorse {

@@ -11,6 +11,7 @@ import StandardToolbar from "../StandardToolbar.vue";
 import { IHorseSearch } from "@/interfaces/IHorseSearch";
 import type { IHorse } from "@/interfaces/IHorse";
 import ModelBox from "../generics/ModelBox.vue";
+import NewModel from "../generics/NewModel.vue";
 const currentHorse: Ref<IHorse | undefined> = ref(undefined);
 const horseForHorseCard: Ref<IHorse | undefined> = ref(undefined);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -52,7 +53,7 @@ const deleteHorseDialog = ref(false);
 const horseToDelete = ref<IHorse | undefined>(undefined);
 const horseToEdit = ref<IHorse | undefined>(undefined);
 const deleteHorse = () => {
-  if (horseToDelete.value) {
+  if (horseToDelete.value?.id) {
     horseService.Delete(horseToDelete.value.id).then(() => {
       reload();
       deleteHorseDialog.value = false;
@@ -89,6 +90,9 @@ const treatmentCreated = () => {
       @reload="reload()"
       @delete="reload()"
     ></ModelBox>
+  </v-container>
+  <v-container>
+    <NewModel interface-name="IHorse"></NewModel>
   </v-container>
 
   <v-container fluid>

@@ -1,8 +1,9 @@
+import { LocalIDFactory } from "@/helpers/LocalIDFactory";
 import { IFile } from "@/interfaces/IFile";
 import { ITreatment } from "@/interfaces/ITreatment";
 
 export class Treatment implements ITreatment {
-  id: number;
+  localID?: string;
   note: string;
   noteForNextTreatment: string;
   horseId: number;
@@ -15,7 +16,7 @@ export class Treatment implements ITreatment {
   files: IFile[];
 
   constructor() {
-    this.id = 0;
+    this.localID = LocalIDFactory.createLocalID();
     this.note = "";
     this.noteForNextTreatment = "";
     this.horseId = 0;

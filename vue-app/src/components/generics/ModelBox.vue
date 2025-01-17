@@ -17,6 +17,7 @@ import { ISearch } from "@/interfaces/ISearch";
 import { ServiceFactory } from "@/factories/ServiceFactory";
 import { AxiosStatic } from "axios";
 import { Translator } from "@/helpers/Translator";
+import { Cloner } from "@/helpers/Cloner";
 const axios: AxiosStatic | undefined = inject("axios");
 const editModelDialog = ref(false);
 const translator = new Translator();
@@ -63,8 +64,10 @@ const reload = () => {
   emit("reload");
 };
 
+const cloner = new Cloner();
+
 const clickOnEdit = () => {
-  modelClone.value = JSON.parse(JSON.stringify(props.model));
+  modelClone.value = cloner.clone<T>(props.model as T);
   editModelDialog.value = true;
 };
 
@@ -111,7 +114,6 @@ const saveModel = () => {
 watch(
   () => props.model,
   () => {
-    console.log("model changed");
     modelClone.value = JSON.parse(JSON.stringify(props.model));
   },
   { immediate: true }
@@ -143,7 +145,7 @@ watch(
         @close="editModelDialog = false"
       ></StandardToolbar>
       <v-card-text v-if="modelClone">
-        <formComponent v-model="modelClone" @updated="reload()"></formComponent>
+        <formComponent v-model="modelClone"></formComponent>
         <div>
           <v-btn @click="saveModel()">Speichern</v-btn>
         </div>

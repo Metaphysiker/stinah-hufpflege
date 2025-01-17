@@ -1,3 +1,4 @@
 export interface IEntityWithIdentity {
-  id: number;
+  id?: number;
+  localID?: string;
 }
