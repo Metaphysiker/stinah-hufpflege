@@ -40,7 +40,7 @@ const availableTableDataHeaders = ref([
     title: "Hufpflegerhythmus in Wochen",
     selected: true,
   },
-  { key: "action", title: "Aktion", selected: false },
+  { key: "action", title: "Aktion", selected: true },
 ]);
 
 const isSpecialColumn = (header: string) => {

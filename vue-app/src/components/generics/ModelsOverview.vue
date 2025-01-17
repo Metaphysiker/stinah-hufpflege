@@ -1,24 +1,36 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends IModel">
+import { IModel } from "@/interfaces/IModel";
 import NewHorse from "./NewHorse.vue";
-import EditHorse from "./EditHorse.vue";
 import HorsesTable from "./HorsesTable.vue";
 import { HorseService } from "../../services/HorseService";
 import type { AxiosStatic } from "axios";
-import { Ref, inject, onMounted, ref } from "vue";
+import {
+  Ref,
+  ShallowRef,
+  inject,
+  onBeforeMount,
+  onMounted,
+  ref,
+  shallowRef,
+} from "vue";
 import NewTreatment from "../treatments/NewTreatment.vue";
 import HorseCard from "./HorseCard.vue";
 import StandardToolbar from "../StandardToolbar.vue";
 import { IHorseSearch } from "@/interfaces/IHorseSearch";
 import type { IHorse } from "@/interfaces/IHorse";
-import ModelBox from "../generics/ModelBox.vue";
-import NewModel from "../generics/NewModel.vue";
 import NewModelCard from "../generics/NewModelCard.vue";
-import ModelsOverview from "../generics/ModelsOverview.vue";
+import { IModelController } from "@/interfaces/IModelController";
+import { ISearch } from "@/interfaces/ISearch";
+import { ServiceFactory } from "@/factories/ServiceFactory";
+import { ComponentFactory } from "@/factories/ComponentFactory";
 const currentHorse: Ref<IHorse | undefined> = ref(undefined);
 const horseForHorseCard: Ref<IHorse | undefined> = ref(undefined);
 const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
 const horses: Ref<IHorse[]> = ref([]);
+const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
+const tableComponent: ShallowRef<any | undefined> = shallowRef(undefined);
+
 const reload = () => {
   newHorseDialog.value = false;
   editHorseDialog.value = false;
@@ -33,8 +45,8 @@ const reload = () => {
   });
 };
 
-defineProps({
-  treatmentCategory: {
+const props = defineProps({
+  interfaceName: {
     required: true,
     type: String,
   },
@@ -53,7 +65,6 @@ const editHorseDialog = ref(false);
 const newHorseDialog = ref(false);
 const deleteHorseDialog = ref(false);
 const horseToDelete = ref<IHorse | undefined>(undefined);
-const horseToEdit = ref<IHorse | undefined>(undefined);
 const deleteHorse = () => {
   if (horseToDelete.value?.id) {
     horseService.Delete(horseToDelete.value.id).then(() => {
@@ -66,21 +77,9 @@ const deleteHorse = () => {
 const newTreatmentDialog = ref(false);
 const horseCardDialog = ref(false);
 
-const clickOnBehandelt = (horse: IHorse) => {
-  currentHorse.value = horse;
-  newTreatmentDialog.value = true;
-};
-
 const clickOnName = (horse: IHorse) => {
   horseForHorseCard.value = horse;
   horseCardDialog.value = true;
-};
-
-const treatmentCreated = () => {
-  if (currentHorse.value) {
-    horseTreated(currentHorse.value);
-  }
-  newTreatmentDialog.value = false;
 };
 
 const createModelDialog = ref(false);
@@ -88,29 +87,37 @@ const create = () => {
   reload();
   createModelDialog.value = false;
 };
+
+onBeforeMount(() => {
+  if (!axios) {
+    throw new Error("axios not injected");
+  }
+  service.value = ServiceFactory.createService(
+    props.interfaceName,
+    axios
+  ) as IModelController<T, ISearch>;
+
+  tableComponent.value = ComponentFactory.createComponent(
+    props.interfaceName,
+    "Table"
+  );
+});
 </script>
 
 <template>
   <v-container fluid>
-    <ModelsOverview interface-name="IHorse"></ModelsOverview>
+    <tableComponent :models="horses"></tableComponent>
   </v-container>
-
-  <v-dialog fullscreen v-model="newHorseDialog">
-    <v-card>
-      <StandardToolbar
-        title="Neues Pferd"
-        @close="newHorseDialog = false"
-      ></StandardToolbar>
-      <v-card-text>
-        <NewHorse @created="reload()"></NewHorse>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
+  <v-container fluid>
+    <div class="d-flex justify-end">
+      <v-btn @click="createModelDialog = true"> Neues Pferd hinzufügen </v-btn>
+    </div>
+  </v-container>
 
   <v-dialog fullscreen v-model="deleteHorseDialog">
     <v-card>
       <StandardToolbar
-        title="Pferd entfernen"
+        title="xxxxxxx entfernen"
         @close="deleteHorseDialog = false"
       ></StandardToolbar>
       <v-card-text>
@@ -121,37 +128,10 @@ const create = () => {
     </v-card>
   </v-dialog>
 
-  <v-dialog fullscreen v-model="newTreatmentDialog">
-    <v-card>
-      <StandardToolbar
-        title="Neuer Behandlungs-Eintrag"
-        @close="newTreatmentDialog = false"
-      ></StandardToolbar>
-      <v-card-text>
-        <div v-if="currentHorse">
-          <NewTreatment
-            :horse-input="currentHorse"
-            @created="treatmentCreated()"
-            :treatment-category="'hoofcare'"
-          ></NewTreatment>
-        </div>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
-
-  <v-dialog fullscreen v-model="horseCardDialog">
-    <v-card v-if="horseForHorseCard">
-      <HorseCard
-        v-model="horseForHorseCard"
-        @close="horseCardDialog = false"
-      ></HorseCard>
-    </v-card>
-  </v-dialog>
-
   <v-dialog fullscreen v-model="createModelDialog">
     <v-card>
       <NewModelCard
-        interface-name="IHorse"
+        :interface-name="props.interfaceName"
         @create="create()"
         @close="createModelDialog = false"
       ></NewModelCard>
