@@ -12,6 +12,7 @@ import { IHorseSearch } from "@/interfaces/IHorseSearch";
 import type { IHorse } from "@/interfaces/IHorse";
 import ModelBox from "../generics/ModelBox.vue";
 import NewModel from "../generics/NewModel.vue";
+import NewModelCard from "../generics/NewModelCard.vue";
 const currentHorse: Ref<IHorse | undefined> = ref(undefined);
 const horseForHorseCard: Ref<IHorse | undefined> = ref(undefined);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -92,7 +93,7 @@ const treatmentCreated = () => {
     ></ModelBox>
   </v-container>
   <v-container>
-    <NewModel interface-name="IHorse"></NewModel>
+    <NewModelCard interface-name="IHorse" @create="reload()"></NewModelCard>
   </v-container>
 
   <v-container fluid>
