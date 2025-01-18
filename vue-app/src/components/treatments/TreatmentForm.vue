@@ -21,7 +21,7 @@ onBeforeMount(() => {
     pageSize: 300,
   };
   horseService.Search(horseSearch).then((response) => {
-    horses.value = response;
+    horses.value = response.data;
     if (treatmentToBeEdited.value.horseId) {
       selectedHorseId.value = treatmentToBeEdited.value.horseId;
     }
@@ -46,12 +46,12 @@ const horseSelected = () => {
     @update:model-value="horseSelected()"
   ></v-autocomplete>
 
-  {{ treatmentToBeEdited.date }}
   <DateSelecter label="Datum" v-model="treatmentToBeEdited.date" />
 
   <v-textarea
     label="Notiz"
     v-model="treatmentToBeEdited.note"
     variant="outlined"
+    rows="15"
   ></v-textarea>
 </template>

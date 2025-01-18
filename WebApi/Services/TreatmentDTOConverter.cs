@@ -28,6 +28,13 @@ public class TreatmentDTOConverter : IDtoConverter<Treatment, TreatmentDTO>
         TreatmentDTO treatmentDTO = _mapperService.mapper.Map<TreatmentDTO>(treatment);
         treatmentDTO.Name = "Behandlung";
 
+        Horse? horse = _db.Horses.Find(treatment.HorseId);
+        if (horse != null)
+        {
+            treatmentDTO.HorseName = horse.Name;
+        }
+
+
         return treatmentDTO;
     }
 

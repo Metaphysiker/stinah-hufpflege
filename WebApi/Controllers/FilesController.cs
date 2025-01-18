@@ -81,7 +81,7 @@ public class FilesController : ControllerBase, IModelController<FileDTO, FileSea
     }
 
     [HttpPost("search")]
-    public async Task<ActionResult<List<FileDTO>>> Search([FromBody] FileSearch search)
+    public async Task<ActionResult<PaginationDTO<FileDTO>>> Search([FromBody] FileSearch search)
     {
         var query = _db.Files.AsQueryable();
 
@@ -90,11 +90,17 @@ public class FilesController : ControllerBase, IModelController<FileDTO, FileSea
             query = query.Where(t => search.Ids.Contains(t.Id));
         }
 
+        PaginationDTO<FileDTO> paginationDTO = new PaginationDTO<FileDTO>();
+        paginationDTO.TotalItems = await query.CountAsync();
+
         var results = await query
             .Skip(search.Page * search.PageSize)
             .Take(search.PageSize)
             .ToListAsync();
 
-        return _fileDTOConverter.Convert(results);
+        paginationDTO.TotalPages = (int)Math.Ceiling((double)paginationDTO.TotalItems / search.PageSize);
+        paginationDTO.Page = search.Page;
+        paginationDTO.Data = _fileDTOConverter.Convert(results);
+        return paginationDTO;
     }
 }

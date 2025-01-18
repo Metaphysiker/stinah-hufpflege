@@ -41,7 +41,7 @@ const getTreatments = () => {
   }
 
   treatmentService.Search(treatmentSearch).then((response) => {
-    treatments.value = response;
+    treatments.value = response.data;
     loading.value = false;
   });
 };

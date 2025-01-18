@@ -9,6 +9,7 @@ export interface ITreatment
   note: string;
   noteForNextTreatment: string;
   horseId: number | undefined;
+  horseName: string | undefined;
   date: Date;
   createdAt: Date;
   updatedAt: Date;

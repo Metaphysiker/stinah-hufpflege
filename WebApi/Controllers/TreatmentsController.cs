@@ -82,7 +82,7 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
 
     [HttpPost("search")]
 
-    public async Task<ActionResult<List<TreatmentDTO>>> Search([FromBody] TreatmentSearch search)
+    public async Task<ActionResult<PaginationDTO<TreatmentDTO>>> Search([FromBody] TreatmentSearch search)
     {
         var query = _db.Treatments.Include(t => t.Horse).AsQueryable();
 
@@ -101,9 +101,22 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
             query = query.Where(t => search.Categories.Contains(t.Category));
         }
 
-        if (search.SortBy != null && search.SortBy == "Date")
+        if (search.SortBy != null)
         {
-            query = query.OrderBy(t => t.Date);
+            if (search.SortBy == "Date")
+            {
+                query = query.OrderBy(t => t.Date);
+            }
+
+            if (search.SortBy == "Note")
+            {
+                query = query.OrderBy(t => t.Note);
+            }
+
+            if (search.SortBy == "Category")
+            {
+                query = query.OrderBy(t => t.Category);
+            }
 
             if (search.SortOrder != null && search.SortOrder == "descending")
             {
@@ -111,11 +124,17 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
             }
         }
 
+        PaginationDTO<TreatmentDTO> paginationDTO = new PaginationDTO<TreatmentDTO>();
+        paginationDTO.TotalItems = await query.CountAsync();
+
         var results = await query
             .Skip(search.Page * search.PageSize)
             .Take(search.PageSize)
             .ToListAsync();
 
-        return _treatmentDTOConverter.Convert(results);
+        paginationDTO.TotalPages = (int)Math.Ceiling((double)paginationDTO.TotalItems / search.PageSize);
+        paginationDTO.Page = search.Page;
+        paginationDTO.Data = _treatmentDTOConverter.Convert(results);
+        return paginationDTO;
     }
 }

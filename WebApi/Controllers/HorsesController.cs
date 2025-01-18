@@ -116,7 +116,7 @@ public class HorsesController : ControllerBase, IModelController<HorseDTO, Horse
     }
 
     [HttpPost("search")]
-    public async Task<ActionResult<List<HorseDTO>>> Search([FromBody] HorseSearch search)
+    public async Task<ActionResult<PaginationDTO<HorseDTO>>> Search([FromBody] HorseSearch search)
     {
         var query = _db.Horses.AsQueryable();
 
@@ -125,12 +125,18 @@ public class HorsesController : ControllerBase, IModelController<HorseDTO, Horse
             query = query.Where(t => search.Ids.Contains(t.Id));
         }
 
+        PaginationDTO<HorseDTO> paginationDTO = new PaginationDTO<HorseDTO>();
+        paginationDTO.TotalItems = await query.CountAsync();
+
         var results = await query
             .Skip(search.Page * search.PageSize)
             .Take(search.PageSize)
             .Include(a => a.Treatments)
             .ToListAsync();
 
-        return _horseDTOConveter.Convert(results);
+        paginationDTO.TotalPages = (int)Math.Ceiling((double)paginationDTO.TotalItems / search.PageSize);
+        paginationDTO.Page = search.Page;
+        paginationDTO.Data = _horseDTOConveter.Convert(results);
+        return paginationDTO;
     }
 }

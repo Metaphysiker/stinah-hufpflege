@@ -45,7 +45,7 @@ const reload = () => {
 
     waiting.value = true;
     service.value?.Search(search).then((response) => {
-      models.value = response;
+      models.value = response.data;
       waiting.value = false;
       resolve();
     });

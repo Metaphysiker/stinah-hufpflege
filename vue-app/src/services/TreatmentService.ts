@@ -4,6 +4,7 @@ import { ITreatment } from "@/interfaces/ITreatment";
 import { ITreatmentSearch } from "@/interfaces/ITreatmentSearch";
 import { IModelController } from "@/interfaces/IModelController";
 import { TreatmentConverter } from "@/converters/TreatmentConverter";
+import { IPagination } from "@/interfaces/IPagination";
 
 export class TreatmentService
   implements IModelController<ITreatment, ITreatmentSearch>
@@ -88,12 +89,15 @@ export class TreatmentService
   }
 
   Search(treatmentSearch: ITreatmentSearch) {
-    return new Promise<ITreatment[]>((resolve, reject) => {
+    return new Promise<IPagination<ITreatment>>((resolve, reject) => {
       this.axiosInstance
         .post("api/treatments/search", treatmentSearch)
         .then((response: any) => {
-          const treatments = this.treatmentConverter.convertMany(response.data);
-          resolve(treatments);
+          const pagination = response.data as IPagination<ITreatment>;
+          pagination.data = this.treatmentConverter.convertMany(
+            pagination.data
+          );
+          resolve(pagination);
         })
         .catch((e: any) => {
           reject(e);

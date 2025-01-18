@@ -5,6 +5,7 @@ import { Horse } from "../classes/Horse";
 import { IHorseSearch } from "@/interfaces/IHorseSearch";
 import { IModelController } from "@/interfaces/IModelController";
 import { HorseConverter } from "@/converters/HorseConverter";
+import { IPagination } from "@/interfaces/IPagination";
 
 export class HorseService implements IModelController<IHorse, IHorseSearch> {
   horse: Horse = new Horse();
@@ -84,12 +85,13 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
   }
 
   Search(search: IHorseSearch) {
-    return new Promise<IHorse[]>((resolve, reject) => {
+    return new Promise<IPagination<IHorse>>((resolve, reject) => {
       this.axiosInstance
         .post("api/horses/search", search)
         .then((response: any) => {
-          const horses = this.horseConverter.convertMany(response.data);
-          resolve(horses);
+          const pagination = response.data as IPagination<IHorse>;
+          pagination.data = this.horseConverter.convertMany(pagination.data);
+          resolve(pagination);
         })
         .catch((e: any) => {
           reject(e);
