@@ -23,7 +23,12 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(["close", "reload", "delete"]);
+const emit = defineEmits<{
+  close: [void];
+  reload: [void];
+  delete: [void];
+  save: [model: T];
+}>();
 
 onBeforeMount(() => {
   if (!axios) {
@@ -38,23 +43,19 @@ onBeforeMount(() => {
 const toolbarTitle = computed(() => {
   return translator.translate(props.interfaceName) + " bearbeiten";
 });
-
-const reload = () => {
-  emits("reload");
-};
 </script>
 <template>
   <StandardToolbar
     :title="toolbarTitle"
-    @close="emits('close')"
+    @close="emit('close')"
   ></StandardToolbar>
 
   <div class="pa-2">
     <ModelBox
       :interface-name="props.interfaceName"
       :model="model"
-      @reload="reload()"
-      @delete="emits('delete')"
+      @save="(savedModel: IModel) => emit('save', savedModel as T)"
+      @delete="emit('delete')"
     ></ModelBox>
   </div>
 </template>

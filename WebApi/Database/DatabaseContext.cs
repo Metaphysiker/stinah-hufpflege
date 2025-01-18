@@ -6,6 +6,7 @@ public class DatabaseContext : IdentityDbContext<IdentityUser>
 {
     public DbSet<Horse> Horses { get; set; }
     public DbSet<Treatment> Treatments { get; set; }
+    public DbSet<TreatmentCategory> TreatmentCategories { get; set; }
     public DbSet<File> Files { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -14,9 +15,6 @@ public class DatabaseContext : IdentityDbContext<IdentityUser>
         var Password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
         var Database = Environment.GetEnvironmentVariable("POSTGRES_DB");
         optionsBuilder.UseNpgsql($"Host=postgres;Username={Username};Password={Password};Database={Database}");
-
-
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,9 +22,8 @@ public class DatabaseContext : IdentityDbContext<IdentityUser>
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Horse>()
-            .HasMany(e => e.Treatments);
-
-        modelBuilder.Entity<Treatment>()
-            .HasOne(e => e.Horse);
+            .HasMany(e => e.Treatments)
+            .WithOne(e => e.Horse)
+            .IsRequired(false);
     }
 }

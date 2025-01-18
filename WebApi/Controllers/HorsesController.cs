@@ -39,7 +39,6 @@ public class HorsesController : ControllerBase, IModelController<HorseDTO, Horse
     [HttpGet("CreateHorses")]
     public string CreateHorses()
     {
-        Console.WriteLine("Inserting a new Horse");
         _db.Add(new Horse { Name = "Polly" });
         _db.SaveChanges();
         return "Created";

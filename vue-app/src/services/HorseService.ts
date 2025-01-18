@@ -4,9 +4,11 @@ import { IHorse } from "../interfaces/IHorse";
 import { Horse } from "../classes/Horse";
 import { IHorseSearch } from "@/interfaces/IHorseSearch";
 import { IModelController } from "@/interfaces/IModelController";
+import { HorseConverter } from "@/converters/HorseConverter";
 
 export class HorseService implements IModelController<IHorse, IHorseSearch> {
   horse: Horse = new Horse();
+  horseConverter = new HorseConverter();
   axiosInstance: AxiosStatic;
   constructor(axios: AxiosStatic | undefined) {
     this.axiosInstance = AxiosInstanceFactory.createAxiosInstance(axios);
@@ -17,7 +19,7 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
       this.axiosInstance
         .get("api/horses/" + id)
         .then((response: any) => {
-          const horse = this.horse.convertToHorse(response.data);
+          const horse = this.horseConverter.convert(response.data);
           resolve(horse);
         })
         .catch((e: any) => {
@@ -31,7 +33,7 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
       this.axiosInstance
         .get("api/horses")
         .then((response: any) => {
-          const horses = this.horse.convertToHorses(response.data);
+          const horses = this.horseConverter.convertMany(response.data);
           resolve(horses);
         })
         .catch((e: any) => {
@@ -45,7 +47,7 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
       this.axiosInstance
         .post("api/horses", horse)
         .then((response: any) => {
-          const horse = this.horse.convertToHorse(response.data);
+          const horse = this.horseConverter.convert(response.data);
           resolve(horse);
         })
         .catch((e: any) => {
@@ -59,7 +61,7 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
       this.axiosInstance
         .put("api/horses", horse)
         .then((response: any) => {
-          const horse = this.horse.convertToHorse(response.data);
+          const horse = this.horseConverter.convert(response.data);
           resolve(horse);
         })
         .catch((e: any) => {
@@ -86,7 +88,7 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
       this.axiosInstance
         .post("api/horses/search", search)
         .then((response: any) => {
-          const horses = this.horse.convertToHorses(response.data);
+          const horses = this.horseConverter.convertMany(response.data);
           resolve(horses);
         })
         .catch((e: any) => {

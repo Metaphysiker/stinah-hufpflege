@@ -1,13 +1,10 @@
-import { HorseHelper } from "@/helpers/HorseHelper";
 import { IHorse } from "../interfaces/IHorse";
-import { ITreatment } from "@/interfaces/ITreatment";
 import { LocalIDFactory } from "@/helpers/LocalIDFactory";
 import { IFile } from "@/interfaces/IFile";
 
 export class Horse implements IHorse {
   localID?: string;
   id?: number;
-  horseHelper = new HorseHelper();
   name: string;
   numberOfWeeksUntilNextTreatment: number;
   birthYear: number;
@@ -16,8 +13,9 @@ export class Horse implements IHorse {
   updatedAt: Date;
   beschlagen: boolean;
   fileKeysString: string;
-  treatments: ITreatment[];
   files: IFile[];
+  treatmentIds: number[];
+  lastTimeTreated: Date | undefined;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
@@ -29,48 +27,7 @@ export class Horse implements IHorse {
     this.updatedAt = new Date();
     this.beschlagen = false;
     this.fileKeysString = "";
-    this.treatments = [];
+    this.treatmentIds = [];
     this.files = [];
-  }
-
-  clone(original: IHorse): IHorse {
-    const horse = new Horse();
-    horse.id = original.id;
-    horse.name = original.name;
-    horse.numberOfWeeksUntilNextTreatment =
-      original.numberOfWeeksUntilNextTreatment;
-    horse.birthYear = original.birthYear;
-    horse.noteForNextTreatment = original.noteForNextTreatment;
-    horse.createdAt = new Date(original.createdAt);
-    horse.updatedAt = new Date(original.updatedAt);
-    horse.beschlagen = original.beschlagen;
-    horse.fileKeysString = original.fileKeysString;
-    horse.treatments = original.treatments;
-    return horse;
-  }
-
-  convertToHorse(horse: IHorse): Horse {
-    this.id = horse.id;
-    this.name = horse.name;
-    this.numberOfWeeksUntilNextTreatment =
-      horse.numberOfWeeksUntilNextTreatment;
-    this.birthYear = horse.birthYear;
-    this.noteForNextTreatment = horse.noteForNextTreatment;
-    this.createdAt = new Date(horse.createdAt);
-    this.updatedAt = new Date(horse.updatedAt);
-    this.beschlagen = horse.beschlagen;
-    this.fileKeysString = horse.fileKeysString;
-    if (horse.treatments) {
-      this.treatments = horse.treatments;
-    } else {
-      this.treatments = [];
-    }
-    return this;
-  }
-
-  convertToHorses(horses: IHorse[]): Horse[] {
-    return horses.map((horse) => {
-      return new Horse().convertToHorse(horse);
-    });
   }
 }

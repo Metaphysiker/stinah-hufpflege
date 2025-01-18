@@ -7,11 +7,14 @@ import { ServiceFactory } from "@/factories/ServiceFactory";
 import { AxiosStatic } from "axios";
 import { IModel } from "@/interfaces/IModel";
 import { ClassFactory } from "@/factories/ClassFactory";
+import { useWaitingStore } from "@/stores/waitingStore";
+import { storeToRefs } from "pinia";
 const axios: AxiosStatic | undefined = inject("axios");
 const editModelDialog = ref(false);
 const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
 const formComponent: ShallowRef<any | undefined> = shallowRef(undefined);
-
+const waitingStore = useWaitingStore();
+const { waiting } = storeToRefs(waitingStore);
 const props = defineProps({
   interfaceName: {
     required: true,
@@ -42,9 +45,11 @@ const emit = defineEmits(["create"]);
 
 const createModel = () => {
   if (modelClone.value) {
+    waiting.value = true;
     service.value?.Create(modelClone.value).then(() => {
       editModelDialog.value = false;
       emit("create");
+      waiting.value = false;
     });
   }
 };

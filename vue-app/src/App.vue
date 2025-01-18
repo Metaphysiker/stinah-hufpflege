@@ -4,6 +4,7 @@ import { treatmentCategories } from "./lists/TreatmentCategories";
 import { useTreatmentCategoryStore } from "./stores/treatmentCategoryStore";
 import { storeToRefs } from "pinia";
 import { Translator } from "./helpers/Translator";
+import WaitingComponent from "./components/waiting/WaitingComponent.vue";
 
 const translator = new Translator();
 const treatmentCategoryStore = useTreatmentCategoryStore();
@@ -39,5 +40,7 @@ onMounted(() => {
       </v-container>
     </v-app-bar>
     <v-main> <RouterView /></v-main>
+
+    <WaitingComponent />
   </v-app>
 </template>

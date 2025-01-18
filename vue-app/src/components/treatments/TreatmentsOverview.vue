@@ -4,6 +4,6 @@ import ModelsOverview from "../generics/ModelsOverview.vue";
 
 <template>
   <v-container fluid>
-    <ModelsOverview interface-name="IHorse"></ModelsOverview>
+    <ModelsOverview interface-name="ITreatment"></ModelsOverview>
   </v-container>
 </template>

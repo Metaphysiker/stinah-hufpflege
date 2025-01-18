@@ -6,7 +6,7 @@ import { Component } from "vue";
 import TreatmentCard from "@/components/treatments/TreatmentCard.vue";
 import TreatmentForm from "@/components/treatments/TreatmentForm.vue";
 import TreatmentBox from "@/components/treatments/TreatmentBox.vue";
-
+import TreatmentsTable from "@/components/treatments/TreatmentsTable.vue";
 export class ComponentFactory {
   static createComponent(
     interfaceName: string,
@@ -37,6 +37,8 @@ export class ComponentFactory {
               return TreatmentCard;
             case "Form":
               return TreatmentForm;
+            case "Table":
+              return TreatmentsTable;
             default:
               throw new Error("Unknown component");
           }

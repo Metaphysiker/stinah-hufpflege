@@ -1,18 +1,20 @@
-import { createMemoryHistory, createRouter } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import HorsesOverviewView from "../views/HorsesOverviewView.vue";
 import { inject } from "vue";
 import { AxiosStatic } from "axios";
 import { AuthenticationService } from "@/services/AuthenticationService";
 import LoginView from "@/views/LoginView.vue";
+import TreatmentsOveriewview from "@/views/TreatmentsOveriewview.vue";
 
 const routes = [
-  { path: "/", name: "home", component: HorsesOverviewView },
-  { path: "/horses-overview", component: HorsesOverviewView },
+  { path: "/horses", component: HorsesOverviewView },
+  { path: "/treatments", component: TreatmentsOveriewview },
   { path: "/login", name: "login", component: LoginView },
+  { path: "/", name: "home", component: HorsesOverviewView },
 ];
 
 const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 

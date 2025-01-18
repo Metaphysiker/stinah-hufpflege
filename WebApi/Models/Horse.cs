@@ -10,6 +10,5 @@ public class Horse : IModel, IEnityWithTreatments, IEnityWithFiles
     public bool Beschlagen { get; set; } = false;
     public string FileKeysString { get; set; } = string.Empty;
     public ICollection<Treatment> Treatments { get; set; } = new List<Treatment>();
-    public DateTime LastTimeTreated { get; set; } = DateTime.UtcNow;
     public ICollection<File> Files { get; set; } = new List<File>();
 }

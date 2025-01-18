@@ -1,9 +1,15 @@
+import { HorseService } from "@/services/HorseService";
 import { IHorse } from "../interfaces/IHorse";
 import { DateFormatter } from "./DateFormatter";
 import { DateHelper } from "./DateHelper";
 export class HorseHelper {
   dateHelper = new DateHelper();
   dateFormatter = new DateFormatter();
+  horseService: HorseService = new HorseService(undefined);
+
+  constructor(horseService: HorseService) {
+    this.horseService = horseService;
+  }
 
   calculateNextTreatmentDate(
     horse: IHorse,
@@ -24,6 +30,7 @@ export class HorseHelper {
   }
 
   getLastTimeTreated(horse: IHorse, category: string): Date | undefined {
+    /*
     const treatmentsInCategory = horse.treatments.filter(
       (treatment) => treatment.category === category
     );
@@ -34,6 +41,8 @@ export class HorseHelper {
     );
 
     return lastTreatment.date;
+    */
+    return undefined;
   }
 
   getNextTreatmentDate(horse: IHorse, category: string): Date | undefined {

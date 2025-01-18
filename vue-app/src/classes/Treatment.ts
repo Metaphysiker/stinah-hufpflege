@@ -6,7 +6,7 @@ export class Treatment implements ITreatment {
   localID?: string;
   note: string;
   noteForNextTreatment: string;
-  horseId: number;
+  horseId: number | undefined;
   date: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -14,12 +14,12 @@ export class Treatment implements ITreatment {
   category: string;
   name: string;
   files: IFile[];
+  treatmentIds: number[];
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
     this.note = "";
     this.noteForNextTreatment = "";
-    this.horseId = 0;
     this.date = new Date();
     this.createdAt = new Date();
     this.updatedAt = new Date();
@@ -27,5 +27,6 @@ export class Treatment implements ITreatment {
     this.category = "";
     this.name = "";
     this.files = [];
+    this.treatmentIds = [];
   }
 }

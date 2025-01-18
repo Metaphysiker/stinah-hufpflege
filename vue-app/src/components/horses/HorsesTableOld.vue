@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { inject, ref } from "vue";
 import type { IHorse } from "../../interfaces/IHorse";
 import { DateFormatter } from "../../helpers/DateFormatter";
 import { UrgencyHelper } from "../../helpers/UrgencyHelper";
 import { HorseHelper } from "@/helpers/HorseHelper";
-const horseHelper = new HorseHelper();
+import { HorseService } from "@/services/HorseService";
+import { AxiosStatic } from "axios";
+const axios: AxiosStatic | undefined = inject("axios");
+const horseService = new HorseService(axios);
+const horseHelper = new HorseHelper(horseService);
 const urgencyHelper = new UrgencyHelper();
 const dateFormatter = new DateFormatter();
 const availableTableDataHeaders = ref([

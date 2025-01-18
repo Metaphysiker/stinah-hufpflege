@@ -1,47 +1,48 @@
 <script setup lang="ts" generic="T extends IModel">
 import { IModel } from "@/interfaces/IModel";
-import NewHorse from "./NewHorse.vue";
-import HorsesTable from "./HorsesTable.vue";
-import { HorseService } from "../../services/HorseService";
 import type { AxiosStatic } from "axios";
 import {
   Ref,
   ShallowRef,
+  computed,
   inject,
   onBeforeMount,
   onMounted,
   ref,
   shallowRef,
 } from "vue";
-import NewTreatment from "../treatments/NewTreatment.vue";
-import HorseCard from "./HorseCard.vue";
-import StandardToolbar from "../StandardToolbar.vue";
-import { IHorseSearch } from "@/interfaces/IHorseSearch";
-import type { IHorse } from "@/interfaces/IHorse";
 import NewModelCard from "../generics/NewModelCard.vue";
 import { IModelController } from "@/interfaces/IModelController";
 import { ISearch } from "@/interfaces/ISearch";
 import { ServiceFactory } from "@/factories/ServiceFactory";
 import { ComponentFactory } from "@/factories/ComponentFactory";
-const currentHorse: Ref<IHorse | undefined> = ref(undefined);
-const horseForHorseCard: Ref<IHorse | undefined> = ref(undefined);
+import ModelCard from "./ModelCard.vue";
+import { EntityFinder } from "@/helpers/EntityFinder";
+import { useWaitingStore } from "@/stores/waitingStore";
+import { storeToRefs } from "pinia";
+import { Translator } from "@/helpers/Translator";
+
 const axios: AxiosStatic | undefined = inject("axios");
-const horseService = new HorseService(axios);
-const horses: Ref<IHorse[]> = ref([]);
+const models: Ref<T[]> = ref([]);
 const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
 const tableComponent: ShallowRef<any | undefined> = shallowRef(undefined);
+const entityFinder = new EntityFinder();
+const waitingStore = useWaitingStore();
+const { waiting } = storeToRefs(waitingStore);
+const translator = new Translator();
 
 const reload = () => {
-  newHorseDialog.value = false;
-  editHorseDialog.value = false;
-  deleteHorseDialog.value = false;
-  const horseSearch: IHorseSearch = {
-    page: 0,
-    pageSize: 1000,
-  };
-
-  horseService.Search(horseSearch).then((response) => {
-    horses.value = response;
+  return new Promise<void>((resolve) => {
+    const search: ISearch = {
+      page: 0,
+      pageSize: 200,
+    };
+    waiting.value = true;
+    service.value?.Search(search).then((response) => {
+      models.value = response;
+      waiting.value = false;
+      resolve();
+    });
   });
 };
 
@@ -56,37 +57,13 @@ onMounted(() => {
   reload();
 });
 
-const horseTreated = (horse: IHorse) => {
-  horseService.Update(horse).then(() => {
-    reload();
-  });
-};
-const editHorseDialog = ref(false);
-const newHorseDialog = ref(false);
-const deleteHorseDialog = ref(false);
-const horseToDelete = ref<IHorse | undefined>(undefined);
-const deleteHorse = () => {
-  if (horseToDelete.value?.id) {
-    horseService.Delete(horseToDelete.value.id).then(() => {
-      reload();
-      deleteHorseDialog.value = false;
-    });
-  }
-};
-
-const newTreatmentDialog = ref(false);
-const horseCardDialog = ref(false);
-
-const clickOnName = (horse: IHorse) => {
-  horseForHorseCard.value = horse;
-  horseCardDialog.value = true;
-};
-
 const createModelDialog = ref(false);
 const create = () => {
   reload();
   createModelDialog.value = false;
 };
+
+const editModelDialog = ref(false);
 
 onBeforeMount(() => {
   if (!axios) {
@@ -102,31 +79,53 @@ onBeforeMount(() => {
     "Table"
   );
 });
+
+const modelToEdit: Ref<T | undefined> = ref(undefined);
+
+const clickOnName = (model: T) => {
+  modelToEdit.value = model;
+  editModelDialog.value = true;
+};
+
+const deleted = () => {
+  editModelDialog.value = false;
+  reload();
+};
+
+const save = (savedModel: T) => {
+  reload().then(() => {
+    const found = entityFinder.findByIdOrLocalID<T>(
+      models.value,
+      savedModel.id,
+      savedModel.localID
+    );
+
+    if (found) {
+      modelToEdit.value = savedModel;
+    } else {
+      editModelDialog.value = false;
+    }
+  });
+};
+
+const createModelText = computed(() => {
+  const translat = translator.translate(props.interfaceName);
+  return `${translat} hinzufügen`;
+});
 </script>
 
 <template>
   <v-container fluid>
-    <tableComponent :models="horses"></tableComponent>
+    <tableComponent
+      :models="models"
+      @clickOnName="(model: T) => clickOnName(model)"
+    ></tableComponent>
   </v-container>
   <v-container fluid>
     <div class="d-flex justify-end">
-      <v-btn @click="createModelDialog = true"> Neues Pferd hinzufügen </v-btn>
+      <v-btn @click="createModelDialog = true"> {{ createModelText }} </v-btn>
     </div>
   </v-container>
-
-  <v-dialog fullscreen v-model="deleteHorseDialog">
-    <v-card>
-      <StandardToolbar
-        title="xxxxxxx entfernen"
-        @close="deleteHorseDialog = false"
-      ></StandardToolbar>
-      <v-card-text>
-        <div class="mb-5">Pferd wirklich entfernen?</div>
-
-        <v-btn @click="deleteHorse()">Ja, entfernen</v-btn>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
 
   <v-dialog fullscreen v-model="createModelDialog">
     <v-card>
@@ -135,6 +134,18 @@ onBeforeMount(() => {
         @create="create()"
         @close="createModelDialog = false"
       ></NewModelCard>
+    </v-card>
+  </v-dialog>
+
+  <v-dialog fullscreen v-model="editModelDialog">
+    <v-card v-if="modelToEdit">
+      <ModelCard
+        @close="editModelDialog = false"
+        :interface-name="props.interfaceName"
+        :model="modelToEdit"
+        @save="(savedModel: IModel) => save(savedModel as T)"
+        @delete="deleted()"
+      ></ModelCard>
     </v-card>
   </v-dialog>
 </template>

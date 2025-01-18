@@ -18,12 +18,17 @@ import { ServiceFactory } from "@/factories/ServiceFactory";
 import { AxiosStatic } from "axios";
 import { Translator } from "@/helpers/Translator";
 import { Cloner } from "@/helpers/Cloner";
+import { useWaitingStore } from "@/stores/waitingStore";
+import { storeToRefs } from "pinia";
 const axios: AxiosStatic | undefined = inject("axios");
 const editModelDialog = ref(false);
 const translator = new Translator();
 const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
 const boxComponent: ShallowRef<any | undefined> = shallowRef(undefined);
 const formComponent: ShallowRef<any | undefined> = shallowRef(undefined);
+
+const waitingStore = useWaitingStore();
+const { waiting } = storeToRefs(waitingStore);
 
 const props = defineProps({
   interfaceName: {
@@ -58,11 +63,11 @@ onBeforeMount(() => {
   );
 });
 
-const emit = defineEmits(["reload", "delete"]);
-
-const reload = () => {
-  emit("reload");
-};
+const emit = defineEmits<{
+  reload: [void];
+  delete: [void];
+  save: [model: T];
+}>();
 
 const cloner = new Cloner();
 
@@ -95,7 +100,9 @@ const deleteModelDialog = ref(false);
 
 const deleteModel = () => {
   if (props.model.id) {
+    waiting.value = true;
     service.value?.Delete(props.model.id).then(() => {
+      waiting.value = false;
       emit("delete");
       deleteModelDialog.value = false;
     });
@@ -104,9 +111,11 @@ const deleteModel = () => {
 
 const saveModel = () => {
   if (modelClone.value) {
-    service.value?.Update(modelClone.value).then(() => {
+    waiting.value = true;
+    service.value?.Update(modelClone.value).then((updatedModel) => {
+      waiting.value = false;
       editModelDialog.value = false;
-      reload();
+      emit("save", updatedModel);
     });
   }
 };
@@ -114,7 +123,7 @@ const saveModel = () => {
 watch(
   () => props.model,
   () => {
-    modelClone.value = JSON.parse(JSON.stringify(props.model));
+    modelClone.value = cloner.clone<T>(props.model as T);
   },
   { immediate: true }
 );

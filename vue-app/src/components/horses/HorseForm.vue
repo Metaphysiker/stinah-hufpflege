@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { IHorse } from "../../interfaces/IHorse";
 import { HorseHelper } from "../../helpers/HorseHelper";
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import { DateFormatter } from "@/helpers/DateFormatter";
+import { HorseService } from "@/services/HorseService";
+import { AxiosStatic } from "axios";
+const axios: AxiosStatic | undefined = inject("axios");
+const horseService = new HorseService(axios);
 const dateFormatter = new DateFormatter();
-const horseHelper = new HorseHelper();
+const horseHelper = new HorseHelper(horseService);
 const horseToBeEdited = defineModel({
   required: true,
   type: Object as () => IHorse,

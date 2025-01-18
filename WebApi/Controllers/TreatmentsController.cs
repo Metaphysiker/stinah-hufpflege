@@ -40,7 +40,6 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
     public async Task<ActionResult<TreatmentDTO>> Create([FromBody] TreatmentDTO treatmentDto)
     {
         var treatment = _treatmentDTOConverter.Convert(treatmentDto);
-
         await _db.AddAsync(treatment);
         await _db.SaveChangesAsync();
 
@@ -85,7 +84,7 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
 
     public async Task<ActionResult<List<TreatmentDTO>>> Search([FromBody] TreatmentSearch search)
     {
-        var query = _db.Treatments.AsQueryable();
+        var query = _db.Treatments.Include(t => t.Horse).AsQueryable();
 
         if (search.Ids.Count > 0)
         {

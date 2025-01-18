@@ -18,6 +18,7 @@ public class HorseDTOConveter : IDtoConverter<Horse, HorseDTO>
     {
         HorseDTO horseDTO = _mapperService.mapper.Map<HorseDTO>(horse);
         horseDTO.TreatmentIds = horse.Treatments.Select(t => t.Id).ToList();
+        horseDTO.LastTimeTreated = horse.Treatments.Count > 0 ? horse.Treatments.Max(t => t.CreatedAt) : DateTime.UtcNow;
         return horseDTO;
     }
 

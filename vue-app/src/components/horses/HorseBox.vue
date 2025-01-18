@@ -3,6 +3,7 @@ import { IHorse } from "@/interfaces/IHorse";
 import { computed, Ref, ref, watch } from "vue";
 import TreatmentList from "../treatments/TreatmentList.vue";
 import { ITreatmentSearch } from "@/interfaces/ITreatmentSearch";
+import { Cloner } from "@/helpers/Cloner";
 
 const props = defineProps({
   model: {
@@ -15,10 +16,12 @@ const emit = defineEmits(["edit"]);
 
 const modelClone = ref<IHorse | undefined>(undefined);
 
+const cloner = new Cloner();
+
 watch(
   () => props.model,
   () => {
-    modelClone.value = JSON.parse(JSON.stringify(props.model));
+    modelClone.value = cloner.clone(props.model);
   },
   { immediate: true }
 );
@@ -39,7 +42,7 @@ const treatmentSearch: Ref<ITreatmentSearch> = ref({
 });
 
 const labelForTreatments = computed(() => {
-  if (props.model.treatments.length === 0) {
+  if (props.model.treatmentIds.length === 0) {
     return "Keine Behandlungen vorhanden";
   }
 

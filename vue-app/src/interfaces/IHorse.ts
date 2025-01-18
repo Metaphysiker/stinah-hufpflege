@@ -1,6 +1,5 @@
 import { IEntityWithFiles } from "./IEntityWithFiles";
 import { IModel } from "./IModel";
-import { ITreatment } from "./ITreatment";
 
 export interface IHorse extends IModel, IEntityWithFiles {
   name: string;
@@ -11,5 +10,6 @@ export interface IHorse extends IModel, IEntityWithFiles {
   updatedAt: Date;
   beschlagen: boolean;
   fileKeysString: string;
-  treatments: ITreatment[];
+  treatmentIds: number[];
+  lastTimeTreated: Date | undefined;
 }

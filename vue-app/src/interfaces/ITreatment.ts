@@ -8,10 +8,11 @@ export interface ITreatment
     IEntityWithIdentity {
   note: string;
   noteForNextTreatment: string;
-  horseId: number;
+  horseId: number | undefined;
   date: Date;
   createdAt: Date;
   updatedAt: Date;
   category: string;
   fileKeysString: string;
+  treatmentIds: number[];
 }

@@ -14,14 +14,12 @@ public class TreatmentDTOConverter : IDtoConverter<Treatment, TreatmentDTO>
     public Treatment Convert(TreatmentDTO treatmentDTO)
     {
         Treatment treatment = _mapperService.mapper.Map<Treatment>(treatmentDTO);
-
         Horse? horse = _db.Horses.Find(treatment.HorseId);
         if (horse != null)
         {
             treatment.Horse = horse;
             horse.Treatments.Add(treatment);
         }
-
         return treatment;
     }
 
