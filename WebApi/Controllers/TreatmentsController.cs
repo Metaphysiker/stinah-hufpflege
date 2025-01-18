@@ -111,8 +111,6 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
             }
         }
 
-
-
         var results = await query
             .Skip(search.Page * search.PageSize)
             .Take(search.PageSize)

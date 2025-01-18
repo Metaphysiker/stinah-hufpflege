@@ -49,15 +49,19 @@ const labelForTreatments = computed(() => {
     return "Keine Behandlungen vorhanden";
   }
 
-  return `Letzte ${treatmentSearch.value.pageSize} Behandlungen`;
+  return `Letzte Behandlungen:`;
 });
 
 const newTreatment: Ref<ITreatment> = ref(new Treatment());
 
-onBeforeMount(() => {
+const assignNewTreatment = () => {
   const treatment = new Treatment();
   treatment.horseId = props.model.id;
   newTreatment.value = treatment;
+};
+
+onBeforeMount(() => {
+  assignNewTreatment();
 });
 
 const createTreatmentDialog = ref(false);
@@ -68,6 +72,11 @@ const treatmentCreated = () => {
 };
 
 const treatmentListKey = ref(0);
+
+const addTreatment = () => {
+  assignNewTreatment();
+  createTreatmentDialog.value = true;
+};
 </script>
 
 <template>
@@ -84,10 +93,11 @@ const treatmentListKey = ref(0);
     <v-divider class="my-2"> </v-divider>
 
     <div class="d-flex justify-start">
-      <v-btn @click="createTreatmentDialog = true" elevation="3" class="my-3">
+      <v-btn @click="addTreatment()" elevation="3" class="my-3">
         Behandlung hinzufügen
       </v-btn>
     </div>
+    <v-divider class="my-2"> </v-divider>
     <div>
       <strong>{{ labelForTreatments }}</strong>
     </div>
