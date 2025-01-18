@@ -33,10 +33,16 @@ const translator = new Translator();
 
 const reload = () => {
   return new Promise<void>((resolve) => {
-    const search: ISearch = {
-      page: 0,
-      pageSize: 200,
-    };
+    let search;
+    if (props.search) {
+      search = props.search;
+    } else {
+      search = {
+        page: 0,
+        pageSize: 200,
+      };
+    }
+
     waiting.value = true;
     service.value?.Search(search).then((response) => {
       models.value = response;
@@ -50,6 +56,10 @@ const props = defineProps({
   interfaceName: {
     required: true,
     type: String,
+  },
+  search: {
+    required: false,
+    type: Object as () => ISearch,
   },
 });
 

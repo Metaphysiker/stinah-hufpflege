@@ -46,6 +46,7 @@ const horseSelected = () => {
     @update:model-value="horseSelected()"
   ></v-autocomplete>
 
+  {{ treatmentToBeEdited.date }}
   <DateSelecter label="Datum" v-model="treatmentToBeEdited.date" />
 
   <v-textarea

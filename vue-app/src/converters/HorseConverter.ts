@@ -1,8 +1,9 @@
 import { Horse } from "@/classes/Horse";
 import { Cloner } from "@/helpers/Cloner";
+import { IConverter } from "@/interfaces/IConverter";
 import { IHorse } from "@/interfaces/IHorse";
 
-export class HorseConverter {
+export class HorseConverter implements IConverter<IHorse> {
   cloner = new Cloner();
 
   convert(input: any): IHorse {

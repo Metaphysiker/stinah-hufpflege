@@ -34,6 +34,8 @@ const getTreatments = () => {
     horseId: horse.value.id,
     page: 0,
     pageSize: 20,
+    sortBy: "Date",
+    sortOrder: "descending",
   };
 
   treatmentService.Search(treatmentSearch).then((response) => {

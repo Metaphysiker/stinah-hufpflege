@@ -1,10 +1,12 @@
 import { ref, type Ref } from "vue";
 import { defineStore } from "pinia";
+import { ITreatmentCategory } from "@/interfaces/ITreatmentCategory";
 
 export const useTreatmentCategoryStore = defineStore(
   "treatmentCategoryStore",
   () => {
-    const selectedTreatmentCategory: Ref<string | undefined> = ref(undefined);
+    const selectedTreatmentCategory: Ref<ITreatmentCategory | undefined> =
+      ref(undefined);
     return { selectedTreatmentCategory };
   }
 );

@@ -6,13 +6,16 @@ import { ISearch } from "@/interfaces/ISearch";
 import { ServiceFactory } from "@/factories/ServiceFactory";
 import { AxiosStatic } from "axios";
 import { IModel } from "@/interfaces/IModel";
-import { ClassFactory } from "@/factories/ClassFactory";
 import { useWaitingStore } from "@/stores/waitingStore";
 import { storeToRefs } from "pinia";
+import { IConverter } from "@/interfaces/IConverter";
+import { ConverterFactory } from "@/factories/ConverterFactory";
+import { ClassFactory } from "@/factories/ClassFactory";
 const axios: AxiosStatic | undefined = inject("axios");
 const editModelDialog = ref(false);
 const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
 const formComponent: ShallowRef<any | undefined> = shallowRef(undefined);
+const converter: Ref<IConverter<T> | undefined> = ref(undefined);
 const waitingStore = useWaitingStore();
 const { waiting } = storeToRefs(waitingStore);
 const props = defineProps({
@@ -20,11 +23,13 @@ const props = defineProps({
     required: true,
     type: String,
   },
+  modelBlueprint: {
+    required: false,
+    type: Object as () => IModel,
+  },
 });
 
-const modelClone: ShallowRef<T> = shallowRef(
-  ClassFactory.createClassInstance(props.interfaceName) as T
-);
+const modelClone: Ref<T | undefined> = ref(undefined);
 
 onBeforeMount(() => {
   if (!axios) {
@@ -35,20 +40,34 @@ onBeforeMount(() => {
     axios
   ) as IModelController<T, ISearch>;
 
+  converter.value = ConverterFactory.createConverter(
+    props.interfaceName
+  ) as IConverter<T>;
+
   formComponent.value = ComponentFactory.createComponent(
     props.interfaceName,
     "Form"
   );
+
+  if (props.modelBlueprint) {
+    modelClone.value = converter.value.convert(props.modelBlueprint);
+  } else {
+    modelClone.value = ClassFactory.createClassInstance(
+      props.interfaceName
+    ) as T;
+  }
 });
 
-const emit = defineEmits(["create"]);
+const emit = defineEmits<{
+  create: [model: T];
+}>();
 
 const createModel = () => {
   if (modelClone.value) {
     waiting.value = true;
-    service.value?.Create(modelClone.value).then(() => {
+    service.value?.Create(modelClone.value).then((createdModel) => {
       editModelDialog.value = false;
-      emit("create");
+      emit("create", createdModel);
       waiting.value = false;
     });
   }

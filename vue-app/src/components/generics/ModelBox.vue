@@ -17,15 +17,17 @@ import { ISearch } from "@/interfaces/ISearch";
 import { ServiceFactory } from "@/factories/ServiceFactory";
 import { AxiosStatic } from "axios";
 import { Translator } from "@/helpers/Translator";
-import { Cloner } from "@/helpers/Cloner";
 import { useWaitingStore } from "@/stores/waitingStore";
 import { storeToRefs } from "pinia";
+import { IConverter } from "@/interfaces/IConverter";
+import { ConverterFactory } from "@/factories/ConverterFactory";
 const axios: AxiosStatic | undefined = inject("axios");
 const editModelDialog = ref(false);
 const translator = new Translator();
 const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
 const boxComponent: ShallowRef<any | undefined> = shallowRef(undefined);
 const formComponent: ShallowRef<any | undefined> = shallowRef(undefined);
+const converter: Ref<IConverter<T> | undefined> = ref(undefined);
 
 const waitingStore = useWaitingStore();
 const { waiting } = storeToRefs(waitingStore);
@@ -52,6 +54,10 @@ onBeforeMount(() => {
     axios
   ) as IModelController<T, ISearch>;
 
+  converter.value = ConverterFactory.createConverter(
+    props.interfaceName
+  ) as IConverter<T>;
+
   boxComponent.value = ComponentFactory.createComponent(
     props.interfaceName,
     "Box"
@@ -69,10 +75,8 @@ const emit = defineEmits<{
   save: [model: T];
 }>();
 
-const cloner = new Cloner();
-
 const clickOnEdit = () => {
-  modelClone.value = cloner.clone<T>(props.model as T);
+  modelClone.value = converter.value?.convert(props.model);
   editModelDialog.value = true;
 };
 
@@ -123,7 +127,7 @@ const saveModel = () => {
 watch(
   () => props.model,
   () => {
-    modelClone.value = cloner.clone<T>(props.model as T);
+    modelClone.value = converter.value?.convert(props.model);
   },
   { immediate: true }
 );
@@ -133,12 +137,16 @@ watch(
     <boxComponent :model="model" @edit="clickOnEdit">
       <v-row class="mb-1">
         <v-col @click="clickOnEdit()">
-          <v-btn color="green" class="me-2"
+          <v-btn color="green" size="large" class="me-2"
             ><v-icon> mdi-pencil </v-icon></v-btn
           >
         </v-col>
         <v-col class="d-flex justify-end">
-          <v-btn color="red" class="me-2" @click="deleteModelDialog = true"
+          <v-btn
+            color="red"
+            size="large"
+            class="me-2"
+            @click="deleteModelDialog = true"
             ><v-icon> mdi-close-circle-outline </v-icon></v-btn
           >
         </v-col>

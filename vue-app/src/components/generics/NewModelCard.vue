@@ -17,9 +17,16 @@ const props = defineProps({
     required: true,
     type: String,
   },
+  modelBlueprint: {
+    required: false,
+    type: Object as () => IModel,
+  },
 });
 
-const emits = defineEmits(["create", "close"]);
+const emit = defineEmits<{
+  close: [void];
+  create: [model: T];
+}>();
 
 onBeforeMount(() => {
   if (!axios) {
@@ -35,20 +42,21 @@ const toolbarTitle = computed(() => {
   return translator.translate(props.interfaceName) + " hinzufügen";
 });
 
-const create = () => {
-  emits("create");
+const create = (model: T) => {
+  emit("create", model);
 };
 </script>
 <template>
   <StandardToolbar
     :title="toolbarTitle"
-    @close="emits('close')"
+    @close="emit('close')"
   ></StandardToolbar>
 
   <div class="pa-2">
     <NewModel
+      :model-blueprint="props.modelBlueprint"
       :interface-name="props.interfaceName"
-      @create="create()"
+      @create="(model: IModel) => create(model as T)"
     ></NewModel>
   </div>
 </template>

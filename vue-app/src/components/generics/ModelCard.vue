@@ -25,7 +25,6 @@ const props = defineProps({
 
 const emit = defineEmits<{
   close: [void];
-  reload: [void];
   delete: [void];
   save: [model: T];
 }>();

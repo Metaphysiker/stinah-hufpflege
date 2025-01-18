@@ -1,19 +1,27 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { treatmentCategories } from "./lists/TreatmentCategories";
+import { inject, onBeforeMount, onMounted, Ref, ref } from "vue";
 import { useTreatmentCategoryStore } from "./stores/treatmentCategoryStore";
 import { storeToRefs } from "pinia";
 import { Translator } from "./helpers/Translator";
 import WaitingComponent from "./components/waiting/WaitingComponent.vue";
+import { AxiosStatic } from "axios";
+import { TreatmentCategoryService } from "./services/TreatmentCategoryService";
+import { ITreatmentCategory } from "./interfaces/ITreatmentCategory";
 
 const translator = new Translator();
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
+const axios: AxiosStatic | undefined = inject("axios");
+const treatmentCategoryService = new TreatmentCategoryService(axios);
+const treatmentCategories: Ref<ITreatmentCategory[]> = ref([]);
 
-onMounted(() => {
-  if (treatmentCategories.length > 0) {
-    selectedTreatmentCategory.value = treatmentCategories[0];
-  }
+onBeforeMount(() => {
+  treatmentCategoryService.ReadAll().then((response) => {
+    treatmentCategories.value = response;
+    if (treatmentCategories.value.length > 0) {
+      selectedTreatmentCategory.value = treatmentCategories.value[0];
+    }
+  });
 });
 </script>
 
@@ -31,7 +39,7 @@ onMounted(() => {
                 :hide-details="true"
                 single-line
                 label="Kategorie"
-                :item-title="(item) => translator.translate(item)"
+                :item-title="(item) => translator.translate(item.name)"
                 :items="treatmentCategories"
               ></v-select>
             </div>

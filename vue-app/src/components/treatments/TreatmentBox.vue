@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { IHorse } from "@/interfaces/IHorse";
 import { ref, watch } from "vue";
 import { ITreatment } from "@/interfaces/ITreatment";
+import { TreatmentConverter } from "@/converters/TreatmentConverter";
 
 const props = defineProps({
   model: {
@@ -12,12 +12,13 @@ const props = defineProps({
 
 const emit = defineEmits(["edit"]);
 
-const modelClone = ref<IHorse | undefined>(undefined);
+const modelClone = ref<ITreatment | undefined>(undefined);
+const treatmentConverter = new TreatmentConverter();
 
 watch(
   () => props.model,
   (model) => {
-    modelClone.value = JSON.parse(JSON.stringify(props.model));
+    modelClone.value = treatmentConverter.convert(model);
   },
   { immediate: true }
 );

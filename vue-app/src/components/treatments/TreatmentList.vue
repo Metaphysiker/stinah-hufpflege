@@ -81,7 +81,7 @@ const deleteTreatment = () => {
         @close="openTreatmentDialog = false"
         interface-name="ITreatment"
         :model="clickedOnTreatment"
-        @reload="reload()"
+        @save="reload()"
         @delete="deleteTreatment()"
       ></ModelCard>
     </v-card>

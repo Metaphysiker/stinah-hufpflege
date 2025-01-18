@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { IHorse } from "@/interfaces/IHorse";
-import { computed, Ref, ref, watch } from "vue";
+import { computed, onBeforeMount, Ref, ref, watch } from "vue";
 import TreatmentList from "../treatments/TreatmentList.vue";
 import { ITreatmentSearch } from "@/interfaces/ITreatmentSearch";
-import { Cloner } from "@/helpers/Cloner";
+import { ITreatment } from "@/interfaces/ITreatment";
+import { Treatment } from "@/classes/Treatment";
+import NewModelCard from "../generics/NewModelCard.vue";
+import { HorseConverter } from "@/converters/HorseConverter";
 
 const props = defineProps({
   model: {
@@ -16,12 +19,12 @@ const emit = defineEmits(["edit"]);
 
 const modelClone = ref<IHorse | undefined>(undefined);
 
-const cloner = new Cloner();
+const horseConverter = new HorseConverter();
 
 watch(
   () => props.model,
   () => {
-    modelClone.value = cloner.clone(props.model);
+    modelClone.value = horseConverter.convert(props.model);
   },
   { immediate: true }
 );
@@ -48,11 +51,27 @@ const labelForTreatments = computed(() => {
 
   return `Letzte ${treatmentSearch.value.pageSize} Behandlungen`;
 });
+
+const newTreatment: Ref<ITreatment> = ref(new Treatment());
+
+onBeforeMount(() => {
+  const treatment = new Treatment();
+  treatment.horseId = props.model.id;
+  newTreatment.value = treatment;
+});
+
+const createTreatmentDialog = ref(false);
+
+const treatmentCreated = () => {
+  treatmentListKey.value++;
+  createTreatmentDialog.value = false;
+};
+
+const treatmentListKey = ref(0);
 </script>
 
 <template>
   <slot></slot>
-
   <div>
     <div class="d-flex align-items-center">
       <div>
@@ -63,9 +82,29 @@ const labelForTreatments = computed(() => {
     </div>
 
     <v-divider class="my-2"> </v-divider>
+
+    <div class="d-flex justify-start">
+      <v-btn @click="createTreatmentDialog = true" elevation="3" class="my-3">
+        Behandlung hinzufügen
+      </v-btn>
+    </div>
     <div>
       <strong>{{ labelForTreatments }}</strong>
     </div>
-    <TreatmentList :treatment-search="treatmentSearch"></TreatmentList>
+    <TreatmentList
+      :key="treatmentListKey"
+      :treatment-search="treatmentSearch"
+    ></TreatmentList>
   </div>
+
+  <v-dialog fullscreen v-model="createTreatmentDialog">
+    <v-card>
+      <NewModelCard
+        interface-name="ITreatment"
+        :model-blueprint="newTreatment"
+        @create="treatmentCreated()"
+        @close="createTreatmentDialog = false"
+      ></NewModelCard>
+    </v-card>
+  </v-dialog>
 </template>

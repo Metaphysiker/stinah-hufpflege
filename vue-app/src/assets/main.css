@@ -4,11 +4,20 @@
   border-top-right-radius: 0.5rem !important;
 }
 
-.standard-toolbar-close-button {
+.standard-toolbar-close-button-left {
   display: flex;
   align-items: center;
   height: 100%;
   padding-left: 1.1rem;
   padding-right: 1.1rem;
   border-right: 0.1rem solid lightgray;
+}
+
+.standard-toolbar-close-button-right {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-left: 1.1rem;
+  padding-right: 1.1rem;
+  border-left: 0.1rem solid lightgray;
 }
