@@ -26,6 +26,8 @@ public class TreatmentDTOConverter : IDtoConverter<Treatment, TreatmentDTO>
     public TreatmentDTO Convert(Treatment treatment)
     {
         TreatmentDTO treatmentDTO = _mapperService.mapper.Map<TreatmentDTO>(treatment);
+        treatmentDTO.Name = "Behandlung";
+
         return treatmentDTO;
     }
 

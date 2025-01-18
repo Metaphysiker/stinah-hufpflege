@@ -4,10 +4,10 @@ import TreatmentForm from "./TreatmentForm.vue";
 import { AxiosStatic } from "axios";
 import { Ref, inject, ref, watch } from "vue";
 import { TreatmentService } from "@/services/TreatmentService";
-import { TreatmentHelper } from "@/helpers/TreatmentHelper";
+import { TreatmentConverter } from "@/converters/TreatmentConverter";
 const axios: AxiosStatic | undefined = inject("axios");
 const treatmentService = new TreatmentService(axios);
-const treatmentHelper = new TreatmentHelper();
+const treatmentConverter = new TreatmentConverter();
 const emit = defineEmits(["updated"]);
 
 const treatmentToBeEdited = defineModel({
@@ -20,7 +20,7 @@ const copyOfTreatmentToBeEdited: Ref<ITreatment | undefined> = ref(undefined);
 watch(
   treatmentToBeEdited,
   () => {
-    copyOfTreatmentToBeEdited.value = treatmentHelper.cloneTreatment(
+    copyOfTreatmentToBeEdited.value = treatmentConverter.convert(
       treatmentToBeEdited.value
     );
   },

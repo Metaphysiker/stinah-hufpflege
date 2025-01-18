@@ -1,8 +1,8 @@
 import { AxiosStatic } from "axios";
-import { IDto } from "./IDto";
 import { ISearch } from "./ISearch";
+import { IModel } from "./IModel";
 
-export interface IModelController<dto extends IDto, search extends ISearch> {
+export interface IModelController<dto extends IModel, search extends ISearch> {
   axiosInstance: AxiosStatic;
   ReadAll(): Promise<dto[]>;
   Read(id: number): Promise<dto>;

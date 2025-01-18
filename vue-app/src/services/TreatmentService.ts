@@ -1,14 +1,14 @@
 import { AxiosStatic } from "axios";
 import { AxiosInstanceFactory } from "../factories/AxiosInstanceFactory";
 import { ITreatment } from "@/interfaces/ITreatment";
-import { TreatmentHelper } from "@/helpers/TreatmentHelper";
 import { ITreatmentSearch } from "@/interfaces/ITreatmentSearch";
 import { IModelController } from "@/interfaces/IModelController";
+import { TreatmentConverter } from "@/converters/TreatmentConverter";
 
 export class TreatmentService
   implements IModelController<ITreatment, ITreatmentSearch>
 {
-  treatmentHelper = new TreatmentHelper();
+  treatmentConverter = new TreatmentConverter();
   axiosInstance: AxiosStatic;
   constructor(axios: AxiosStatic | undefined) {
     this.axiosInstance = AxiosInstanceFactory.createAxiosInstance(axios);
@@ -19,9 +19,7 @@ export class TreatmentService
       this.axiosInstance
         .get("api/treatments")
         .then((response: any) => {
-          const treatments = this.treatmentHelper.convertToTreatments(
-            response.data
-          );
+          const treatments = this.treatmentConverter.convertMany(response.data);
           resolve(treatments);
         })
         .catch((e: any) => {
@@ -35,9 +33,7 @@ export class TreatmentService
       this.axiosInstance
         .get("api/treatments/" + id)
         .then((response: any) => {
-          const treatment = this.treatmentHelper.convertToTreatment(
-            response.data
-          );
+          const treatment = this.treatmentConverter.convert(response.data);
           resolve(treatment);
         })
         .catch((e: any) => {
@@ -51,7 +47,7 @@ export class TreatmentService
       this.axiosInstance
         .post("api/treatments", treatment)
         .then((response: any) => {
-          const createdTreatment = this.treatmentHelper.convertToTreatment(
+          const createdTreatment = this.treatmentConverter.convert(
             response.data
           );
           resolve(createdTreatment);
@@ -67,7 +63,7 @@ export class TreatmentService
       this.axiosInstance
         .put("api/treatments", treatment)
         .then((response: any) => {
-          const updatedTreatment = this.treatmentHelper.convertToTreatment(
+          const updatedTreatment = this.treatmentConverter.convert(
             response.data
           );
           resolve(updatedTreatment);
@@ -96,9 +92,7 @@ export class TreatmentService
       this.axiosInstance
         .post("api/treatments/search", treatmentSearch)
         .then((response: any) => {
-          const treatments = this.treatmentHelper.convertToTreatments(
-            response.data
-          );
+          const treatments = this.treatmentConverter.convertMany(response.data);
           resolve(treatments);
         })
         .catch((e: any) => {
