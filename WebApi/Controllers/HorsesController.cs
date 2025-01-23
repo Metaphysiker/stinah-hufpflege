@@ -11,9 +11,9 @@ namespace WebApi.Controllers;
 public class HorsesController : ControllerBase, IModelController<HorseDTO, HorseSearch>
 {
     private readonly DatabaseContext _db;
-    private readonly HorseDTOConveter _horseDTOConveter;
+    private readonly HorseDTOConverter _horseDTOConveter;
 
-    public HorsesController(DatabaseContext db, HorseDTOConveter horseDTOConveter)
+    public HorsesController(DatabaseContext db, HorseDTOConverter horseDTOConveter)
     {
         _db = db;
         _horseDTOConveter = horseDTOConveter;

@@ -1,12 +1,14 @@
 import { IHorse } from "../interfaces/IHorse";
 import { LocalIDFactory } from "@/helpers/LocalIDFactory";
 import { IFile } from "@/interfaces/IFile";
+import { ITreatmentDate } from "@/interfaces/ITreatmentDate";
 
 export class Horse implements IHorse {
   localID?: string;
   id?: number;
   name: string;
-  numberOfWeeksUntilNextTreatment: number;
+  numberOfWeeksUntilNextTreatmentHoofcare: number;
+  numberOfWeeksUntilNextTreatmentToothcare: number;
   birthYear: number;
   noteForNextTreatment: string;
   createdAt: Date;
@@ -15,12 +17,13 @@ export class Horse implements IHorse {
   fileKeysString: string;
   files: IFile[];
   treatmentIds: number[];
-  lastTimeTreated: Date | undefined;
+  treatmentDates: ITreatmentDate[];
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
     this.name = "";
-    this.numberOfWeeksUntilNextTreatment = 8;
+    this.numberOfWeeksUntilNextTreatmentHoofcare = 8;
+    this.numberOfWeeksUntilNextTreatmentToothcare = 8;
     this.birthYear = 0;
     this.noteForNextTreatment = "";
     this.createdAt = new Date();
@@ -29,5 +32,6 @@ export class Horse implements IHorse {
     this.fileKeysString = "";
     this.treatmentIds = [];
     this.files = [];
+    this.treatmentDates = [];
   }
 }

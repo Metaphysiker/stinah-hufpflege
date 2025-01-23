@@ -7,7 +7,12 @@ import { ITreatment } from "@/interfaces/ITreatment";
 import { Treatment } from "@/classes/Treatment";
 import NewModelCard from "../generics/NewModelCard.vue";
 import { HorseConverter } from "@/converters/HorseConverter";
-
+import { useTreatmentCategoryStore } from "@/stores/treatmentCategoryStore";
+import { storeToRefs } from "pinia";
+import { Translator } from "@/helpers/Translator";
+const treatmentCategoryStore = useTreatmentCategoryStore();
+const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
+const translator = new Translator();
 const props = defineProps({
   model: {
     required: true,
@@ -49,7 +54,11 @@ const labelForTreatments = computed(() => {
     return "Keine Behandlungen vorhanden";
   }
 
-  return `Letzte Behandlungen:`;
+  const translatedCategory = translator.translate(
+    selectedTreatmentCategory.value?.name
+  );
+
+  return `Letzte Behandlungen` + ` (${translatedCategory})`;
 });
 
 const newTreatment: Ref<ITreatment> = ref(new Treatment());
@@ -57,12 +66,23 @@ const newTreatment: Ref<ITreatment> = ref(new Treatment());
 const assignNewTreatment = () => {
   const treatment = new Treatment();
   treatment.horseId = props.model.id;
+  treatment.category = selectedTreatmentCategory.value?.name || "";
   newTreatment.value = treatment;
 };
 
 onBeforeMount(() => {
   assignNewTreatment();
+  updateTreatmentSearch();
 });
+
+const updateTreatmentSearch = () => {
+  if (selectedTreatmentCategory.value) {
+    treatmentSearch.value = {
+      ...treatmentSearch.value,
+      categories: [selectedTreatmentCategory.value.name],
+    };
+  }
+};
 
 const createTreatmentDialog = ref(false);
 

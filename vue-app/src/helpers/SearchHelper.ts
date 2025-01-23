@@ -2,7 +2,6 @@ import { ISearch } from "@/interfaces/ISearch";
 
 export class SearchHelper {
   updateSearch(sortBy: any, search: ISearch): ISearch {
-    console.log(sortBy);
     const firstSortBy = sortBy[0] as unknown as {
       key: string;
       order: string;

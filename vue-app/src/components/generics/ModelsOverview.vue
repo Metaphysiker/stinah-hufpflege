@@ -125,12 +125,10 @@ const createModelText = computed(() => {
 </script>
 
 <template>
-  <v-container fluid>
-    <tableComponent
-      :models="models"
-      @clickOnName="(model: T) => clickOnName(model)"
-    ></tableComponent>
-  </v-container>
+  <tableComponent
+    :models="models"
+    @clickOnName="(model: T) => clickOnName(model)"
+  ></tableComponent>
   <v-container fluid>
     <div class="d-flex justify-end">
       <v-btn @click="createModelDialog = true"> {{ createModelText }} </v-btn>

@@ -25,7 +25,7 @@ public class TreatmentCategoriesController : ControllerBase
     [HttpGet("setup")]
     public async Task<ActionResult<List<TreatmentCategory>>> Setup()
     {
-        List<String> list = ["hoofcare", "toothcare"];
+        List<String> list = ["general", "hoofcare", "toothcare"];
         foreach (var item in list)
         {
             var found = await _db.TreatmentCategories.FirstOrDefaultAsync(a => a.Name == item);

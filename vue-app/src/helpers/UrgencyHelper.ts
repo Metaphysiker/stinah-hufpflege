@@ -1,13 +1,20 @@
 import { IHorse } from "@/interfaces/IHorse";
 import { HorseHelper } from "./HorseHelper";
+import { HorseService } from "@/services/HorseService";
 
 export class UrgencyHelper {
-  horseHelper = new HorseHelper();
-  calculateUrgencyInDays(horse: IHorse) {
+  horseService: HorseService = new HorseService(undefined);
+  horseHelper = new HorseHelper(this.horseService);
+
+  constructor(horseHelper: HorseHelper) {
+    this.horseHelper = horseHelper;
+  }
+
+  calculateUrgencyInDays(horse: IHorse, category: string | undefined) {
     const now = new Date();
     const nextTreatmentDate = this.horseHelper.calculateNextTreatmentDate(
       horse,
-      "hoofcare"
+      category
     );
     if (nextTreatmentDate) {
       const difference = nextTreatmentDate.getTime() - now.getTime();
@@ -16,28 +23,28 @@ export class UrgencyHelper {
     return 0;
   }
 
-  isNextWeek(horse: IHorse) {
-    return this.calculateUrgencyInDays(horse) < 7;
+  isNextWeek(horse: IHorse, category: string | undefined) {
+    return this.calculateUrgencyInDays(horse, category) < 7;
   }
 
-  isNextMonth(horse: IHorse) {
-    return this.calculateUrgencyInDays(horse) < 30;
+  isNextMonth(horse: IHorse, category: string | undefined) {
+    return this.calculateUrgencyInDays(horse, category) < 30;
   }
 
-  getColorForUrgency(horse: IHorse) {
-    if (this.isNextWeek(horse)) {
+  getColorForUrgency(horse: IHorse, category: string | undefined) {
+    if (this.isNextWeek(horse, category)) {
       return "red";
-    } else if (this.isNextMonth(horse)) {
+    } else if (this.isNextMonth(horse, category)) {
       return "yellow";
     } else {
       return "white";
     }
   }
 
-  getClassForUrgency(horse: IHorse) {
-    if (this.isNextWeek(horse)) {
+  getClassForUrgency(horse: IHorse, category: string | undefined) {
+    if (this.isNextWeek(horse, category)) {
       return "bg-red";
-    } else if (this.isNextMonth(horse)) {
+    } else if (this.isNextMonth(horse, category)) {
       return "bg-yellow";
     } else {
       return "bg-white";

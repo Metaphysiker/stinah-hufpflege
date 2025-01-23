@@ -1,51 +1,106 @@
 <script setup lang="ts">
-import { inject, ref } from "vue";
+import { inject } from "vue";
 import type { IHorse } from "../../interfaces/IHorse";
 import { DateFormatter } from "../../helpers/DateFormatter";
 import { UrgencyHelper } from "../../helpers/UrgencyHelper";
 import { HorseHelper } from "@/helpers/HorseHelper";
 import { HorseService } from "@/services/HorseService";
 import { AxiosStatic } from "axios";
+import { useTreatmentCategoryStore } from "@/stores/treatmentCategoryStore";
+import { storeToRefs } from "pinia";
+import { Translator } from "@/helpers/Translator";
+const treatmentCategoryStore = useTreatmentCategoryStore();
+const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
 const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
 const horseHelper = new HorseHelper(horseService);
-const urgencyHelper = new UrgencyHelper();
+const urgencyHelper = new UrgencyHelper(horseHelper);
 const dateFormatter = new DateFormatter();
-const availableTableDataHeaders = ref([
-  { key: "name", title: "Name", selected: true },
-  {
-    key: "lastTimeTreated",
-    title: "Letze Behandlung",
-    selected: true,
-    sortRaw(a: IHorse, b: IHorse) {
-      const aDate =
-        horseHelper.getLastTimeTreated(a, "hoofcare")?.getTime() || 0;
-      const bDate =
-        horseHelper.getLastTimeTreated(b, "hoofcare")?.getTime() || 0;
-      return aDate - bDate;
-    },
-  },
-  {
-    key: "nextTreatmentDate",
-    title: "nächstes Mal",
-    selected: true,
-    sortRaw(a: IHorse, b: IHorse) {
-      const aDate =
-        horseHelper.getNextTreatmentDate(a, "hoofcare")?.getTime() || 0;
-      const bDate =
-        horseHelper.getNextTreatmentDate(b, "hoofcare")?.getTime() || 0;
+const translator = new Translator();
 
-      return aDate - bDate;
+const getHeaders = () => {
+  const category =
+    "(" + translator.translate(selectedTreatmentCategory.value?.name) + ")";
+  const titleForLastTimeTreated = "Letzte Behandlung " + category;
+
+  let showNumberOfWeeksUntilNextTreatmentHoofcare = false;
+  let showNumberOfWeeksUntilNextTreatmentToothcare = false;
+  let showNextTreatmentDate = false;
+
+  if (selectedTreatmentCategory.value?.name === "hoofcare") {
+    showNumberOfWeeksUntilNextTreatmentHoofcare = true;
+    showNextTreatmentDate = true;
+  } else if (selectedTreatmentCategory.value?.name === "toothcare") {
+    showNumberOfWeeksUntilNextTreatmentToothcare = true;
+    showNextTreatmentDate = true;
+  } else if (!selectedTreatmentCategory.value) {
+    showNumberOfWeeksUntilNextTreatmentHoofcare = true;
+    showNumberOfWeeksUntilNextTreatmentToothcare = true;
+    showNextTreatmentDate = true;
+  }
+
+  return [
+    { key: "name", title: "Name", selected: true },
+    {
+      key: "lastTimeTreated",
+      title: titleForLastTimeTreated,
+      selected: true,
+      sortRaw(a: IHorse, b: IHorse) {
+        const aDate =
+          horseHelper
+            .getLastTimeTreatedForCategory(
+              a,
+              selectedTreatmentCategory.value?.name
+            )
+            ?.getTime() || 0;
+        const bDate =
+          horseHelper
+            .getLastTimeTreatedForCategory(
+              b,
+              selectedTreatmentCategory.value?.name
+            )
+            ?.getTime() || 0;
+        return aDate - bDate;
+      },
     },
-  },
-  { key: "birthYear", title: "Alter", selected: true },
-  {
-    key: "numberOfWeeksUntilNextTreatment",
-    title: "Hufpflegerhythmus in Wochen",
-    selected: true,
-  },
-  { key: "action", title: "Aktion", selected: false },
-]);
+    {
+      key: "nextTreatmentDate",
+      title: "nächstes Mal",
+      selected: showNextTreatmentDate,
+      sortRaw(a: IHorse, b: IHorse) {
+        const aDate =
+          horseHelper
+            .calculateNextTreatmentDate(
+              a,
+              selectedTreatmentCategory.value?.name
+            )
+            ?.getTime() || 0;
+        const bDate =
+          horseHelper
+            .calculateNextTreatmentDate(
+              b,
+              selectedTreatmentCategory.value?.name
+            )
+            ?.getTime() || 0;
+
+        return aDate - bDate;
+      },
+    },
+    {
+      key: "numberOfWeeksUntilNextTreatmentHoofcare",
+      title: translator.translate("numberOfWeeksUntilNextTreatmentHoofcare"),
+      selected: showNumberOfWeeksUntilNextTreatmentHoofcare,
+    },
+    {
+      key: "numberOfWeeksUntilNextTreatmentToothcare",
+      title: translator.translate("numberOfWeeksUntilNextTreatmentToothcare"),
+      selected: showNumberOfWeeksUntilNextTreatmentToothcare,
+    },
+    { key: "birthYear", title: "Alter", selected: true },
+
+    { key: "action", title: "Aktion", selected: false },
+  ];
+};
 
 const isSpecialColumn = (header: string) => {
   return [
@@ -87,15 +142,31 @@ const emit = defineEmits<{
   clickOnName: [model: IHorse];
 }>();
 
-const lastTimeTreatedForHoofcare = (horse: IHorse) => {
-  const lastTimeTreatedDate =
-    horseHelper.getLastTimeTreated(horse, "hoofcare") || "";
-  if (!lastTimeTreatedDate) return "";
-  return dateFormatter.dddotmmdotyyyy(lastTimeTreatedDate);
+const lastTimeTreatedForCategory = (horse: IHorse) => {
+  if (selectedTreatmentCategory.value?.name) {
+    const foundLastTreatmentDate = horse.treatmentDates.find(
+      (treatmentDate) =>
+        treatmentDate.category === selectedTreatmentCategory.value?.name
+    );
+
+    if (foundLastTreatmentDate?.lastTimeTreated) {
+      return dateFormatter.dddotmmdotyyyy(
+        foundLastTreatmentDate.lastTimeTreated
+      );
+    }
+  }
+
+  return "";
 };
 
-const nextTreatmentDateForHoofcare = (horse: IHorse) => {
-  const nextTreatmentDate = horseHelper.getNextTreatmentDate(horse, "hoofcare");
+const nextTreatmentDateForCategory = (
+  horse: IHorse,
+  category: string | undefined
+) => {
+  const nextTreatmentDate = horseHelper.calculateNextTreatmentDate(
+    horse,
+    category
+  );
   if (!nextTreatmentDate) return "";
   return dateFormatter.dddotmmdotyyyy(nextTreatmentDate);
 };
@@ -103,7 +174,7 @@ const nextTreatmentDateForHoofcare = (horse: IHorse) => {
 
 <template>
   <v-data-table
-    :headers="availableTableDataHeaders.filter((h) => h.selected)"
+    :headers="getHeaders().filter((h) => h.selected)"
     :items="models"
     hide-default-footer
     :items-per-page="100"
@@ -111,7 +182,7 @@ const nextTreatmentDateForHoofcare = (horse: IHorse) => {
     <template v-slot:item="row">
       <tr>
         <td
-          v-for="header in availableTableDataHeaders.filter((h) => h.selected)"
+          v-for="header in getHeaders().filter((h) => h.selected)"
           :key="header.key"
         >
           <div v-if="row.item && row.item.hasOwnProperty(header.key)">
@@ -129,14 +200,24 @@ const nextTreatmentDateForHoofcare = (horse: IHorse) => {
             </template>
           </div>
           <template v-if="header.key === 'lastTimeTreated'">
-            {{ lastTimeTreatedForHoofcare(row.item) }}
+            {{ lastTimeTreatedForCategory(row.item) }}
           </template>
           <template v-if="header.key === 'nextTreatmentDate'">
             <div
               class="rounded pa-1 text-center"
-              :class="urgencyHelper.getClassForUrgency(row.item)"
+              :class="
+                urgencyHelper.getClassForUrgency(
+                  row.item,
+                  selectedTreatmentCategory?.name
+                )
+              "
             >
-              {{ nextTreatmentDateForHoofcare(row.item) }}
+              {{
+                nextTreatmentDateForCategory(
+                  row.item,
+                  selectedTreatmentCategory?.name
+                )
+              }}
             </div>
           </template>
           <template v-if="header.key === 'action'">

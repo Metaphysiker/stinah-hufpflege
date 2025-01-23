@@ -1,9 +1,11 @@
 import { IEntityWithFiles } from "./IEntityWithFiles";
 import { IModel } from "./IModel";
+import { ITreatmentDate } from "./ITreatmentDate";
 
 export interface IHorse extends IModel, IEntityWithFiles {
   name: string;
-  numberOfWeeksUntilNextTreatment: number;
+  numberOfWeeksUntilNextTreatmentHoofcare: number;
+  numberOfWeeksUntilNextTreatmentToothcare: number;
   birthYear: number;
   noteForNextTreatment: string;
   createdAt: Date;
@@ -11,5 +13,5 @@ export interface IHorse extends IModel, IEntityWithFiles {
   beschlagen: boolean;
   fileKeysString: string;
   treatmentIds: number[];
-  lastTimeTreated: Date | undefined;
+  treatmentDates: ITreatmentDate[];
 }

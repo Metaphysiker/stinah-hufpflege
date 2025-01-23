@@ -1,8 +1,8 @@
-public class HorseDTOConveter : IDtoConverter<Horse, HorseDTO>
+public class HorseDTOConverter : IDtoConverter<Horse, HorseDTO>
 {
 
     private readonly AutoMapperService _mapperService;
-    public HorseDTOConveter(AutoMapperService mapperService)
+    public HorseDTOConverter(AutoMapperService mapperService)
     {
         _mapperService = mapperService;
     }
@@ -18,7 +18,7 @@ public class HorseDTOConveter : IDtoConverter<Horse, HorseDTO>
     {
         HorseDTO horseDTO = _mapperService.mapper.Map<HorseDTO>(horse);
         horseDTO.TreatmentIds = horse.Treatments.Select(t => t.Id).ToList();
-        horseDTO.LastTimeTreated = horse.Treatments.Count > 0 ? horse.Treatments.Max(t => t.CreatedAt) : DateTime.UtcNow;
+        horseDTO.TreatmentDates = GetLastTimeTreatedForEachCategory(horse);
         return horseDTO;
     }
 
@@ -40,5 +40,23 @@ public class HorseDTOConveter : IDtoConverter<Horse, HorseDTO>
             horses.Add(Convert(horseDTO));
         }
         return horses;
+    }
+
+    public List<TreatmentDate> GetLastTimeTreatedForEachCategory(Horse horse)
+    {
+        List<TreatmentDate> treatmentDates = new List<TreatmentDate>();
+        var categories = horse.Treatments.Select(t => t.Category).Distinct();
+        foreach (var category in categories)
+        {
+            TreatmentDate treatmentDate = new TreatmentDate();
+            treatmentDate.Category = category;
+            if (horse.Treatments.Where(t => t.Category == category).Count() > 0)
+            {
+                treatmentDate.LastTimeTreated = horse.Treatments.Where(t => t.Category == category).Max(t => t.Date);
+                treatmentDates.Add(treatmentDate);
+            }
+
+        }
+        return treatmentDates;
     }
 }

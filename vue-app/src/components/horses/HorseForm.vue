@@ -21,21 +21,25 @@ const props = defineProps({
   },
 });
 
-const nextTreatmentDateForHoofcare = computed(() => {
+const nextTreatmentDateForCategory = (
+  category: string | undefined,
+  numberOfWeeks: number
+) => {
   if (horseToBeEdited.value) {
-    const lastTimeTreated = horseHelper.getLastTimeTreated(
+    const lastTimeTreated = horseHelper.calculateHypotheticalNextTreatmentDate(
       horseToBeEdited.value,
-      "hoofcare"
+      category,
+      numberOfWeeks
     );
     if (!lastTimeTreated) return "";
     return dateFormatter.dddotmmdotyyyy(lastTimeTreated);
   }
   return "";
-});
+};
 
-const lastTimeTreatedForHoofcare = computed(
-  () => horseHelper.getLastTimeTreated(horseToBeEdited.value, "hoofcare") || ""
-);
+const age = computed(() => {
+  return new Date().getFullYear() - horseToBeEdited.value.birthYear;
+});
 </script>
 <template>
   <v-text-field
@@ -44,31 +48,63 @@ const lastTimeTreatedForHoofcare = computed(
     v-model="horseToBeEdited.name"
     variant="underlined"
   ></v-text-field>
-  <v-text-field
-    readonly
-    label="Letzte Behandlung"
-    v-model="lastTimeTreatedForHoofcare"
-    variant="underlined"
-    type="date"
-  ></v-text-field>
 
-  <v-text-field
-    :readonly="props.readonly"
-    label="Hufpflegerhythmus in Wochen"
-    v-model="horseToBeEdited.numberOfWeeksUntilNextTreatment"
-    variant="underlined"
-    type="number"
-  ></v-text-field>
-  <div class="my-2">
-    Nächste Behandlung: <strong>{{ nextTreatmentDateForHoofcare }}</strong>
-  </div>
-  <v-text-field
-    :readonly="props.readonly"
-    label="Jahrgang"
-    v-model="horseToBeEdited.birthYear"
-    variant="underlined"
-    type="number"
-  ></v-text-field>
+  <v-card class="mb-3" variant="outlined">
+    <v-card-text>
+      <v-text-field
+        :readonly="props.readonly"
+        label="Hufpflegerhythmus in Wochen"
+        v-model="horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcare"
+        variant="underlined"
+        type="number"
+      ></v-text-field>
+      <div class="my-2">
+        Nächste Behandlung:
+        <strong>{{
+          nextTreatmentDateForCategory(
+            "hoofcare",
+            horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcare
+          )
+        }}</strong>
+      </div>
+    </v-card-text>
+  </v-card>
+
+  <v-card class="mb-3" variant="outlined">
+    <v-card-text>
+      <v-text-field
+        :readonly="props.readonly"
+        label="Zahnpflegerhythmus in Wochen"
+        v-model="horseToBeEdited.numberOfWeeksUntilNextTreatmentToothcare"
+        variant="underlined"
+        type="number"
+      ></v-text-field>
+      <div class="my-2" elevation-2>
+        Nächste Behandlung:
+        <strong>{{
+          nextTreatmentDateForCategory(
+            "toothcare",
+            horseToBeEdited.numberOfWeeksUntilNextTreatmentToothcare
+          )
+        }}</strong>
+      </div>
+    </v-card-text>
+  </v-card>
+
+  <v-card class="mb-3" variant="outlined">
+    <v-card-text>
+      <v-text-field
+        :readonly="props.readonly"
+        label="Jahrgang"
+        v-model="horseToBeEdited.birthYear"
+        variant="underlined"
+        type="number"
+      ></v-text-field>
+      <br />
+      <strong>Alter: </strong>{{ age }}
+    </v-card-text>
+  </v-card>
+
   <v-checkbox
     :readonly="props.readonly"
     label="Beschlagen?"

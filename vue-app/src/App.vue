@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import { inject, onBeforeMount, onMounted, Ref, ref } from "vue";
+import { inject, onBeforeMount, ref, watch } from "vue";
 import { useTreatmentCategoryStore } from "./stores/treatmentCategoryStore";
 import { storeToRefs } from "pinia";
-import { Translator } from "./helpers/Translator";
 import WaitingComponent from "./components/waiting/WaitingComponent.vue";
 import { AxiosStatic } from "axios";
 import { TreatmentCategoryService } from "./services/TreatmentCategoryService";
-import { ITreatmentCategory } from "./interfaces/ITreatmentCategory";
+import TreatmentCategorySelecter from "./components/TreatmentCategorySelecter.vue";
 
-const translator = new Translator();
 const treatmentCategoryStore = useTreatmentCategoryStore();
-const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
+const { treatmentCategories, selectedTreatmentCategory } = storeToRefs(
+  treatmentCategoryStore
+);
 const axios: AxiosStatic | undefined = inject("axios");
 const treatmentCategoryService = new TreatmentCategoryService(axios);
-const treatmentCategories: Ref<ITreatmentCategory[]> = ref([]);
 
 onBeforeMount(() => {
   treatmentCategoryService.ReadAll().then((response) => {
@@ -22,6 +21,12 @@ onBeforeMount(() => {
       selectedTreatmentCategory.value = treatmentCategories.value[0];
     }
   });
+});
+
+const mainKey = ref(0);
+
+watch(selectedTreatmentCategory, () => {
+  mainKey.value++;
 });
 </script>
 
@@ -33,22 +38,13 @@ onBeforeMount(() => {
           <div class="me-10"><v-app-bar-title>Pflege</v-app-bar-title></div>
           <div>
             <div style="width: 12rem" class="d-flex align-center h-100">
-              <v-select
-                v-model="selectedTreatmentCategory"
-                density="comfortable"
-                :hide-details="true"
-                single-line
-                label="Kategorie"
-                :item-title="(item) => translator.translate(item.name)"
-                :items="treatmentCategories"
-              ></v-select>
+              <TreatmentCategorySelecter />
             </div>
           </div>
         </div>
       </v-container>
     </v-app-bar>
-    <v-main> <RouterView /></v-main>
-
+    <v-main :key="mainKey"> <RouterView /></v-main>
     <WaitingComponent />
   </v-app>
 </template>

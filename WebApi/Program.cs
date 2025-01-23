@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddScoped<AutoMapperService>();
-builder.Services.AddScoped<HorseDTOConveter>();
+builder.Services.AddScoped<HorseDTOConverter>();
 builder.Services.AddScoped<TreatmentDTOConverter>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>

@@ -6,6 +6,10 @@ import { IHorse } from "@/interfaces/IHorse";
 import { HorseService } from "@/services/HorseService";
 import { AxiosStatic } from "axios";
 import { IHorseSearch } from "@/interfaces/IHorseSearch";
+import { storeToRefs } from "pinia";
+import { useTreatmentCategoryStore } from "@/stores/treatmentCategoryStore";
+import { ITreatmentCategory } from "@/interfaces/ITreatmentCategory";
+import { Translator } from "@/helpers/Translator";
 const treatmentToBeEdited = defineModel({
   required: true,
   type: Object as () => ITreatment,
@@ -14,8 +18,15 @@ const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
 const horses: Ref<IHorse[]> = ref([]);
 const selectedHorseId: Ref<number | null> = ref(null);
+const treatmentCategoriesCopy = ref<ITreatmentCategory[]>([]);
+const treatmentCategoryStore = useTreatmentCategoryStore();
+const { treatmentCategories } = storeToRefs(treatmentCategoryStore);
+const translator = new Translator();
 
 onBeforeMount(() => {
+  console.log("mounted");
+  console.log(treatmentToBeEdited.value);
+  treatmentCategoriesCopy.value = [...treatmentCategories.value];
   const horseSearch: IHorseSearch = {
     page: 0,
     pageSize: 300,
@@ -46,7 +57,17 @@ const horseSelected = () => {
     @update:model-value="horseSelected()"
   ></v-autocomplete>
 
-  <DateSelecter label="Datum" v-model="treatmentToBeEdited.date" />
+  <v-select
+    v-model="treatmentToBeEdited.category"
+    :hide-details="true"
+    label="Kategorie"
+    :item-title="(item) => translator.translate(item.name)"
+    :item-value="(item) => item.name"
+    :items="treatmentCategoriesCopy"
+  ></v-select>
+  <div class="my-2">
+    <DateSelecter label="Datum" v-model="treatmentToBeEdited.date" />
+  </div>
 
   <v-textarea
     label="Notiz"

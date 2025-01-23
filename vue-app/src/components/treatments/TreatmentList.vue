@@ -8,6 +8,7 @@ import { inject, Ref, ref, watch } from "vue";
 import ModelCard from "../generics/ModelCard.vue";
 import { Cloner } from "@/helpers/Cloner";
 import { SearchHelper } from "@/helpers/SearchHelper";
+import { Translator } from "@/helpers/Translator";
 const dateFormatter = new DateFormatter();
 const axios: AxiosStatic | undefined = inject("axios");
 const treatmentService = new TreatmentService(axios);
@@ -85,6 +86,7 @@ const serverItems = ref<ITreatment[]>([]);
 const totalItems = ref(0);
 const loadingItems = ref(false);
 const searchHelper = new SearchHelper();
+const translator = new Translator();
 
 const loadItems = ({
   page,
@@ -117,13 +119,13 @@ const loadItems = ({
 
 const availableTableDataHeaders = ref([
   { key: "date", title: "Datum", selected: true },
-  { key: "category", title: "Kategorie", selected: false },
+  { key: "category", title: "Kategorie", selected: true },
   { key: "name", title: "Name", selected: false },
   { key: "note", title: "Notiz", selected: true },
 ]);
 
 const isSpecialColumn = (header: string) => {
-  return ["name", "date", "note"].includes(header);
+  return ["name", "date", "note", "category"].includes(header);
 };
 
 const clickOnName = (model: ITreatment) => {
@@ -174,6 +176,9 @@ const itemsPerPageOptions = [
                 <v-btn @click="clickOnName(row.item)">{{
                   row.item["name"]
                 }}</v-btn>
+              </template>
+              <template v-if="header.key === 'category'">
+                {{ translator.translate(row.item["category"]) }}
               </template>
               <template v-if="header.key === 'date'">
                 <v-btn @click="clickOnName(row.item)">

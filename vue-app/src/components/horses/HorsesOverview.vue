@@ -3,7 +3,5 @@ import ModelsOverview from "../generics/ModelsOverview.vue";
 </script>
 
 <template>
-  <v-container fluid>
-    <ModelsOverview interface-name="IHorse"></ModelsOverview>
-  </v-container>
+  <ModelsOverview interface-name="IHorse"></ModelsOverview>
 </template>

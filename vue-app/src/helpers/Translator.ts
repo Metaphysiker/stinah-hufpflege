@@ -6,11 +6,15 @@ export class Translator {
     tooth: "Zahn",
     hoofcare: "Hufpflege",
     toothcare: "Zahnpflege",
+    general: "Allgemein",
     IHorse: "Pferd",
     ITreatment: "Behandlung",
+    numberOfWeeksUntilNextTreatmentHoofcare: "Hufpflege-Rhythmus in Wochen",
+    numberOfWeeksUntilNextTreatmentToothcare: "Zahnpflege-Rhythmus in Wochen",
   };
 
-  translate(key: string): string {
+  translate(key: string | undefined): string {
+    if (!key) return "";
     return this.dictionary[key];
   }
 }
