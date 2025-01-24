@@ -33,6 +33,7 @@ const translator = new Translator();
 
 const reload = () => {
   return new Promise<void>((resolve) => {
+    console.log("reload");
     let search;
     if (props.search) {
       search = props.search;
@@ -103,6 +104,7 @@ const deleted = () => {
 };
 
 const save = (savedModel: T) => {
+  console.log("save");
   reload().then(() => {
     const found = entityFinder.findByIdOrLocalID<T>(
       models.value,

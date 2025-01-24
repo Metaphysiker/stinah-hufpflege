@@ -10,8 +10,6 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["edit"]);
-
 const modelClone = ref<ITreatment | undefined>(undefined);
 const treatmentConverter = new TreatmentConverter();
 
