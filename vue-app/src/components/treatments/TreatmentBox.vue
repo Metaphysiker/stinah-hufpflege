@@ -2,7 +2,8 @@
 import { ref, watch } from "vue";
 import { ITreatment } from "@/interfaces/ITreatment";
 import { TreatmentConverter } from "@/converters/TreatmentConverter";
-
+import { DateFormatter } from "@/helpers/DateFormatter";
+const dateFormatter = new DateFormatter();
 const props = defineProps({
   model: {
     required: true,
@@ -33,10 +34,12 @@ defineEmits<{
   <slot></slot>
 
   <div>
-    <div class="d-flex align-items-center">
-      <div style="white-space: break-spaces">
-        {{ model.note }}
-      </div>
+    <p>
+      <strong>Datum: </strong> {{ dateFormatter.dddotmmdotyyyy(model.date) }}
+    </p>
+    <div style="white-space: break-spaces">
+      <strong>Notiz: </strong><br />
+      {{ model.note }}
     </div>
   </div>
 </template>

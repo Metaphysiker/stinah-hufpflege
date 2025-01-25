@@ -117,9 +117,9 @@ const loadItems = ({
 };
 
 const availableTableDataHeaders = ref([
-  { key: "name", title: "Name", selected: true },
-  { key: "createdAt", title: "Erstellt am", selected: true },
-  { key: "fileKeyString", title: "Datei", selected: true },
+  { key: "name", title: "Datei", selected: true },
+  { key: "createdAt", title: "Erstellt am:", selected: true },
+  { key: "fileKeyString", title: "Datei", selected: false },
 ]);
 
 const isSpecialColumn = (header: string) => {

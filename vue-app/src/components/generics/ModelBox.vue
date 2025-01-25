@@ -158,6 +158,7 @@ watch(
           >
         </v-col>
       </v-row>
+      <v-divider></v-divider>
     </boxComponent>
     <v-divider class="mt-3"></v-divider>
   </div>

@@ -95,6 +95,19 @@ public class FilesController : ControllerBase, IModelController<FileDTO, FileSea
             query = query.Where(t => t.Horse != null && t.Horse.Id == search.HorseId);
         }
 
+        if (search.SortBy != null)
+        {
+            if (search.SortBy == "CreatedAt")
+            {
+                query = query.OrderBy(t => t.CreatedAt);
+            }
+
+            if (search.SortOrder != null && search.SortOrder == "descending")
+            {
+                query = query.Reverse();
+            }
+        }
+
         PaginationDTO<FileDTO> paginationDTO = new PaginationDTO<FileDTO>();
         paginationDTO.TotalItems = await query.CountAsync();
 

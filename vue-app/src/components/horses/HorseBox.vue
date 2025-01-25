@@ -169,9 +169,14 @@ const nextTreatmentDateForCategory = (
 <template>
   <slot></slot>
   <div>
-    <h3>{{ model.name }}</h3>
-    <p>Alter: {{ age }} Jahre</p>
-    <p>Geboren: {{ model.birthYear }}</p>
+    <p><strong>Name: </strong>{{ model.name }}</p>
+    <p><strong>Alter: </strong>{{ age }}</p>
+    <p><strong>Geboren: </strong>{{ model.birthYear }}</p>
+    <div style="white-space: pre-line">
+      <strong>Patenschaften: </strong><br />
+      {{ model.patenschaften }}
+    </div>
+
     <v-divider class="my-2"> </v-divider>
     <div
       v-for="treatmentDate of model.treatmentDates"
