@@ -18,6 +18,7 @@ public class HorseDTOConverter : IDtoConverter<Horse, HorseDTO>
     {
         HorseDTO horseDTO = _mapperService.mapper.Map<HorseDTO>(horse);
         horseDTO.TreatmentIds = horse.Treatments.Select(t => t.Id).ToList();
+        horseDTO.FileIds = horse.Files.Select(f => f.Id).ToList();
         horseDTO.TreatmentDates = GetLastTimeTreatedForEachCategory(horse);
         return horseDTO;
     }

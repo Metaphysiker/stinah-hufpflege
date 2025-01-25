@@ -7,6 +7,7 @@ import { SearchHelper } from "@/helpers/SearchHelper";
 import { IFile } from "@/interfaces/IFile";
 import { IFileSearch } from "@/interfaces/IFileSearch";
 import { FileService } from "@/services/FileService";
+import { DateFormatter } from "@/helpers/DateFormatter";
 const axios: AxiosStatic | undefined = inject("axios");
 const fileService = new FileService(axios);
 const files: Ref<IFile[]> = ref([]);
@@ -20,7 +21,7 @@ const props = defineProps({
 
 const fileSearch: Ref<IFileSearch | undefined> = ref(undefined);
 
-const getTreatments = () => {
+const getFiles = () => {
   return new Promise<void>((resolve) => {
     if (!fileSearch.value) {
       resolve();
@@ -37,7 +38,7 @@ watch(
   () => props.fileSearch,
   () => {
     fileSearch.value = cloner.clone(props.fileSearch);
-    getTreatments();
+    getFiles();
   },
   { immediate: true }
 );
@@ -52,7 +53,7 @@ const openFile = (file: IFile) => {
 const clickedOnFile: Ref<IFile | undefined> = ref(undefined);
 
 const reload = () => {
-  getTreatments().then(() => {
+  getFiles().then(() => {
     const found = files.value.find(
       (file) => file.id === clickedOnFile.value?.id
     );
@@ -87,6 +88,7 @@ const serverItems = ref<IFile[]>([]);
 const totalItems = ref(0);
 const loadingItems = ref(false);
 const searchHelper = new SearchHelper();
+const dateFormatter = new DateFormatter();
 
 const loadItems = ({
   page,
@@ -115,14 +117,13 @@ const loadItems = ({
 };
 
 const availableTableDataHeaders = ref([
-  { key: "date", title: "Datum", selected: true },
-  { key: "category", title: "Kategorie", selected: true },
-  { key: "name", title: "Name", selected: false },
-  { key: "note", title: "Notiz", selected: true },
+  { key: "name", title: "Name", selected: true },
+  { key: "createdAt", title: "Erstellt am", selected: true },
+  { key: "fileKeyString", title: "Datei", selected: true },
 ]);
 
 const isSpecialColumn = (header: string) => {
-  return ["name", "date", "note", "category"].includes(header);
+  return ["name", "createdAt"].includes(header);
 };
 
 const clickOnName = (model: IFile) => {
@@ -167,10 +168,12 @@ const itemsPerPageOptions = [
                   row.item["name"]
                 }}</v-btn>
               </template>
-              <template v-if="header.key === 'date'">
-                <v-btn @click="clickOnName(row.item)">
-                  {{ row.item["name"] }}
-                </v-btn>
+              <template v-if="header.key === 'createdAt'">
+                {{
+                  row.item["createdAt"]
+                    ? dateFormatter.dddotmmdotyyyy(row.item["createdAt"])
+                    : ""
+                }}
               </template>
             </div>
           </td>

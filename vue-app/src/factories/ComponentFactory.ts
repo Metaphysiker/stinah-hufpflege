@@ -7,6 +7,8 @@ import TreatmentCard from "@/components/treatments/TreatmentCard.vue";
 import TreatmentForm from "@/components/treatments/TreatmentForm.vue";
 import TreatmentBox from "@/components/treatments/TreatmentBox.vue";
 import TreatmentsTable from "@/components/treatments/TreatmentsTable.vue";
+import FileBox from "@/components/files/FileBox.vue";
+import FileForm from "@/components/files/FileForm.vue";
 export class ComponentFactory {
   static createComponent(
     interfaceName: string,
@@ -39,6 +41,23 @@ export class ComponentFactory {
               return TreatmentForm;
             case "Table":
               return TreatmentsTable;
+            default:
+              throw new Error("Unknown component");
+          }
+        }
+      case "IFile":
+        if (componentName) {
+          switch (componentName) {
+            case "Box":
+              return FileBox;
+            case "Card":
+              //return FileCard;
+              throw new Error("FileCard not implemented");
+            case "Form":
+              return FileForm;
+            case "Table":
+              //return FilesTable;
+              throw new Error("FilesTable not implemented");
             default:
               throw new Error("Unknown component");
           }

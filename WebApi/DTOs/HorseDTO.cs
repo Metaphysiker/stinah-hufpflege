@@ -12,5 +12,6 @@ public class HorseDTO : IDTO
     public string FileKeysString { get; set; } = string.Empty;
     public DateTime LastTimeTreated { get; set; } = DateTime.UtcNow;
     public ICollection<int> TreatmentIds { get; set; } = new List<int>();
+    public ICollection<int> FileIds { get; set; } = new List<int>();
     public ICollection<TreatmentDate> TreatmentDates { get; set; } = new List<TreatmentDate>();
 }

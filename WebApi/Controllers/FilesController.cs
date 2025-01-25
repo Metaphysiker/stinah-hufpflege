@@ -41,14 +41,15 @@ public class FilesController : ControllerBase, IModelController<FileDTO, FileSea
     [HttpPost]
     public async Task<ActionResult<FileDTO>> Create([FromBody] FileDTO dto)
     {
-        await _db.AddAsync(dto);
+        var model = _fileDTOConverter.Convert(dto);
+        await _db.AddAsync(model);
         _db.SaveChanges();
-        var createdFile = await _db.Files.FindAsync(dto.Id);
-        if (createdFile == null)
+        var createdModel = await _db.Files.FindAsync(model.Id);
+        if (createdModel == null)
         {
             return BadRequest();
         }
-        return _fileDTOConverter.Convert(createdFile);
+        return _fileDTOConverter.Convert(createdModel);
     }
 
     [HttpPut]

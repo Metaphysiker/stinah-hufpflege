@@ -8,10 +8,11 @@ export class File implements IFile {
   createdAt: Date;
   updatedAt: Date;
   fileKeyString: string;
+  horseId?: number;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
-    this.name = "";
+    this.name = "Datei";
     this.createdAt = new Date();
     this.updatedAt = new Date();
     this.fileKeyString = "";

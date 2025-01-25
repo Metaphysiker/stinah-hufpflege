@@ -5,4 +5,5 @@ export interface IFile extends IModel {
   createdAt: Date;
   updatedAt: Date;
   fileKeyString: string;
+  horseId?: number;
 }

@@ -16,6 +16,8 @@ import { AxiosStatic } from "axios";
 import { DateFormatter } from "@/helpers/DateFormatter";
 import FileList from "../files/FileList.vue";
 import { IFileSearch } from "@/interfaces/IFileSearch";
+import { File } from "@/classes/File";
+import { IFile } from "@/interfaces/IFile";
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
 const translator = new Translator();
@@ -84,7 +86,16 @@ const labelForTreatments = computed(() => {
   return `Letzte Behandlungen` + ` (${translatedCategory})`;
 });
 
+const labelForFiles = computed(() => {
+  if (props.model.fileIds.length === 0) {
+    return "Keine Dateien vorhanden";
+  }
+
+  return `Letzte Dateien`;
+});
+
 const newTreatment: Ref<ITreatment> = ref(new Treatment());
+const newFile: Ref<IFile> = ref(new File());
 
 const assignNewTreatment = () => {
   const treatment = new Treatment();
@@ -93,8 +104,15 @@ const assignNewTreatment = () => {
   newTreatment.value = treatment;
 };
 
+const assignNewFile = () => {
+  const file = new File();
+  file.horseId = props.model.id;
+  newFile.value = file;
+};
+
 onBeforeMount(() => {
   assignNewTreatment();
+  assignNewFile();
   updateTreatmentSearch();
 });
 
@@ -108,10 +126,17 @@ const updateTreatmentSearch = () => {
 };
 
 const createTreatmentDialog = ref(false);
+const createFileDialog = ref(false);
 
 const treatmentCreated = () => {
   treatmentListKey.value++;
   createTreatmentDialog.value = false;
+  emit("saved", props.model);
+};
+
+const fileCreated = () => {
+  fileListKey.value++;
+  createFileDialog.value = false;
   emit("saved", props.model);
 };
 
@@ -121,6 +146,11 @@ const fileListKey = ref(0);
 const addTreatment = () => {
   assignNewTreatment();
   createTreatmentDialog.value = true;
+};
+
+const addFile = () => {
+  assignNewFile();
+  createFileDialog.value = true;
 };
 
 const nextTreatmentDateForCategory = (
@@ -171,6 +201,15 @@ const nextTreatmentDateForCategory = (
       @reload="emit('reload')"
     ></TreatmentList>
 
+    <div class="d-flex justify-start">
+      <v-btn @click="addFile()" elevation="3" class="my-3">
+        Datei hinzufügen
+      </v-btn>
+    </div>
+    <v-divider class="my-2"> </v-divider>
+    <div>
+      <strong>{{ labelForFiles }}</strong>
+    </div>
     <FileList
       :key="fileListKey"
       :file-search="fileSearch"
@@ -185,6 +224,17 @@ const nextTreatmentDateForCategory = (
         :model-blueprint="newTreatment"
         @created="treatmentCreated()"
         @close="createTreatmentDialog = false"
+      ></NewModelCard>
+    </v-card>
+  </v-dialog>
+
+  <v-dialog fullscreen v-model="createFileDialog">
+    <v-card>
+      <NewModelCard
+        interface-name="IFile"
+        :model-blueprint="newFile"
+        @created="fileCreated()"
+        @close="createFileDialog = false"
       ></NewModelCard>
     </v-card>
   </v-dialog>

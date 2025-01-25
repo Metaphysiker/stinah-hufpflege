@@ -4,6 +4,7 @@ import { IModelController } from "@/interfaces/IModelController";
 import { ISearch } from "@/interfaces/ISearch";
 import { IModel } from "@/interfaces/IModel";
 import { TreatmentService } from "@/services/TreatmentService";
+import { FileService } from "@/services/FileService";
 
 export class ServiceFactory {
   static createService(
@@ -15,6 +16,8 @@ export class ServiceFactory {
         return new HorseService(axios);
       case "ITreatment":
         return new TreatmentService(axios);
+      case "IFile":
+        return new FileService(axios);
       default:
         throw new Error("Unknown type");
     }

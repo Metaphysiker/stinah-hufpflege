@@ -9,6 +9,7 @@ export class Translator {
     general: "Allgemein",
     IHorse: "Pferd",
     ITreatment: "Behandlung",
+    IFile: "Datei",
     numberOfWeeksUntilNextTreatmentHoofcare: "Hufpflege-Rhythmus in Wochen",
     numberOfWeeksUntilNextTreatmentToothcare: "Zahnpflege-Rhythmus in Wochen",
   };

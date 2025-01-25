@@ -1,3 +1,4 @@
+import { FileConverter } from "@/converters/FileConverter";
 import { HorseConverter } from "@/converters/HorseConverter";
 import { TreatmentConverter } from "@/converters/TreatmentConverter";
 import { IConverter } from "@/interfaces/IConverter";
@@ -10,6 +11,8 @@ export class ConverterFactory {
         return new HorseConverter();
       case "ITreatment":
         return new TreatmentConverter();
+      case "IFile":
+        return new FileConverter();
       default:
         throw new Error("Unknown type");
     }

@@ -18,6 +18,7 @@ export class Horse implements IHorse {
   files: IFile[];
   treatmentIds: number[];
   treatmentDates: ITreatmentDate[];
+  fileIds: number[];
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
@@ -33,5 +34,6 @@ export class Horse implements IHorse {
     this.treatmentIds = [];
     this.files = [];
     this.treatmentDates = [];
+    this.fileIds = [];
   }
 }

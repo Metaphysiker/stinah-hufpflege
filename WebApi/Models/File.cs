@@ -5,5 +5,7 @@ public class File : IModel
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public string FileKeyString { get; set; } = string.Empty;
+    public int? HorseId { get; set; }
+    public Horse? Horse { get; set; }
 
 }
