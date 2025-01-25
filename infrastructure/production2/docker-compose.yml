@@ -1,0 +1,45 @@
+name: stinah-pflege-production
+services:
+  webapi:
+    build:
+      context: ../../WebApi
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT_BACKEND}:8080"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+  vue:
+    build:
+      context: ../../vue-app
+      dockerfile: Dockerfile
+      target: production-stage
+      args:
+        VITE_API_BASE_URL: "${API_BASE_URL}"
+    volumes:
+      - ../../vue-app/src:/app/src
+    env_file:
+      - .env
+    ports:
+      - "${PORT_FRONTEND}:80"
+    depends_on:
+      - webapi
+  dotnet:
+    build: ../../tools/dotnet
+    volumes:
+      - ../../:/app
+    env_file:
+      - .env
+    entrypoint: sh -c "cd WebApi && dotnet ef database update"
+    depends_on:
+      - webapi
+  postgres:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
