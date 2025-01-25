@@ -8,7 +8,9 @@ const fileService = new FileService(axios);
 
 const errorMessages = ref<string[]>([]);
 
-const emit = defineEmits(["filesUploaded"]);
+const emit = defineEmits<{
+  filesUploaded: [fileKeyStrings: string[]];
+}>();
 
 const loading = ref(false);
 

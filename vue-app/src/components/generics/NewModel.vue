@@ -11,11 +11,16 @@ import { storeToRefs } from "pinia";
 import { IConverter } from "@/interfaces/IConverter";
 import { ConverterFactory } from "@/factories/ConverterFactory";
 import { ClassFactory } from "@/factories/ClassFactory";
+import { IValidator } from "@/validators/IValidator";
+import { ValidatorFactory } from "@/factories/ValidatorFactory";
+import { ValidationHelper } from "@/helpers/ValidationHelper";
 const axios: AxiosStatic | undefined = inject("axios");
 const editModelDialog = ref(false);
 const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
 const formComponent: ShallowRef<any | undefined> = shallowRef(undefined);
 const converter: Ref<IConverter<T> | undefined> = ref(undefined);
+const validator: Ref<IValidator<T> | undefined> = ref(undefined);
+const validationHelper = new ValidationHelper();
 const waitingStore = useWaitingStore();
 const { waiting } = storeToRefs(waitingStore);
 const props = defineProps({
@@ -49,6 +54,10 @@ onBeforeMount(() => {
     "Form"
   );
 
+  validator.value = ValidatorFactory.createValidator(
+    props.interfaceName
+  ) as IValidator<T>;
+
   if (props.modelBlueprint) {
     modelClone.value = converter.value.convert(props.modelBlueprint);
   } else {
@@ -56,11 +65,18 @@ onBeforeMount(() => {
       props.interfaceName
     ) as T;
   }
+  validate();
 });
 
 const emit = defineEmits<{
   created: [model: T];
 }>();
+
+const validate = () => {
+  if (modelClone.value) {
+    validator.value?.validate(modelClone.value);
+  }
+};
 
 const createModel = () => {
   if (modelClone.value) {
@@ -75,10 +91,14 @@ const createModel = () => {
 </script>
 <template>
   <div class="" v-if="modelClone">
-    <formComponent v-model="modelClone"> </formComponent>
+    <formComponent v-model="modelClone" @validate="validate()"> </formComponent>
     <v-divider class="mt-3"></v-divider>
     <div>
-      <v-btn @click="createModel()">Speichern</v-btn>
+      <v-btn
+        :disabled="validationHelper.hasValidationIssues(modelClone)"
+        @click="createModel()"
+        >Speichern</v-btn
+      >
     </div>
   </div>
 </template>

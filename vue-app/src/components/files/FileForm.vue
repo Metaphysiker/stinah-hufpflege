@@ -5,6 +5,7 @@ import { AxiosStatic } from "axios";
 import { IHorseSearch } from "@/interfaces/IHorseSearch";
 import { IFile } from "@/interfaces/IFile";
 import { HorseService } from "@/services/HorseService";
+import NewFile from "./NewFile.vue";
 const fileToBeEdited = defineModel({
   required: true,
   type: Object as () => IFile,
@@ -27,12 +28,22 @@ onBeforeMount(() => {
   });
 });
 
+const emit = defineEmits<{
+  validate: [void];
+}>();
+
 const horseSelected = () => {
   if (selectedHorseId.value) {
     fileToBeEdited.value.horseId = selectedHorseId.value;
   } else {
     fileToBeEdited.value.horseId = undefined;
   }
+  emit("validate");
+};
+
+const filesUploaded = (fileKeyStrings: string[]) => {
+  fileToBeEdited.value.fileKeyStrings = fileKeyStrings;
+  emit("validate");
 };
 </script>
 <template>
@@ -44,4 +55,25 @@ const horseSelected = () => {
     item-value="id"
     @update:model-value="horseSelected()"
   ></v-autocomplete>
+  <div
+    v-if="
+      fileToBeEdited.fileKeyStrings && fileToBeEdited.fileKeyStrings.length == 0
+    "
+  >
+    <NewFile
+      @files-uploaded="(fileKeyStrings: string[]) => filesUploaded(fileKeyStrings)"
+    ></NewFile>
+  </div>
+  <div
+    v-if="
+      fileToBeEdited.fileKeyStrings && fileToBeEdited.fileKeyStrings.length > 0
+    "
+  >
+    <p><strong>Hochgeladene Dateien:</strong></p>
+    <ul>
+      <li v-for="fileKey in fileToBeEdited.fileKeyStrings" :key="fileKey">
+        - {{ fileKey }}
+      </li>
+    </ul>
+  </div>
 </template>

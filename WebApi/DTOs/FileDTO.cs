@@ -5,5 +5,6 @@ public class FileDTO : IDTO
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public string FileKeyString { get; set; } = string.Empty;
+    public List<string> FileKeyStrings { get; set; } = new List<string>();
     public int? HorseId { get; set; }
 }

@@ -8,6 +8,7 @@ export class File implements IFile {
   createdAt: Date;
   updatedAt: Date;
   fileKeyString: string;
+  fileKeyStrings: string[];
   horseId?: number;
 
   constructor() {
@@ -16,5 +17,6 @@ export class File implements IFile {
     this.createdAt = new Date();
     this.updatedAt = new Date();
     this.fileKeyString = "";
+    this.fileKeyStrings = [];
   }
 }
