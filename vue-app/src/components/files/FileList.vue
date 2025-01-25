@@ -76,7 +76,7 @@ const reload = () => {
   });
 };
 
-const deleteTreatment = () => {
+const deleteFile = () => {
   openFileDialog.value = false;
   reload();
 };
@@ -186,10 +186,10 @@ const itemsPerPageOptions = [
     <v-card v-if="clickedOnFile">
       <ModelCard
         @close="openFileDialog = false"
-        interface-name="ITreatment"
+        interface-name="IFile"
         :model="clickedOnFile"
         @saved="reload()"
-        @deleted="deleteTreatment()"
+        @deleted="deleteFile()"
       ></ModelCard>
     </v-card>
   </v-dialog>

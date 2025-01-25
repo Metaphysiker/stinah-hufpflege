@@ -2,6 +2,7 @@
 import { ref, watch } from "vue";
 import { IFile } from "@/interfaces/IFile";
 import { FileConverter } from "@/converters/FileConverter";
+import ShowFiles from "./ShowFiles.vue";
 
 const props = defineProps({
   model: {
@@ -33,10 +34,6 @@ defineEmits<{
   <slot></slot>
 
   <div>
-    <div class="d-flex align-items-center">
-      <div style="white-space: break-spaces">
-        {{ model.name }}
-      </div>
-    </div>
+    <ShowFiles :file-keys-string="model.fileKeysString"></ShowFiles>
   </div>
 </template>

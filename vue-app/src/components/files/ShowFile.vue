@@ -68,7 +68,12 @@ watch(
         >
           Download
         </v-btn>
-        <v-btn color="red" class="ma-2" @click="removeFileKeyDialog = true">
+        <v-btn
+          v-if="false"
+          color="red"
+          class="ma-2"
+          @click="removeFileKeyDialog = true"
+        >
           <v-icon> mdi-close-circle-outline </v-icon>
         </v-btn>
       </div>
@@ -83,7 +88,12 @@ watch(
       >
         {{ props.fileKey }}
       </v-btn>
-      <v-btn color="red" class="ma-2" @click="removeFileKeyDialog = true">
+      <v-btn
+        v-if="false"
+        color="red"
+        class="ma-2"
+        @click="removeFileKeyDialog = true"
+      >
         <v-icon> mdi-close-circle-outline </v-icon>
       </v-btn>
     </div>

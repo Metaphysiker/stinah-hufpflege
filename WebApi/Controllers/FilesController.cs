@@ -43,7 +43,7 @@ public class FilesController : ControllerBase, IModelController<FileDTO, FileSea
     {
         var model = _fileDTOConverter.Convert(dto);
         await _db.AddAsync(model);
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
         var createdModel = await _db.Files.FindAsync(model.Id);
         if (createdModel == null)
         {
@@ -67,7 +67,6 @@ public class FilesController : ControllerBase, IModelController<FileDTO, FileSea
     }
 
     [HttpDelete("{id}")]
-
     public async Task<ActionResult> Delete(int id)
     {
         var file = await _db.Files.FindAsync(id);
@@ -89,6 +88,11 @@ public class FilesController : ControllerBase, IModelController<FileDTO, FileSea
         if (search.Ids.Count > 0)
         {
             query = query.Where(t => search.Ids.Contains(t.Id));
+        }
+
+        if (search.HorseId != null)
+        {
+            query = query.Where(t => t.Horse != null && t.Horse.Id == search.HorseId);
         }
 
         PaginationDTO<FileDTO> paginationDTO = new PaginationDTO<FileDTO>();

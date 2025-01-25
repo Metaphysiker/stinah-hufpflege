@@ -25,5 +25,10 @@ public class DatabaseContext : IdentityDbContext<IdentityUser>
             .HasMany(e => e.Treatments)
             .WithOne(e => e.Horse)
             .IsRequired(false);
+
+        modelBuilder.Entity<Horse>()
+            .HasMany(e => e.Files)
+            .WithOne(e => e.Horse)
+            .IsRequired(false);
     }
 }

@@ -7,16 +7,14 @@ export class File implements IFile {
   name: string;
   createdAt: Date;
   updatedAt: Date;
-  fileKeyString: string;
-  fileKeyStrings: string[];
   horseId?: number;
+  fileKeysString: string;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
     this.name = "Datei";
     this.createdAt = new Date();
     this.updatedAt = new Date();
-    this.fileKeyString = "";
-    this.fileKeyStrings = [];
+    this.fileKeysString = "";
   }
 }
