@@ -123,7 +123,7 @@ const loadItems = ({
 
 const availableTableDataHeaders = ref([
   { key: "date", title: "Datum", selected: true },
-  { key: "category", title: "Kategorie", selected: true },
+  { key: "category", title: "Kategorie", selected: false },
   { key: "name", title: "Name", selected: false },
   { key: "note", title: "Notiz", selected: true },
 ]);

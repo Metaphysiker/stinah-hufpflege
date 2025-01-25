@@ -19,6 +19,7 @@ export class Horse implements IHorse {
   treatmentIds: number[];
   treatmentDates: ITreatmentDate[];
   fileIds: number[];
+  patenschaften: string;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
@@ -35,5 +36,6 @@ export class Horse implements IHorse {
     this.files = [];
     this.treatmentDates = [];
     this.fileIds = [];
+    this.patenschaften = "";
   }
 }

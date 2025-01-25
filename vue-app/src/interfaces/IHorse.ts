@@ -15,4 +15,5 @@ export interface IHorse extends IModel, IEntityWithFiles {
   treatmentIds: number[];
   treatmentDates: ITreatmentDate[];
   fileIds: number[];
+  patenschaften: string;
 }

@@ -105,6 +105,12 @@ const age = computed(() => {
     </v-card-text>
   </v-card>
 
+  <v-textarea
+    label="Paten / Patenschaften"
+    v-model="horseToBeEdited.patenschaften"
+    variant="outlined"
+  ></v-textarea>
+
   <v-checkbox
     :readonly="props.readonly"
     label="Beschlagen?"
