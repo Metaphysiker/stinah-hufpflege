@@ -206,8 +206,8 @@ const itemsPerPageOptions = [
         @close="openTreatmentDialog = false"
         interface-name="ITreatment"
         :model="clickedOnTreatment"
-        @save="reload()"
-        @delete="deleteTreatment()"
+        @saved="reload()"
+        @deleted="deleteTreatment()"
       ></ModelCard>
     </v-card>
   </v-dialog>

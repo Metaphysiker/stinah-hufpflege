@@ -20,6 +20,13 @@ watch(
   },
   { immediate: true }
 );
+
+const emit = defineEmits<{
+  edit: [void];
+  reload: [void];
+  deleted: [void];
+  saved: [model: ITreatment];
+}>();
 </script>
 
 <template>

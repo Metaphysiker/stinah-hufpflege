@@ -25,7 +25,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   close: [void];
-  create: [model: T];
+  created: [model: T];
 }>();
 
 onBeforeMount(() => {
@@ -43,7 +43,7 @@ const toolbarTitle = computed(() => {
 });
 
 const create = (model: T) => {
-  emit("create", model);
+  emit("created", model);
 };
 </script>
 <template>
@@ -56,7 +56,7 @@ const create = (model: T) => {
     <NewModel
       :model-blueprint="props.modelBlueprint"
       :interface-name="props.interfaceName"
-      @create="(model: IModel) => create(model as T)"
+      @created="(model: IModel) => create(model as T)"
     ></NewModel>
   </div>
 </template>

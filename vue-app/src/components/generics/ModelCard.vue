@@ -25,9 +25,9 @@ const props = defineProps({
 
 const emit = defineEmits<{
   close: [void];
-  delete: [void];
+  deleted: [void];
   reload: [void];
-  save: [model: T];
+  saved: [model: T];
 }>();
 
 onBeforeMount(() => {
@@ -54,8 +54,8 @@ const toolbarTitle = computed(() => {
     <ModelBox
       :interface-name="props.interfaceName"
       :model="model"
-      @save="(savedModel: IModel) => emit('save', savedModel as T)"
-      @delete="emit('delete')"
+      @saved="(savedModel: IModel) => emit('saved', savedModel as T)"
+      @deleted="emit('deleted')"
       @reload="emit('reload')"
     ></ModelBox>
   </div>

@@ -26,9 +26,10 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
+  edit: [void];
   reload: [void];
-  delete: [void];
-  save: [model: IHorse];
+  deleted: [void];
+  saved: [model: IHorse];
 }>();
 
 const modelClone = ref<IHorse | undefined>(undefined);
@@ -101,8 +102,7 @@ const createTreatmentDialog = ref(false);
 const treatmentCreated = () => {
   treatmentListKey.value++;
   createTreatmentDialog.value = false;
-  emit("save", props.model);
-  console.log("treatment created");
+  emit("saved", props.model);
 };
 
 const treatmentListKey = ref(0);
@@ -171,7 +171,7 @@ const nextTreatmentDateForCategory = (
       <NewModelCard
         interface-name="ITreatment"
         :model-blueprint="newTreatment"
-        @create="treatmentCreated()"
+        @created="treatmentCreated()"
         @close="createTreatmentDialog = false"
       ></NewModelCard>
     </v-card>

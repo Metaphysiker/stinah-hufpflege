@@ -70,9 +70,10 @@ onBeforeMount(() => {
 });
 
 const emit = defineEmits<{
+  edit: [void];
   reload: [void];
-  delete: [void];
-  save: [model: T];
+  deleted: [void];
+  saved: [model: T];
 }>();
 
 const clickOnEdit = () => {
@@ -107,7 +108,7 @@ const deleteModel = () => {
     waiting.value = true;
     service.value?.Delete(props.model.id).then(() => {
       waiting.value = false;
-      emit("delete");
+      emit("deleted");
       deleteModelDialog.value = false;
     });
   }
@@ -119,7 +120,7 @@ const saveModel = () => {
     service.value?.Update(modelClone.value).then((updatedModel) => {
       waiting.value = false;
       editModelDialog.value = false;
-      emit("save", updatedModel);
+      emit("saved", updatedModel);
     });
   }
 };
@@ -134,7 +135,13 @@ watch(
 </script>
 <template>
   <div class="">
-    <boxComponent :model="model" @edit="clickOnEdit" @reload="emit('reload')">
+    <boxComponent
+      :model="model"
+      @edit="clickOnEdit"
+      @reload="emit('reload')"
+      @saved="emit('saved', $event)"
+      @deleted="emit('deleted')"
+    >
       <v-row class="mb-1">
         <v-col @click="clickOnEdit()">
           <v-btn color="green" size="large" class="me-2"

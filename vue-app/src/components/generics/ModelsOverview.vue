@@ -111,8 +111,6 @@ const save = (savedModel: T) => {
     );
 
     if (found) {
-      console.log("found");
-      console.log(found);
       modelToEdit.value = found;
     } else {
       editModelDialog.value = false;
@@ -160,7 +158,7 @@ const createModelText = computed(() => {
     <v-card>
       <NewModelCard
         :interface-name="props.interfaceName"
-        @create="create()"
+        @created="create()"
         @close="createModelDialog = false"
       ></NewModelCard>
     </v-card>
@@ -172,8 +170,8 @@ const createModelText = computed(() => {
         @close="editModelDialog = false"
         :interface-name="props.interfaceName"
         :model="modelToEdit"
-        @save="(savedModel: IModel) => save(savedModel as T)"
-        @delete="deleted()"
+        @saved="(savedModel: IModel) => save(savedModel as T)"
+        @deleted="deleted()"
         @reload="reloadAndSetModelToEdit()"
       ></ModelCard>
     </v-card>

@@ -59,7 +59,7 @@ onBeforeMount(() => {
 });
 
 const emit = defineEmits<{
-  create: [model: T];
+  created: [model: T];
 }>();
 
 const createModel = () => {
@@ -67,7 +67,7 @@ const createModel = () => {
     waiting.value = true;
     service.value?.Create(modelClone.value).then((createdModel) => {
       editModelDialog.value = false;
-      emit("create", createdModel);
+      emit("created", createdModel);
       waiting.value = false;
     });
   }
