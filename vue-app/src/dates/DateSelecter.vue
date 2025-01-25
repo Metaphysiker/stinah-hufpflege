@@ -21,6 +21,7 @@ const dateString = computed(() => {
   <v-menu v-model="dateMenu" :close-on-content-click="false">
     <template v-slot:activator="{ props }">
       <v-text-field
+        readonly
         v-model="dateString"
         :label="label"
         append-inner-icon="mdi-calendar"
@@ -29,7 +30,13 @@ const dateString = computed(() => {
       ></v-text-field>
     </template>
     <v-card>
-      <v-date-picker :hide-header="false" v-model="date"></v-date-picker>
+      <v-btn @click="dateMenu = false">Schliessen</v-btn>
+      <v-date-picker
+        :hide-header="true"
+        border="xs"
+        v-model="date"
+      ></v-date-picker>
+      <v-btn @click="dateMenu = false">Schliessen</v-btn>
     </v-card>
   </v-menu>
 </template>
