@@ -33,7 +33,6 @@ const translator = new Translator();
 
 const reload = () => {
   return new Promise<void>((resolve) => {
-    console.log("reload");
     let search;
     if (props.search) {
       search = props.search;
@@ -104,7 +103,6 @@ const deleted = () => {
 };
 
 const save = (savedModel: T) => {
-  console.log("save");
   reload().then(() => {
     const found = entityFinder.findByIdOrLocalID<T>(
       models.value,
@@ -113,9 +111,30 @@ const save = (savedModel: T) => {
     );
 
     if (found) {
-      modelToEdit.value = savedModel;
+      console.log("found");
+      console.log(found);
+      modelToEdit.value = found;
     } else {
       editModelDialog.value = false;
+    }
+  });
+};
+
+const reloadAndSetModelToEdit = () => {
+  reload().then(() => {
+    if (modelToEdit.value) {
+      const found = entityFinder.findByIdOrLocalID<T>(
+        models.value,
+        modelToEdit.value.id,
+        modelToEdit.value.localID
+      );
+
+      if (found) {
+        modelToEdit.value = found;
+      } else {
+        modelToEdit.value = undefined;
+        editModelDialog.value = false;
+      }
     }
   });
 };
@@ -155,6 +174,7 @@ const createModelText = computed(() => {
         :model="modelToEdit"
         @save="(savedModel: IModel) => save(savedModel as T)"
         @delete="deleted()"
+        @reload="reloadAndSetModelToEdit()"
       ></ModelCard>
     </v-card>
   </v-dialog>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { IHorse } from "@/interfaces/IHorse";
-import { computed, onBeforeMount, Ref, ref, watch } from "vue";
+import { computed, inject, onBeforeMount, Ref, ref, watch } from "vue";
 import TreatmentList from "../treatments/TreatmentList.vue";
 import { ITreatmentSearch } from "@/interfaces/ITreatmentSearch";
 import { ITreatment } from "@/interfaces/ITreatment";
@@ -10,9 +10,14 @@ import { HorseConverter } from "@/converters/HorseConverter";
 import { useTreatmentCategoryStore } from "@/stores/treatmentCategoryStore";
 import { storeToRefs } from "pinia";
 import { Translator } from "@/helpers/Translator";
+import { HorseHelper } from "@/helpers/HorseHelper";
+import { HorseService } from "@/services/HorseService";
+import { AxiosStatic } from "axios";
+import { DateFormatter } from "@/helpers/DateFormatter";
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
 const translator = new Translator();
+const dateFormatter = new DateFormatter();
 const props = defineProps({
   model: {
     required: true,
@@ -29,6 +34,9 @@ const emit = defineEmits<{
 const modelClone = ref<IHorse | undefined>(undefined);
 
 const horseConverter = new HorseConverter();
+const axios: AxiosStatic | undefined = inject("axios");
+const horseService = new HorseService(axios);
+const horseHelper = new HorseHelper(horseService);
 
 watch(
   () => props.model,
@@ -103,6 +111,18 @@ const addTreatment = () => {
   assignNewTreatment();
   createTreatmentDialog.value = true;
 };
+
+const nextTreatmentDateForCategory = (
+  horse: IHorse,
+  category: string | undefined
+) => {
+  const nextTreatmentDate = horseHelper.calculateNextTreatmentDate(
+    horse,
+    category
+  );
+  if (!nextTreatmentDate) return "";
+  return dateFormatter.dddotmmdotyyyy(nextTreatmentDate);
+};
 </script>
 
 <template>
@@ -114,6 +134,18 @@ const addTreatment = () => {
       </div>
       <div class="ml-1">| {{ age }} Jahre alt</div>
       <div class="ml-1">| {{ model.birthYear }} geboren</div>
+    </div>
+    <v-divider class="my-2"> </v-divider>
+    <div
+      v-for="treatmentDate of model.treatmentDates"
+      :key="treatmentDate.category"
+    >
+      <strong
+        >Nächste Behandlung ({{
+          translator.translate(treatmentDate.category)
+        }})</strong
+      >:
+      {{ nextTreatmentDateForCategory(model, treatmentDate.category) }}
     </div>
 
     <v-divider class="my-2"> </v-divider>
@@ -130,6 +162,7 @@ const addTreatment = () => {
     <TreatmentList
       :key="treatmentListKey"
       :treatment-search="treatmentSearch"
+      @reload="emit('reload')"
     ></TreatmentList>
   </div>
 

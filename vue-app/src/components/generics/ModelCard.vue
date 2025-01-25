@@ -26,6 +26,7 @@ const props = defineProps({
 const emit = defineEmits<{
   close: [void];
   delete: [void];
+  reload: [void];
   save: [model: T];
 }>();
 
@@ -55,6 +56,7 @@ const toolbarTitle = computed(() => {
       :model="model"
       @save="(savedModel: IModel) => emit('save', savedModel as T)"
       @delete="emit('delete')"
+      @reload="emit('reload')"
     ></ModelBox>
   </div>
 </template>

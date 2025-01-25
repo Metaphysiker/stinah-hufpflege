@@ -65,6 +65,7 @@ const reload = () => {
       clickedOnTreatment.value = undefined;
       openTreatmentDialog.value = false;
     }
+    emits("reload");
   });
 
   const treatmentSearchPageSize = treatmentSearch.value?.pageSize
@@ -82,6 +83,9 @@ const deleteTreatment = () => {
   reload();
 };
 
+const emits = defineEmits<{
+  reload: [void];
+}>();
 const serverItems = ref<ITreatment[]>([]);
 const totalItems = ref(0);
 const loadingItems = ref(false);

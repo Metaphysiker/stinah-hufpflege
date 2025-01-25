@@ -134,7 +134,7 @@ watch(
 </script>
 <template>
   <div class="">
-    <boxComponent :model="model" @edit="clickOnEdit">
+    <boxComponent :model="model" @edit="clickOnEdit" @reload="emit('reload')">
       <v-row class="mb-1">
         <v-col @click="clickOnEdit()">
           <v-btn color="green" size="large" class="me-2"
