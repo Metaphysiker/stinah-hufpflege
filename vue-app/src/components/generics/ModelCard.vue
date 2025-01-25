@@ -41,7 +41,7 @@ onBeforeMount(() => {
 });
 
 const toolbarTitle = computed(() => {
-  return translator.translate(props.interfaceName) + " bearbeiten";
+  return translator.translate(props.interfaceName) + "";
 });
 </script>
 <template>

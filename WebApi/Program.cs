@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<AutoMapperService>();
 builder.Services.AddScoped<HorseDTOConverter>();
 builder.Services.AddScoped<TreatmentDTOConverter>();
+builder.Services.AddScoped<FileDTOConverter>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

@@ -14,6 +14,8 @@ import { HorseHelper } from "@/helpers/HorseHelper";
 import { HorseService } from "@/services/HorseService";
 import { AxiosStatic } from "axios";
 import { DateFormatter } from "@/helpers/DateFormatter";
+import FileList from "../files/FileList.vue";
+import { IFileSearch } from "@/interfaces/IFileSearch";
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
 const translator = new Translator();
@@ -57,6 +59,14 @@ const age = computed(() => {
 const treatmentSearch: Ref<ITreatmentSearch> = ref({
   horseId: props.model.id,
   sortBy: "Date",
+  sortOrder: "descending",
+  pageSize: 5,
+  page: 0,
+});
+
+const fileSearch: Ref<IFileSearch> = ref({
+  horseId: props.model.id,
+  sortBy: "CreatedAt",
   sortOrder: "descending",
   pageSize: 5,
   page: 0,
@@ -106,6 +116,7 @@ const treatmentCreated = () => {
 };
 
 const treatmentListKey = ref(0);
+const fileListKey = ref(0);
 
 const addTreatment = () => {
   assignNewTreatment();
@@ -128,13 +139,9 @@ const nextTreatmentDateForCategory = (
 <template>
   <slot></slot>
   <div>
-    <div class="d-flex align-items-center">
-      <div>
-        <strong>{{ model.name }}</strong>
-      </div>
-      <div class="ml-1">| {{ age }} Jahre alt</div>
-      <div class="ml-1">| {{ model.birthYear }} geboren</div>
-    </div>
+    <h3>{{ model.name }}</h3>
+    <p>Alter: {{ age }} Jahre</p>
+    <p>Geboren: {{ model.birthYear }}</p>
     <v-divider class="my-2"> </v-divider>
     <div
       v-for="treatmentDate of model.treatmentDates"
@@ -146,9 +153,8 @@ const nextTreatmentDateForCategory = (
         }})</strong
       >:
       {{ nextTreatmentDateForCategory(model, treatmentDate.category) }}
+      <v-divider class="my-2"> </v-divider>
     </div>
-
-    <v-divider class="my-2"> </v-divider>
 
     <div class="d-flex justify-start">
       <v-btn @click="addTreatment()" elevation="3" class="my-3">
@@ -164,6 +170,12 @@ const nextTreatmentDateForCategory = (
       :treatment-search="treatmentSearch"
       @reload="emit('reload')"
     ></TreatmentList>
+
+    <FileList
+      :key="fileListKey"
+      :file-search="fileSearch"
+      @reload="emit('reload')"
+    ></FileList>
   </div>
 
   <v-dialog fullscreen v-model="createTreatmentDialog">

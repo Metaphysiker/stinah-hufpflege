@@ -1,9 +1,17 @@
+import { FileConverter } from "@/converters/FileConverter";
 import { AxiosInstanceFactory } from "@/factories/AxiosInstanceFactory";
+import { IFile } from "@/interfaces/IFile";
+import { IFileSearch } from "@/interfaces/IFileSearch";
+import { IModelController } from "@/interfaces/IModelController";
+import { IPagination } from "@/interfaces/IPagination";
 import { IService } from "@/interfaces/IService";
 import { AxiosStatic } from "axios";
 import Compressor from "compressorjs";
 
-export class FileService implements IService {
+export class FileService
+  implements IService, IModelController<IFile, IFileSearch>
+{
+  fileConverter = new FileConverter();
   axiosInstance: AxiosStatic;
   constructor(axios: AxiosStatic | undefined) {
     this.axiosInstance = AxiosInstanceFactory.createAxiosInstance(axios);
@@ -85,6 +93,90 @@ export class FileService implements IService {
         .get("api/files/get-presigned-url-by-key?key=" + fileKey)
         .then((response: any) => {
           resolve(response.data);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
+  Read(id: number) {
+    return new Promise<IFile>((resolve, reject) => {
+      this.axiosInstance
+        .get("api/files/" + id)
+        .then((response: any) => {
+          const file = this.fileConverter.convert(response.data);
+          resolve(file);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
+  ReadAll() {
+    return new Promise<IFile[]>((resolve, reject) => {
+      this.axiosInstance
+        .get("api/files")
+        .then((response: any) => {
+          const files = this.fileConverter.convertMany(response.data);
+          resolve(files);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
+  Create(file: IFile) {
+    return new Promise<IFile>((resolve, reject) => {
+      this.axiosInstance
+        .post("api/files", file)
+        .then((response: any) => {
+          const file = this.fileConverter.convert(response.data);
+          resolve(file);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
+  Update(file: IFile) {
+    return new Promise<IFile>((resolve, reject) => {
+      this.axiosInstance
+        .put("api/files", file)
+        .then((response: any) => {
+          const file = this.fileConverter.convert(response.data);
+          resolve(file);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
+  Delete(id: number) {
+    return new Promise<void>((resolve, reject) => {
+      this.axiosInstance
+        .delete("api/files/" + id)
+        .then((response: any) => {
+          resolve();
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
+  Search(search: IFileSearch) {
+    return new Promise<IPagination<IFile>>((resolve, reject) => {
+      this.axiosInstance
+        .post("api/files/search", search)
+        .then((response: any) => {
+          const pagination = response.data as IPagination<IFile>;
+          pagination.data = this.fileConverter.convertMany(pagination.data);
+          resolve(pagination);
         })
         .catch((e: any) => {
           reject(e);
