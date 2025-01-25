@@ -42,7 +42,7 @@ const horseSelected = () => {
 };
 
 const filesUploaded = (fileKeyStrings: string[]) => {
-  fileToBeEdited.value.fileKeyStrings = fileKeyStrings;
+  fileToBeEdited.value.fileKeysString = fileKeyStrings.join(",");
   emit("validate");
 };
 </script>
@@ -55,23 +55,18 @@ const filesUploaded = (fileKeyStrings: string[]) => {
     item-value="id"
     @update:model-value="horseSelected()"
   ></v-autocomplete>
-  <div
-    v-if="
-      fileToBeEdited.fileKeyStrings && fileToBeEdited.fileKeyStrings.length == 0
-    "
-  >
+  <div v-if="!fileToBeEdited.fileKeysString">
     <NewFile
       @files-uploaded="(fileKeyStrings: string[]) => filesUploaded(fileKeyStrings)"
     ></NewFile>
   </div>
-  <div
-    v-if="
-      fileToBeEdited.fileKeyStrings && fileToBeEdited.fileKeyStrings.length > 0
-    "
-  >
+  <div v-if="fileToBeEdited.fileKeysString">
     <p><strong>Hochgeladene Dateien:</strong></p>
     <ul>
-      <li v-for="fileKey in fileToBeEdited.fileKeyStrings" :key="fileKey">
+      <li
+        v-for="fileKey in fileToBeEdited.fileKeysString.split(',')"
+        :key="fileKey"
+      >
         - {{ fileKey }}
       </li>
     </ul>

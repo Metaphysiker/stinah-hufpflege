@@ -15,8 +15,9 @@ public class FileDTOConverter : IDtoConverter<File, FileDTO>
 
     public FileDTO Convert(File file)
     {
-        FileDTO FileDTO = _mapperService.mapper.Map<FileDTO>(file);
-        return FileDTO;
+        FileDTO fileDTO = _mapperService.mapper.Map<FileDTO>(file);
+        fileDTO.Name = file.FileKeysString;
+        return fileDTO;
     }
 
     public List<FileDTO> Convert(List<File> files)
