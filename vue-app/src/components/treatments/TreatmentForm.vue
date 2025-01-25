@@ -24,8 +24,6 @@ const { treatmentCategories } = storeToRefs(treatmentCategoryStore);
 const translator = new Translator();
 
 onBeforeMount(() => {
-  console.log("mounted");
-  console.log(treatmentToBeEdited.value);
   treatmentCategoriesCopy.value = [...treatmentCategories.value];
   const horseSearch: IHorseSearch = {
     page: 0,

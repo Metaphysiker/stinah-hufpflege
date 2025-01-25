@@ -21,7 +21,7 @@ watch(
   { immediate: true }
 );
 
-const emit = defineEmits<{
+defineEmits<{
   edit: [void];
   reload: [void];
   deleted: [void];
