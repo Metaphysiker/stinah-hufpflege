@@ -1,0 +1,33 @@
+name: stinah-pflege-production
+services:
+  webapi:
+    image: stinah-pflege-production-webapi
+    ports:
+      - "${PORT_BACKEND}:8080"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+  vue:
+    image: stinah-pflege-production-vue
+    env_file:
+      - .env
+    ports:
+      - "${PORT_FRONTEND}:80"
+    depends_on:
+      - webapi
+  dotnet:
+    image: stinah-pflege-production-dotnet
+    env_file:
+      - .env
+    depends_on:
+      - webapi
+  postgres:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

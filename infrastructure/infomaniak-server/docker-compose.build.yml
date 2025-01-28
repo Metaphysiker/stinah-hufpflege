@@ -1,6 +1,7 @@
 name: stinah-pflege-production
 services:
   webapi:
+    container_name: stinah-pflege-production-webapi
     build:
       context: ../../WebApi
       dockerfile: Dockerfile
@@ -11,6 +12,7 @@ services:
     depends_on:
       - postgres
   vue:
+    container_name: stinah-pflege-production-vue
     build:
       context: ../../vue-app
       dockerfile: Dockerfile
@@ -26,6 +28,7 @@ services:
     depends_on:
       - webapi
   dotnet:
+    container_name: stinah-pflege-production-dotnet
     build: ../../tools/dotnet
     volumes:
       - ../../:/app
