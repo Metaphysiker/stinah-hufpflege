@@ -21,22 +21,4 @@ public class TreatmentCategoriesController : ControllerBase
     {
         return await _db.TreatmentCategories.ToListAsync();
     }
-
-    [HttpGet("setup")]
-    public async Task<ActionResult<List<TreatmentCategory>>> Setup()
-    {
-        List<String> list = ["general", "hoofcare", "toothcare"];
-        foreach (var item in list)
-        {
-            var found = await _db.TreatmentCategories.FirstOrDefaultAsync(a => a.Name == item);
-            if (found == null)
-            {
-                var treatmentCategory = new TreatmentCategory { Name = item };
-                await _db.AddAsync(treatmentCategory);
-            }
-        }
-        await _db.SaveChangesAsync();
-        return await _db.TreatmentCategories.ToListAsync();
-    }
-
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 namespace WebApi.Controllers;
 
 [ApiController]
@@ -27,77 +28,117 @@ public class SetupController : ControllerBase
     [HttpGet("setup")]
     public async Task<ActionResult> Setup()
     {
-        // Create Stinah Role
-        var stinahRole = await _roleManager.FindByNameAsync("Stinah");
-        if (stinahRole == null)
-        {
-            stinahRole = new IdentityRole { Name = "Stinah" };
-            await _roleManager.CreateAsync(stinahRole);
-        }
-
-        // Create Admin Role
-        var adminRole = await _roleManager.FindByNameAsync("Admin");
-        if (adminRole == null)
-        {
-            adminRole = new IdentityRole { Name = "Admin" };
-            await _roleManager.CreateAsync(adminRole);
-        }
-
-        // Create Admin User
-        var admin = await _userManager.FindByEmailAsync("s.raess@me.com");
-        if (admin != null && adminRole != null && adminRole.Name != null)
-        {
-            await _userManager.AddToRoleAsync(admin, adminRole.Name);
-        }
-        else
-        {
-            admin = new IdentityUser { UserName = "s.raess@me.com", Email = "s.raess@me.com" };
-            string? adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
-            if (adminPassword == null)
-            {
-                adminPassword = "password";
-            }
-            _userManager.CreateAsync(admin, adminPassword).Wait();
-        }
-        await _userManager.AddToRoleAsync(admin, "Admin");
-        await _userManager.AddToRoleAsync(admin, "Stinah");
-
-        // Create Stinah User
-        var stinahuser = await _userManager.FindByEmailAsync("info@stinah.ch");
-        if (stinahuser != null && stinahRole != null && stinahRole.Name != null)
-        {
-            await _userManager.AddToRoleAsync(stinahuser, stinahRole.Name);
-        }
-        else
-        {
-            stinahuser = new IdentityUser { UserName = "info@stinah.ch", Email = "info@stinah.ch" };
-            string? password = Environment.GetEnvironmentVariable("STINAH_PASSWORD");
-            if (password == null)
-            {
-                password = "password";
-            }
-            _userManager.CreateAsync(stinahuser, password).Wait();
-        }
-        await _userManager.AddToRoleAsync(stinahuser, "Stinah");
-
-        // Create Regular User
-        var regularuser = await _userManager.FindByEmailAsync("user@stinah.ch");
-        if (regularuser != null && stinahRole != null && stinahRole.Name != null)
-        {
-            await _userManager.AddToRoleAsync(regularuser, stinahRole.Name);
-        }
-        else
-        {
-            regularuser = new IdentityUser { UserName = "user@stinah.ch", Email = "user@stinah.ch" };
-            string? password = Environment.GetEnvironmentVariable("REGULAR_USER_PASSWORD");
-            if (password == null)
-            {
-                password = "password";
-            }
-            _userManager.CreateAsync(regularuser, password).Wait();
-        }
-        await _userManager.AddToRoleAsync(regularuser, "Stinah");
-
+        await CreateTreatmentCategories();
+        await CreateRoles();
+        await CreateAdminUser();
+        await CreateStinahUser();
+        await CreateHoofcareUser();
+        await CreateToothcareUser();
+        await CreateHealthcareUser();
         return Ok();
+    }
+
+    private async Task CreateRoles()
+    {
+        Roles[] roles = (Roles[])Enum.GetValues(typeof(Roles));
+        foreach (var role in roles)
+        {
+            var found = await _roleManager.FindByNameAsync(role.ToString());
+            if (found == null)
+            {
+                var identityRole = new IdentityRole { Name = role.ToString() };
+                await _roleManager.CreateAsync(identityRole);
+            }
+        }
+    }
+
+    private async Task CreateAdminUser()
+    {
+        var admin = await _userManager.FindByNameAsync(Roles.Admin.ToString());
+        if (admin == null)
+        {
+            admin = new IdentityUser { UserName = Roles.Admin.ToString() };
+            string? password = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
+            await _userManager.CreateAsync(admin, password!);
+        }
+
+        await _userManager.AddToRoleAsync(admin, Roles.Admin.ToString());
+        await _userManager.AddToRoleAsync(admin, Roles.RegularUser.ToString());
+        await _userManager.AddToRoleAsync(admin, Roles.Hoofcare.ToString());
+        await _userManager.AddToRoleAsync(admin, Roles.Toothcare.ToString());
+        await _userManager.AddToRoleAsync(admin, Roles.Healthcare.ToString());
+    }
+
+    private async Task CreateStinahUser()
+    {
+        var user = await _userManager.FindByNameAsync("Stinah");
+        if (user == null)
+        {
+            user = new IdentityUser { UserName = "Stinah", Email = "info@stinah.ch" };
+            string? password = Environment.GetEnvironmentVariable("STINAH_PASSWORD");
+            await _userManager.CreateAsync(user, password!);
+        }
+
+        await _userManager.AddToRoleAsync(user, Roles.RegularUser.ToString());
+        await _userManager.AddToRoleAsync(user, Roles.Hoofcare.ToString());
+        await _userManager.AddToRoleAsync(user, Roles.Toothcare.ToString());
+        await _userManager.AddToRoleAsync(user, Roles.Healthcare.ToString());
+    }
+
+    private async Task CreateHoofcareUser()
+    {
+        var user = await _userManager.FindByNameAsync(Roles.Hoofcare.ToString());
+        if (user == null)
+        {
+            user = new IdentityUser { UserName = Roles.Hoofcare.ToString() };
+            string? password = Environment.GetEnvironmentVariable("REGULAR_USER_PASSWORD");
+            await _userManager.CreateAsync(user, password!);
+        }
+
+        await _userManager.AddToRoleAsync(user, Roles.RegularUser.ToString());
+        await _userManager.AddToRoleAsync(user, Roles.Hoofcare.ToString());
+    }
+
+    private async Task CreateToothcareUser()
+    {
+        var user = await _userManager.FindByNameAsync(Roles.Toothcare.ToString());
+        if (user == null)
+        {
+            user = new IdentityUser { UserName = Roles.Toothcare.ToString() };
+            string? password = Environment.GetEnvironmentVariable("REGULAR_USER_PASSWORD");
+            await _userManager.CreateAsync(user, password!);
+        }
+
+        await _userManager.AddToRoleAsync(user, Roles.RegularUser.ToString());
+        await _userManager.AddToRoleAsync(user, Roles.Toothcare.ToString());
+    }
+
+    private async Task CreateHealthcareUser()
+    {
+        var user = await _userManager.FindByNameAsync(Roles.Healthcare.ToString());
+        if (user == null)
+        {
+            user = new IdentityUser { UserName = Roles.Healthcare.ToString() };
+            string? password = Environment.GetEnvironmentVariable("REGULAR_USER_PASSWORD");
+            await _userManager.CreateAsync(user, password!);
+        }
+
+        await _userManager.AddToRoleAsync(user, Roles.RegularUser.ToString());
+        await _userManager.AddToRoleAsync(user, Roles.Healthcare.ToString());
+    }
+
+    private async Task CreateTreatmentCategories()
+    {
+        List<String> list = ["Hoofcare", "Toothcare", "Healthcare",];
+        foreach (var item in list)
+        {
+            var found = await _db.TreatmentCategories.FirstOrDefaultAsync(a => a.Name == item);
+            if (found == null)
+            {
+                var treatmentCategory = new TreatmentCategory { Name = item };
+                await _db.AddAsync(treatmentCategory);
+            }
+        }
+        await _db.SaveChangesAsync();
     }
 }
