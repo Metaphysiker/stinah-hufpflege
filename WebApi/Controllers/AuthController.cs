@@ -53,33 +53,27 @@ public class AuthController : ControllerBase
         var managedUser = await _userManager.FindByEmailAsync(request.Email);
         if (managedUser == null)
         {
-            return BadRequest("User not found");
+            managedUser = await _userManager.FindByNameAsync(request.Email);
+
+            if (managedUser == null)
+            {
+                return BadRequest("User not found");
+            }
         }
+
         var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, request.Password);
         if (!isPasswordValid)
         {
             return BadRequest("Login failed");
         }
-        var userInDb = _db.Users.FirstOrDefault(u => u.Email == request.Email);
-        if (userInDb is null)
-            return Unauthorized();
-        var accessToken = await _tokenService.CreateToken(userInDb);
+
+        var accessToken = await _tokenService.CreateToken(managedUser);
         await _db.SaveChangesAsync();
-
-        if (userInDb.UserName == null)
-        {
-            return BadRequest("No Username");
-        }
-
-        if (userInDb.Email == null)
-        {
-            return BadRequest("No Email");
-        }
 
         return Ok(new AuthResponse
         {
-            Username = userInDb.UserName,
-            Email = userInDb.Email,
+            Username = managedUser.UserName ?? "",
+            Email = managedUser.Email ?? "",
             Token = accessToken,
         });
     }

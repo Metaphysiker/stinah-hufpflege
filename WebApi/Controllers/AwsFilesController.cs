@@ -3,7 +3,7 @@ using Amazon.S3.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-[Authorize(Roles = "Admin, Stinah")]
+[Authorize(Roles = "RegularUser")]
 [Route("api/files")]
 [ApiController]
 public class FilesController : ControllerBase

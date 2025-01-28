@@ -8,6 +8,10 @@ namespace WebApi.Controllers;
 [Route("api/[controller]")]
 public class SetupController : ControllerBase
 {
+    /*
+        Every User has the role "RegularUser" by default.
+        The roles "Admin", "Hoofcare", "Toothcare" and "Healthcare" are special roles.
+    */
     private readonly DatabaseContext _db;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
@@ -129,13 +133,14 @@ public class SetupController : ControllerBase
 
     private async Task CreateTreatmentCategories()
     {
-        List<String> list = ["Hoofcare", "Toothcare", "Healthcare",];
-        foreach (var item in list)
+
+        CareAreas[] careAreas = (CareAreas[])Enum.GetValues(typeof(CareAreas));
+        foreach (var careArea in careAreas)
         {
-            var found = await _db.TreatmentCategories.FirstOrDefaultAsync(a => a.Name == item);
+            var found = await _db.TreatmentCategories.FirstOrDefaultAsync(a => a.Name == careArea.ToString());
             if (found == null)
             {
-                var treatmentCategory = new TreatmentCategory { Name = item };
+                var treatmentCategory = new TreatmentCategory { Name = careArea.ToString() };
                 await _db.AddAsync(treatmentCategory);
             }
         }

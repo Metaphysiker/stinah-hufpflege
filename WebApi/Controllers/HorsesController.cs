@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Controllers;
 
-[Authorize(Roles = "Admin, Stinah")]
+[Authorize(Roles = "RegularUser")]
 [ApiController]
 [Route("api/[controller]")]
 public class HorsesController : ControllerBase, IModelController<HorseDTO, HorseSearch>

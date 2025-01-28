@@ -54,11 +54,6 @@ public class TokenService
                 throw new ArgumentNullException(nameof(user.UserName));
             }
 
-            if (user.Email == null)
-            {
-                throw new ArgumentNullException(nameof(user.Email));
-            }
-
             var claims = new List<Claim>
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, "TokenForTheApiWithAuth"),
@@ -66,8 +61,12 @@ public class TokenService
                     new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.Email, user.Email),
                 };
+
+            if (user.Email != null)
+            {
+                claims.Add(new Claim(ClaimTypes.Email, user.Email));
+            }
 
             var userRoles = await userManager.GetRolesAsync(user);
 

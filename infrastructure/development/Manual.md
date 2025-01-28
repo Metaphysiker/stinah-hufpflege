@@ -31,3 +31,19 @@ docker compose run dotnet bash
 cd WebApi
 
 dotnet add package AutoMapper --version 13.0.1
+
+# psql Postgres Database
+
+Get name of postgres container with
+
+    docker ps
+
+    docker exec -it stinah-hufpflege-development-postgres-1 /bin/bash
+
+Then:
+
+    psql -d abc -U abc
+
+Then:
+
+    Select \* From "Treatments"
