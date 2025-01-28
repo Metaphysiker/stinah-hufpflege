@@ -16,12 +16,6 @@ services:
       - "${PORT_FRONTEND}:80"
     depends_on:
       - webapi
-  dotnet:
-    image: stinah-pflege-production-dotnet
-    env_file:
-      - .env
-    depends_on:
-      - webapi
   postgres:
     image: postgres:16-alpine
     env_file:

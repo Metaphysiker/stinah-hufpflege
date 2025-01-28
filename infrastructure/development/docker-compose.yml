@@ -8,6 +8,7 @@ services:
       - "${PORT_BACKEND}:8080"
     env_file:
       - .env
+    #entrypoint: sh -c "cd WebApi && dotnet ef database update"
     depends_on:
       - postgres
   vue:
@@ -29,15 +30,6 @@ services:
     build: ../../tools/npm
     volumes:
       - ../../:/app
-  dotnet:
-    build: ../../tools/dotnet
-    volumes:
-      - ../../:/app
-    env_file:
-      - .env
-    #entrypoint: sh -c "cd WebApi && dotnet ef database update"
-    depends_on:
-      - webapi
   postgres:
     image: postgres:16-alpine
     env_file:

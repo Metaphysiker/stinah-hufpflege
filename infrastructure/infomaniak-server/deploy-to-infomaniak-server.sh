@@ -13,8 +13,6 @@ docker save stinah-pflege-production-webapi | bzip2 | pv | ssh deploy@84.234.19.
 
 docker save stinah-pflege-production-vue | bzip2 | pv | ssh deploy@84.234.19.192 docker load
 
-docker save stinah-pflege-production-dotnet | bzip2 | pv | ssh deploy@84.234.19.192 docker load
-
 scp docker-compose.remote.yml deploy@84.234.19.192:/home/deploy/stinah-pflege
 
 scp .env deploy@84.234.19.192:/home/deploy/stinah-pflege

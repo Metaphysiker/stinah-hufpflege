@@ -11,7 +11,11 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
 
 WORKDIR /App
-COPY --from=build-env /App/out .
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+COPY --from=build-env /App .
 
 EXPOSE 8080
-ENTRYPOINT [ "dotnet", "WebApi.dll" ]
+ENTRYPOINT [ "dotnet", "out/WebApi.dll" ]
