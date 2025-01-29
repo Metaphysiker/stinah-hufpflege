@@ -16,32 +16,22 @@ public class TreatmentCategoriesController : ControllerBase
         _db = db;
     }
 
+    [AllowAnonymous]
     [Authorize]
     [HttpGet]
     public async Task<ActionResult<List<TreatmentCategory>>> ReadAll()
     {
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            Console.WriteLine(User.Identity.Name);
-
-            Console.WriteLine(User.Claims);
-            foreach (var claim in User.Claims)
-            {
-                Console.WriteLine($"{claim.Type}: {claim.Value}");
-            }
             TreatmentCategoryFinder finder = new TreatmentCategoryFinder();
-            var found = finder.GetTreatmentCategoriesForClaims(User.Claims);
-            Console.WriteLine("Found treatment categories:");
-            foreach (var item in found)
-            {
-                Console.WriteLine(item);
-            }
+            var treatmentCategoriesForUser = finder.GetTreatmentCategoriesForClaims(User.Claims);
+            var query = _db.TreatmentCategories.Where(tc => treatmentCategoriesForUser.Contains(tc.Name));
+            return await query.ToListAsync();
         }
         else
         {
-            Console.WriteLine("User is not authenticated");
+            return new List<TreatmentCategory>();
         }
 
-        return await _db.TreatmentCategories.ToListAsync();
     }
 }
