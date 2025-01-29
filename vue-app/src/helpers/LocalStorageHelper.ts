@@ -5,6 +5,10 @@ export class LocalStorageHelper {
     localStorage.setItem("current_user", JSON.stringify(currentUser));
   }
 
+  clearCurrentUser() {
+    localStorage.removeItem("current_user");
+  }
+
   getCurrentUser(): IUser | null {
     var item = localStorage.getItem("current_user");
     console.log(item);

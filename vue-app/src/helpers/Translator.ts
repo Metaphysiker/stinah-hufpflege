@@ -20,4 +20,13 @@ export class Translator {
     if (!this.dictionary[key]) return key;
     return this.dictionary[key];
   }
+
+  translateBack(value: string): string {
+    for (const key in this.dictionary) {
+      if (this.dictionary[key] === value) {
+        return key;
+      }
+    }
+    return value;
+  }
 }

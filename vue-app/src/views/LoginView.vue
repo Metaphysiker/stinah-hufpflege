@@ -20,8 +20,12 @@ const loading = ref(false);
 const login = () => {
   errors.value = [];
   loading.value = true;
+
+  let emailOrUsername = email.value;
+  emailOrUsername = translator.translateBack(capitalize(emailOrUsername));
+
   const authRequest: IAuthRequest = {
-    email: email.value,
+    email: emailOrUsername,
     password: password.value,
   };
   authenticationService
@@ -49,6 +53,11 @@ const login = () => {
 };
 
 const errors = ref<string[]>([]);
+
+const capitalize = (string: string) => {
+  string = string.toLowerCase();
+  return String(string[0]).toUpperCase() + String(string).slice(1);
+};
 </script>
 
 <template>
@@ -61,9 +70,31 @@ const errors = ref<string[]>([]);
           {{ error }}
         </p>
       </v-alert>
-      <v-text-field v-model="email" label="Email" />
+      <v-text-field v-model="email" label="Email oder Username" />
       <v-text-field v-model="password" label="Password" type="password" />
       <v-btn @click="login()">Login</v-btn>
+      <v-divider class="my-2"> </v-divider>
+      <v-table density="compact">
+        <thead>
+          <tr>
+            <th class="text-left">Vorhandene Logins</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>stinah oder info@stinah.ch</td>
+          </tr>
+          <tr>
+            <td>hufpflege</td>
+          </tr>
+          <tr>
+            <td>zahnpflege</td>
+          </tr>
+          <tr>
+            <td>gesundheit</td>
+          </tr>
+        </tbody>
+      </v-table>
     </v-card-text>
   </v-card>
 </template>

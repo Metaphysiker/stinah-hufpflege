@@ -8,6 +8,11 @@ import { TreatmentCategoryService } from "./services/TreatmentCategoryService";
 import TreatmentCategorySelecter from "./components/TreatmentCategorySelecter.vue";
 import { useUserStore } from "./stores/userStore";
 import AuthenticationManager from "./components/authentication/AuthenticationManager.vue";
+import router from "./router";
+import { LocalStorageHelper } from "./helpers/LocalStorageHelper";
+import { Translator } from "./helpers/Translator";
+const translator = new Translator();
+const localStorageHelper = new LocalStorageHelper();
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
 const treatmentCategoryStore = useTreatmentCategoryStore();
@@ -35,6 +40,13 @@ watch(selectedTreatmentCategory, () => {
 watch(currentUser, () => {
   setTreatmentCategories();
 });
+
+const logout = () => {
+  currentUser.value = undefined;
+  localStorageHelper.clearCurrentUser();
+
+  router.push("/login");
+};
 </script>
 
 <template>
@@ -58,5 +70,23 @@ watch(currentUser, () => {
     <v-main :key="mainKey"> <RouterView /></v-main>
     <WaitingComponent />
     <AuthenticationManager />
+    <v-footer
+      border
+      app
+      absolute
+      class="bg-lightgray font-size-rem-6"
+      height="25"
+      v-if="currentUser"
+    >
+      <v-col class="d-flex justify-end">
+        <div class="">
+          <strong>User:</strong>
+          {{ translator.translate(currentUser.username) }}
+        </div>
+        <div>
+          <v-btn @click="logout()" class="ms-2" size="x-small">Ausloggen</v-btn>
+        </div>
+      </v-col>
+    </v-footer>
   </v-app>
 </template>

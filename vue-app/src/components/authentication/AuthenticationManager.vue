@@ -5,7 +5,7 @@ import { AuthenticationService } from "@/services/AuthenticationService";
 import { useUserStore } from "@/stores/userStore";
 import { AxiosStatic } from "axios";
 import { storeToRefs } from "pinia";
-import { inject, onMounted } from "vue";
+import { inject, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const axios: AxiosStatic | undefined = inject("axios");
 const authentificationService = new AuthenticationService(axios);
@@ -62,9 +62,11 @@ const checkIfUserIsLoggedIn = (user: IUser): Promise<boolean> => {
 const redirectToLogin = () => {
   router.push("/login");
 };
+
+const showUser = ref(false);
 </script>
 <template>
-  <v-card>
+  <v-card v-if="showUser">
     <v-card-text>
       <div v-if="currentUser">
         {{ currentUser.email }} <br />
