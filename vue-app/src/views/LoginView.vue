@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { LocalStorageHelper } from "@/helpers/LocalStorageHelper";
 import { Translator } from "@/helpers/Translator";
 import { IAuthRequest } from "@/interfaces/IAuthRequest";
 import router from "@/router";
 import { AuthenticationService } from "@/services/AuthenticationService";
+import { useUserStore } from "@/stores/userStore";
 import { AxiosStatic } from "axios";
+import { storeToRefs } from "pinia";
 import { inject, ref } from "vue";
-const localStorageHelper = new LocalStorageHelper();
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
 const email = ref("");
 const password = ref("");
 const axios: AxiosStatic | undefined = inject("axios");
@@ -27,7 +29,7 @@ const login = () => {
         axios.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${response.token}`;
-        localStorageHelper.setJWTToken(response.token);
+        currentUser.value = response;
         router.push("/");
       }
     })

@@ -16,6 +16,7 @@ public class TreatmentCategoriesController : ControllerBase
         _db = db;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<List<TreatmentCategory>>> ReadAll()
     {
@@ -23,6 +24,13 @@ public class TreatmentCategoriesController : ControllerBase
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
+            Console.WriteLine(User.Identity.Name);
+
+            Console.WriteLine(User.Claims);
+            foreach (var claim in User.Claims)
+            {
+                Console.WriteLine($"{claim.Type}: {claim.Value}");
+            }
             TreatmentCategoryFinder finder = new TreatmentCategoryFinder();
             var found = finder.GetTreatmentCategoriesForClaims(User.Claims);
             Console.WriteLine("Found treatment categories:");

@@ -1,8 +1,7 @@
 import { AxiosInstanceFactory } from "@/factories/AxiosInstanceFactory";
-import { LocalStorageHelper } from "@/helpers/LocalStorageHelper";
 import { IAuthRequest } from "@/interfaces/IAuthRequest";
-import { IAuthResponse } from "@/interfaces/IAuthResponse";
 import { IService } from "@/interfaces/IService";
+import { IUser } from "@/interfaces/IUser";
 import { AxiosStatic } from "axios";
 
 export class AuthenticationService implements IService {
@@ -12,7 +11,7 @@ export class AuthenticationService implements IService {
   }
 
   login(authRequest: IAuthRequest) {
-    return new Promise<IAuthResponse>((resolve, reject) => {
+    return new Promise<IUser>((resolve, reject) => {
       this.axiosInstance
         .post("api/auth/login", authRequest)
         .then((response) => {
@@ -24,10 +23,12 @@ export class AuthenticationService implements IService {
     });
   }
 
-  isLoggedIn() {
+  isLoggedIn(user: IUser | undefined) {
     return new Promise<boolean>((resolve) => {
-      const localStorageHelper = new LocalStorageHelper();
-      const jwtToken = localStorageHelper.getJWTToken();
+      if (!user) {
+        resolve(false);
+      }
+      const jwtToken = user?.token;
       if (!jwtToken) {
         resolve(false);
       }

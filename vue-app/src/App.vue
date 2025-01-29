@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { inject, onBeforeMount, ref, watch } from "vue";
+import { inject, ref, watch } from "vue";
 import { useTreatmentCategoryStore } from "./stores/treatmentCategoryStore";
 import { storeToRefs } from "pinia";
 import WaitingComponent from "./components/waiting/WaitingComponent.vue";
 import { AxiosStatic } from "axios";
 import { TreatmentCategoryService } from "./services/TreatmentCategoryService";
 import TreatmentCategorySelecter from "./components/TreatmentCategorySelecter.vue";
-
+import { useUserStore } from "./stores/userStore";
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { treatmentCategories, selectedTreatmentCategory } = storeToRefs(
   treatmentCategoryStore
@@ -14,19 +16,23 @@ const { treatmentCategories, selectedTreatmentCategory } = storeToRefs(
 const axios: AxiosStatic | undefined = inject("axios");
 const treatmentCategoryService = new TreatmentCategoryService(axios);
 
-onBeforeMount(() => {
+const setTreatmentCategories = () => {
   treatmentCategoryService.ReadAll().then((response) => {
     treatmentCategories.value = response;
     if (treatmentCategories.value.length > 0) {
       selectedTreatmentCategory.value = treatmentCategories.value[0];
     }
   });
-});
+};
 
 const mainKey = ref(0);
 
 watch(selectedTreatmentCategory, () => {
   mainKey.value++;
+});
+
+watch(currentUser, () => {
+  setTreatmentCategories();
 });
 </script>
 
