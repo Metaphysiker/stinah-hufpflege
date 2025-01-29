@@ -169,7 +169,7 @@ watch(
         :title="toolbarTitle"
         @close="editModelDialog = false"
       ></StandardToolbar>
-      <v-card-text v-if="modelClone">
+      <v-card-text v-if="modelClone" class="pa-1">
         <formComponent v-model="modelClone"></formComponent>
         <div>
           <v-btn @click="saveModel()">Speichern</v-btn>

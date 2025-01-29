@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { ITreatment } from "@/interfaces/ITreatment";
 import { TreatmentConverter } from "@/converters/TreatmentConverter";
 import { DateFormatter } from "@/helpers/DateFormatter";
+import { Translator } from "@/helpers/Translator";
 const dateFormatter = new DateFormatter();
 const props = defineProps({
   model: {
@@ -28,6 +29,7 @@ defineEmits<{
   deleted: [void];
   saved: [model: ITreatment];
 }>();
+const translator = new Translator();
 </script>
 
 <template>
@@ -36,6 +38,9 @@ defineEmits<{
   <div>
     <p>
       <strong>Datum: </strong> {{ dateFormatter.dddotmmdotyyyy(model.date) }}
+    </p>
+    <p>
+      <strong>Kategorie: </strong> {{ translator.translate(model.category) }}
     </p>
     <div style="white-space: break-spaces">
       <strong>Notiz: </strong><br />
