@@ -39,6 +39,7 @@ watch(selectedTreatmentCategory, () => {
 
 watch(currentUser, () => {
   setTreatmentCategories();
+  mainKey.value++;
 });
 
 const logout = () => {

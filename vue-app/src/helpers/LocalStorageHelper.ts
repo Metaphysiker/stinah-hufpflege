@@ -11,7 +11,6 @@ export class LocalStorageHelper {
 
   getCurrentUser(): IUser | null {
     var item = localStorage.getItem("current_user");
-    console.log(item);
     if (item) {
       return JSON.parse(item);
     }

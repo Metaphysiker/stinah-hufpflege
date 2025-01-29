@@ -19,7 +19,6 @@ onMounted(() => {
 
 const handleLogin = () => {
   loadCurrentUser().then((user) => {
-    console.log("User", user);
     if (user) {
       checkIfUserIsLoggedIn(user).then((isLoggedIn) => {
         if (isLoggedIn) {
@@ -38,7 +37,6 @@ const loadCurrentUser = (): Promise<IUser | undefined> => {
   return new Promise<IUser | undefined>((resolve) => {
     if (currentUser.value) resolve(currentUser.value);
     const userFromLocalStorage = localStorageHelper.getCurrentUser();
-    console.log("User from local storage", userFromLocalStorage);
     if (userFromLocalStorage) {
       resolve(userFromLocalStorage);
     } else {
