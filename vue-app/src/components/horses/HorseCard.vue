@@ -12,6 +12,7 @@ import ShowFiles from "../files/ShowFiles.vue";
 import NewTreatment from "../treatments/NewTreatment.vue";
 import StandardToolbar from "../StandardToolbar.vue";
 import TreatmentCards from "../treatments/TreatmentCards.vue";
+import { TreatmentCategoryNames } from "@/enum/TreatmentCategoryNames";
 const fileHelper = new FileHelper();
 const axios: AxiosStatic | undefined = inject("axios");
 const treatments: Ref<ITreatment[]> = ref([]);
@@ -150,14 +151,14 @@ const noteForNextTreatmentToBeCopied = ref("");
         :content-input="noteForNextTreatmentToBeCopied"
         @created="getTreatments()"
         @clear-content-input="noteForNextTreatmentToBeCopied = ''"
-        :treatment-category="'hoofcare'"
+        :treatment-category="TreatmentCategoryNames.Hoofcare.toString()"
       ></NewTreatment>
       <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 
       <h5 class="my-2">Hufpflege</h5>
       <TreatmentCards
         :horse="horse"
-        :categories="['hoofcare']"
+        :categories="[TreatmentCategoryNames.Hoofcare.toString()]"
       ></TreatmentCards>
     </div>
 
