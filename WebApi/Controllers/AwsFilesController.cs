@@ -2,38 +2,40 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 [Authorize(Roles = "RegularUser")]
 [Route("api/files")]
 [ApiController]
 public class FilesController : ControllerBase
 {
+    private readonly DatabaseContext _db;
+
     private readonly IAmazonS3 _s3Client;
-    public FilesController(IAmazonS3 s3Client)
+    public FilesController(IAmazonS3 s3Client, DatabaseContext db)
     {
         _s3Client = s3Client;
+        _db = db;
     }
+
 
     [HttpPost("upload")]
     public async Task<IActionResult> UploadFileAsync(IFormFile file)
     {
 
-        long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
-        string timeStamp = timeNow.ToString();
-        //var prefix = Guid.NewGuid().ToString();
-        var prefix = timeStamp;
+        var fileKeysString = await CreateUniqFileName(file.FileName);
         var bucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME");
         var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(s3Client: _s3Client, bucketName: bucketName);
         if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
         var request = new PutObjectRequest()
         {
             BucketName = bucketName,
-            Key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}-{file.FileName}",
+            Key = fileKeysString,
             InputStream = file.OpenReadStream()
         };
         request.Metadata.Add("Content-Type", file.ContentType);
         await _s3Client.PutObjectAsync(request);
-        return Ok($"{prefix}-{file.FileName}");
+        return Ok(fileKeysString);
     }
 
     [HttpGet("get-all")]
@@ -105,5 +107,23 @@ public class FilesController : ControllerBase
         if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist");
         await _s3Client.DeleteObjectAsync(bucketName, key);
         return NoContent();
+    }
+
+    public async Task<string> CreateUniqFileName(string fileName)
+    {
+        var newFileName = $"{fileName}";
+        var counter = 0;
+
+        while (true)
+        {
+            var files = await _db.Files.Where(f => f.FileKeysString == newFileName).ToListAsync();
+            if (files.Count == 0)
+            {
+                return newFileName;
+            }
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+            var extension = Path.GetExtension(fileName);
+            newFileName = $"{fileNameWithoutExtension}({++counter}){extension}";
+        }
     }
 }
