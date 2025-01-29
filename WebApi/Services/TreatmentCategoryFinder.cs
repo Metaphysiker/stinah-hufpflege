@@ -14,14 +14,16 @@ public class TreatmentCategoryFinder
         List<string> treatmentCategories = new List<string>();
 
         string[] careAreaStrings = Enum.GetNames(typeof(CareAreas));
+        Console.WriteLine("CareAreas:");
+        foreach (var careArea in careAreaStrings)
+        {
+            Console.WriteLine(careArea);
+        }
 
         foreach (var claim in claims)
         {
-            Console.WriteLine($"Role: {claim.Value}");
-
             if (claim.Type == ClaimTypes.Role)
             {
-                Console.WriteLine($"Role: {claim.Value}");
                 if (careAreaStrings.Contains(claim.Value))
                 {
                     treatmentCategories.Add(claim.Value);

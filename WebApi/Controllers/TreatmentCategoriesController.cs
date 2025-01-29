@@ -20,8 +20,6 @@ public class TreatmentCategoriesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<TreatmentCategory>>> ReadAll()
     {
-        Console.WriteLine("TreatmentCategoriesController.ReadAll");
-
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             Console.WriteLine(User.Identity.Name);

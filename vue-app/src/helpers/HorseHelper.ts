@@ -63,6 +63,9 @@ export class HorseHelper {
     horse: IHorse,
     category: string | undefined
   ): Date | undefined => {
+    if (!horse.treatmentDates || horse.treatmentDates.length == 0)
+      return undefined;
+
     if (!category) {
       const foundLastTreatmentDate = horse.treatmentDates.reduce((a, b) => {
         if (!a.lastTimeTreated) return b;

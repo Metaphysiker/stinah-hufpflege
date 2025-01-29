@@ -7,6 +7,7 @@ import { AxiosStatic } from "axios";
 import { TreatmentCategoryService } from "./services/TreatmentCategoryService";
 import TreatmentCategorySelecter from "./components/TreatmentCategorySelecter.vue";
 import { useUserStore } from "./stores/userStore";
+import AuthenticationManager from "./components/authentication/AuthenticationManager.vue";
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
 const treatmentCategoryStore = useTreatmentCategoryStore();
@@ -43,7 +44,11 @@ watch(currentUser, () => {
         <div class="d-flex align-center h-100">
           <div class="me-10"><v-app-bar-title>Pflege</v-app-bar-title></div>
           <div>
-            <div style="width: 12rem" class="d-flex align-center h-100">
+            <div
+              style="width: 12rem"
+              class="d-flex align-center h-100"
+              v-if="currentUser"
+            >
               <TreatmentCategorySelecter />
             </div>
           </div>
@@ -52,5 +57,6 @@ watch(currentUser, () => {
     </v-app-bar>
     <v-main :key="mainKey"> <RouterView /></v-main>
     <WaitingComponent />
+    <AuthenticationManager />
   </v-app>
 </template>

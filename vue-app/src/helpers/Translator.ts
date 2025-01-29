@@ -4,8 +4,9 @@ export class Translator {
     wrongPassword: "Falsches Passwort.",
     hoof: "Huf",
     tooth: "Zahn",
-    hoofcare: "Hufpflege",
-    toothcare: "Zahnpflege",
+    Hoofcare: "Hufpflege",
+    Toothcare: "Zahnpflege",
+    Healthcare: "Gesundheit",
     general: "Allgemein",
     IHorse: "Pferd",
     ITreatment: "Behandlung",
@@ -16,6 +17,7 @@ export class Translator {
 
   translate(key: string | undefined): string {
     if (!key) return "";
+    if (!this.dictionary[key]) return key;
     return this.dictionary[key];
   }
 }

@@ -1,9 +1,16 @@
+import { IUser } from "@/interfaces/IUser";
+
 export class LocalStorageHelper {
-  setJWTToken(jwt_token: string) {
-    localStorage.setItem("jwt_token", jwt_token);
+  setCurrentUser(currentUser: IUser) {
+    localStorage.setItem("current_user", JSON.stringify(currentUser));
   }
 
-  getJWTToken() {
-    return localStorage.getItem("jwt_token");
+  getCurrentUser(): IUser | null {
+    var item = localStorage.getItem("current_user");
+    console.log(item);
+    if (item) {
+      return JSON.parse(item);
+    }
+    return null;
   }
 }

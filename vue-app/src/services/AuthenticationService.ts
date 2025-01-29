@@ -23,11 +23,8 @@ export class AuthenticationService implements IService {
     });
   }
 
-  isLoggedIn(user: IUser | undefined) {
+  isLoggedIn(user: IUser) {
     return new Promise<boolean>((resolve) => {
-      if (!user) {
-        resolve(false);
-      }
       const jwtToken = user?.token;
       if (!jwtToken) {
         resolve(false);

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { LocalStorageHelper } from "@/helpers/LocalStorageHelper";
 import { Translator } from "@/helpers/Translator";
 import { IAuthRequest } from "@/interfaces/IAuthRequest";
 import router from "@/router";
@@ -9,6 +10,7 @@ import { storeToRefs } from "pinia";
 import { inject, ref } from "vue";
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
+const localStorageHelper = new LocalStorageHelper();
 const email = ref("");
 const password = ref("");
 const axios: AxiosStatic | undefined = inject("axios");
@@ -24,12 +26,11 @@ const login = () => {
   };
   authenticationService
     .login(authRequest)
-    .then((response) => {
+    .then((user) => {
+      localStorageHelper.setCurrentUser(user);
+      currentUser.value = user;
       if (axios) {
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${response.token}`;
-        currentUser.value = response;
+        axios.defaults.headers.common["Authorization"] = `Bearer ${user.token}`;
         router.push("/");
       }
     })
