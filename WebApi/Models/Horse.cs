@@ -1,6 +1,7 @@
 public class Horse : IModel, IEnityWithTreatments, IEnityWithFiles
 {
     public int Id { get; set; }
+    public int OldId { get; set; } = 0;
     public string Name { get; set; } = string.Empty;
     public int NumberOfWeeksUntilNextTreatmentHoofcare { get; set; } = 0;
     public int NumberOfWeeksUntilNextTreatmentToothcare { get; set; } = 0;

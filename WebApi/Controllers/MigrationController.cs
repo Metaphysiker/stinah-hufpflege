@@ -12,6 +12,101 @@ public class MigrationController : ControllerBase
         _db = db;
     }
 
+    [HttpGet("clean")]
+    public async Task<HttpStatusCode> clean()
+    {
+        var horses = _db.Horses.ToList();
+        foreach (var horse in horses)
+        {
+            _db.Horses.Remove(horse);
+        }
+
+        var treatments = _db.Treatments.ToList();
+        foreach (var treatment in treatments)
+        {
+            _db.Treatments.Remove(treatment);
+        }
+
+        var files = _db.Files.ToList();
+        foreach (var file in files)
+        {
+            _db.Files.Remove(file);
+        }
+
+        await _db.SaveChangesAsync();
+
+        return HttpStatusCode.OK;
+    }
+
+
+    [HttpPost("migrate-hufpflege")]
+    public async Task<List<Horse>> migrateHufpflege([FromBody] List<OldHorse> oldHorses)
+    {
+        await _db.SaveChangesAsync();
+
+        foreach (var oldHorse in oldHorses)
+        {
+            Horse horse = new Horse();
+            horse.Name = oldHorse.Name;
+            horse.NumberOfWeeksUntilNextTreatmentHoofcare = oldHorse.NumberOfWeeksUntilNextTreatment;
+            horse.BirthYear = oldHorse.BirthYear;
+            horse.NoteForNextTreatment = oldHorse.NoteForNextTreatment;
+            horse.CreatedAt = oldHorse.CreatedAt;
+            horse.UpdatedAt = oldHorse.UpdatedAt;
+            horse.Beschlagen = oldHorse.Beschlagen;
+            horse.FileKeysString = oldHorse.FileKeysString;
+            Console.WriteLine("OldId: " + oldHorse.Id);
+            horse.OldId = oldHorse.Id;
+
+            foreach (var fileKeyString in oldHorse.FileKeysString.Split(","))
+            {
+                File file = new File();
+                file.Horse = horse;
+                file.HorseId = horse.Id;
+                file.FileKeysString = fileKeyString;
+                horse.Files.Add(file);
+            }
+
+            await _db.AddAsync(horse);
+        }
+
+        await _db.SaveChangesAsync();
+        return _db.Horses.ToList();
+    }
+
+    [HttpPost("migrate-hufpflege-treatments")]
+    public async Task<List<Treatment>> migrateHufpflegeTreatments([FromBody] List<OldTreatment> oldTreatments)
+    {
+        await _db.SaveChangesAsync();
+
+        foreach (var oldTreatment in oldTreatments)
+        {
+
+            var foundHorse = _db.Horses.FirstOrDefault(h => h.OldId == oldTreatment.HorseId);
+
+            if (foundHorse == null)
+            {
+                Console.WriteLine("Horse not found: " + oldTreatment.HorseId);
+
+                continue;
+            }
+            Console.WriteLine("Found horse: " + foundHorse.Name);
+            var treatment = new Treatment();
+            treatment.Note = oldTreatment.Note;
+            treatment.NoteForNextTreatment = oldTreatment.NoteForNextTreatment;
+            treatment.HorseId = foundHorse.Id;
+            treatment.Date = oldTreatment.Date;
+            treatment.CreatedAt = oldTreatment.CreatedAt;
+            treatment.UpdatedAt = oldTreatment.UpdatedAt;
+            treatment.FileKeysString = oldTreatment.FileKeysString;
+            treatment.Category = CareAreas.Hoofcare.ToString();
+            await _db.AddAsync(treatment);
+        }
+
+        await _db.SaveChangesAsync();
+        return _db.Treatments.ToList();
+    }
+
 
     [HttpGet("migrate")]
     public async Task<HttpStatusCode> migrate()
