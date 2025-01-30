@@ -1,16 +1,14 @@
-import { TreatmentCategoryNames } from "@/enum/TreatmentCategoryNames";
+import { CareAreas } from "@/enum/CareAreas";
 import { ITreatmentCategory } from "@/interfaces/ITreatmentCategory";
 export class TreatmentCategoryHelper {
   getPropertyNameFromTreatmentCategory(
     treatmentCategory: ITreatmentCategory
   ): string | undefined {
-    if (treatmentCategory.name === TreatmentCategoryNames.Hoofcare.toString()) {
+    if (treatmentCategory.name === CareAreas.Hoofcare.toString()) {
       return "numberOfWeeksUntilNextTreatmentHoofcare";
     }
 
-    if (
-      treatmentCategory.name === TreatmentCategoryNames.Toothcare.toString()
-    ) {
+    if (treatmentCategory.name === CareAreas.Toothcare.toString()) {
       return "numberOfWeeksUntilNextTreatmentToothcare";
     }
 

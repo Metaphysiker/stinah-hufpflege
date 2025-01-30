@@ -9,7 +9,7 @@ import { AxiosStatic } from "axios";
 import { useTreatmentCategoryStore } from "@/stores/treatmentCategoryStore";
 import { storeToRefs } from "pinia";
 import { Translator } from "@/helpers/Translator";
-import { TreatmentCategoryNames } from "@/enum/TreatmentCategoryNames";
+import { CareAreas } from "@/enum/CareAreas";
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -28,15 +28,11 @@ const getHeaders = () => {
   let showNumberOfWeeksUntilNextTreatmentToothcare = false;
   let showNextTreatmentDate = false;
 
-  if (
-    selectedTreatmentCategory.value?.name ===
-    TreatmentCategoryNames.Hoofcare.toString()
-  ) {
+  if (selectedTreatmentCategory.value?.name === CareAreas.Hoofcare.toString()) {
     showNumberOfWeeksUntilNextTreatmentHoofcare = true;
     showNextTreatmentDate = true;
   } else if (
-    selectedTreatmentCategory.value?.name ===
-    TreatmentCategoryNames.Toothcare.toString()
+    selectedTreatmentCategory.value?.name === CareAreas.Toothcare.toString()
   ) {
     showNumberOfWeeksUntilNextTreatmentToothcare = true;
     showNextTreatmentDate = true;

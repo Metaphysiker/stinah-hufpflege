@@ -5,7 +5,7 @@ import { computed, inject } from "vue";
 import { DateFormatter } from "@/helpers/DateFormatter";
 import { HorseService } from "@/services/HorseService";
 import { AxiosStatic } from "axios";
-import { TreatmentCategoryNames } from "@/enum/TreatmentCategoryNames";
+import { CareAreas } from "@/enum/CareAreas";
 const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
 const dateFormatter = new DateFormatter();
@@ -63,7 +63,7 @@ const age = computed(() => {
         Nächste Behandlung:
         <strong>{{
           nextTreatmentDateForCategory(
-            TreatmentCategoryNames.Hoofcare.toString(),
+            CareAreas.Hoofcare.toString(),
             horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcare
           )
         }}</strong>
@@ -84,7 +84,7 @@ const age = computed(() => {
         Nächste Behandlung:
         <strong>{{
           nextTreatmentDateForCategory(
-            TreatmentCategoryNames.Toothcare.toString(),
+            CareAreas.Toothcare.toString(),
             horseToBeEdited.numberOfWeeksUntilNextTreatmentToothcare
           )
         }}</strong>

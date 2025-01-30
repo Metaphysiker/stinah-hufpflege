@@ -2,7 +2,7 @@ import { HorseService } from "@/services/HorseService";
 import { IHorse } from "../interfaces/IHorse";
 import { DateFormatter } from "./DateFormatter";
 import { DateHelper } from "./DateHelper";
-import { TreatmentCategoryNames } from "@/enum/TreatmentCategoryNames";
+import { CareAreas } from "@/enum/CareAreas";
 export class HorseHelper {
   dateHelper = new DateHelper();
   dateFormatter = new DateFormatter();
@@ -19,14 +19,14 @@ export class HorseHelper {
     const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category);
     if (!lastTimeTreated) return undefined;
 
-    if (category === TreatmentCategoryNames.Hoofcare.toString()) {
+    if (category === CareAreas.Hoofcare.toString()) {
       return this.dateHelper.addDays(
         lastTimeTreated,
         horse.numberOfWeeksUntilNextTreatmentHoofcare * 7
       );
     }
 
-    if (category === TreatmentCategoryNames.Toothcare.toString()) {
+    if (category === CareAreas.Toothcare.toString()) {
       return this.dateHelper.addDays(
         lastTimeTreated,
         horse.numberOfWeeksUntilNextTreatmentToothcare * 7
@@ -44,11 +44,11 @@ export class HorseHelper {
     const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category);
     if (!lastTimeTreated) return undefined;
 
-    if (category === TreatmentCategoryNames.Hoofcare.toString()) {
+    if (category === CareAreas.Hoofcare.toString()) {
       return this.dateHelper.addDays(lastTimeTreated, numberOfWeeks * 7);
     }
 
-    if (category === TreatmentCategoryNames.Toothcare.toString()) {
+    if (category === CareAreas.Toothcare.toString()) {
       return this.dateHelper.addDays(lastTimeTreated, numberOfWeeks * 7);
     }
 
