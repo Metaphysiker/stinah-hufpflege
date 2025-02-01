@@ -90,6 +90,16 @@ public class MigrationController : ControllerBase
 
                 continue;
             }
+
+            foreach (var fileKeyString in foundHorse.FileKeysString.Split(","))
+            {
+                File file = new File();
+                file.Horse = foundHorse;
+                file.HorseId = foundHorse.Id;
+                file.FileKeysString = fileKeyString;
+                foundHorse.Files.Add(file);
+            }
+
             Console.WriteLine("Found horse: " + foundHorse.Name);
             var treatment = new Treatment();
             treatment.Note = oldTreatment.Note;
