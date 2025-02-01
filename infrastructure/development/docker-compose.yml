@@ -26,6 +26,15 @@ services:
       - "${PORT_FRONTEND}:8080"
     depends_on:
       - webapi
+  dotnet:
+    build: ../../tools/dotnet
+    volumes:
+      - ../../:/app
+    env_file:
+      - .env
+    #entrypoint: sh -c "cd WebApi && dotnet ef database update"
+    depends_on:
+      - webapi
   npm:
     build: ../../tools/npm
     volumes:

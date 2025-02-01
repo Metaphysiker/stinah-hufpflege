@@ -10,7 +10,7 @@ Maybe uncomment it.
 
 Then:
 
-docker compose run -it --entrypoint bash webapi
+docker compose run dotnet bash #In production: docker compose run -it --entrypoint bash webapi
 
 cd WebApi
 
