@@ -172,6 +172,15 @@ const nextTreatmentDateForCategory = (
     <p><strong>Name: </strong>{{ model.name }}</p>
     <p><strong>Alter: </strong>{{ age }}</p>
     <p><strong>Geboren: </strong>{{ model.birthYear }}</p>
+    <p>
+      <strong>Hufpflegerhythmus in Wochen: </strong
+      >{{ model.numberOfWeeksUntilNextTreatmentHoofcare }}
+    </p>
+    <p>
+      <strong>Zahnpflegerhythmuspflegerhythmus in Wochen: </strong
+      >{{ model.numberOfWeeksUntilNextTreatmentToothcare }}
+    </p>
+
     <div style="white-space: pre-line">
       <strong>Patenschaften: </strong><br />
       {{ model.patenschaften }}
