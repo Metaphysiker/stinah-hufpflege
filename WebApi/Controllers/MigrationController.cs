@@ -63,6 +63,7 @@ public class MigrationController : ControllerBase
                 File file = new File();
                 file.Horse = horse;
                 file.HorseId = horse.Id;
+
                 file.FileKeysString = fileKeyString;
                 horse.Files.Add(file);
             }
@@ -144,6 +145,66 @@ public class MigrationController : ControllerBase
         await _db.SaveChangesAsync();
 
         return HttpStatusCode.OK;
+    }
+
+
+    [HttpPost("migrate-zahnpflege")]
+    public async Task<List<Horse>> migrateZahnpflege([FromBody] List<OldHorse> oldHorses)
+    {
+        await _db.SaveChangesAsync();
+
+        foreach (var oldHorse in oldHorses)
+        {
+            var mainHorse = new Horse();
+            var foundHorse = _db.Horses.FirstOrDefault(h => h.Name == oldHorse.Name);
+            if (foundHorse != null)
+            {
+                Console.WriteLine("Horse already exists: " + oldHorse.Name);
+                mainHorse = foundHorse;
+            }
+            else
+            {
+                Horse horse = new Horse();
+                horse.Name = oldHorse.Name;
+                horse.NumberOfWeeksUntilNextTreatmentHoofcare = oldHorse.NumberOfWeeksUntilNextTreatment;
+                horse.BirthYear = oldHorse.BirthYear;
+                horse.NoteForNextTreatment = oldHorse.NoteForNextTreatment;
+                horse.CreatedAt = oldHorse.CreatedAt;
+                horse.UpdatedAt = oldHorse.UpdatedAt;
+                horse.Beschlagen = oldHorse.Beschlagen;
+                horse.FileKeysString = oldHorse.FileKeysString;
+                Console.WriteLine("OldId: " + oldHorse.Id);
+                horse.OldId = oldHorse.Id;
+                await _db.AddAsync(horse);
+                mainHorse = horse;
+            }
+
+
+
+            foreach (var fileKeyString in oldHorse.FileKeysString.Split(","))
+            {
+                File file = new File();
+                file.Horse = mainHorse;
+                file.HorseId = mainHorse.Id;
+
+                file.FileKeysString = fileKeyString;
+                mainHorse.Files.Add(file);
+            }
+
+            Treatment treatment = new Treatment();
+            treatment.Note = oldHorse.NoteForNextTreatment;
+            treatment.NoteForNextTreatment = oldHorse.NoteForNextTreatment;
+            treatment.HorseId = mainHorse.Id;
+            treatment.Date = oldHorse.LastTimeTreated;
+            treatment.CreatedAt = oldHorse.CreatedAt;
+            treatment.UpdatedAt = oldHorse.UpdatedAt;
+            treatment.FileKeysString = oldHorse.FileKeysString;
+            treatment.Category = CareAreas.Toothcare.ToString();
+            mainHorse.Treatments.Add(treatment);
+        }
+
+        await _db.SaveChangesAsync();
+        return _db.Horses.ToList();
     }
 
 }

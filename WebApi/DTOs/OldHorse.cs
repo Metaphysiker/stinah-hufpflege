@@ -2,7 +2,7 @@ public class OldHorse
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string LastTimeTreated { get; set; } = string.Empty;
+    public DateTime LastTimeTreated { get; set; } = DateTime.Now;
     public int NumberOfWeeksUntilNextTreatment { get; set; }
     public int BirthYear { get; set; }
     public string NoteForNextTreatment { get; set; } = string.Empty;
