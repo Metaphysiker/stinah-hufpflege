@@ -78,20 +78,29 @@ const capitalize = (string: string) => {
         <thead>
           <tr>
             <th class="text-left">Vorhandene Logins</th>
+            <th>Passwort</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>stinah oder info@stinah.ch</td>
+            <td>Das gleiche wie vorher</td>
           </tr>
           <tr>
             <td>hufpflege</td>
+            <td>stinah</td>
           </tr>
           <tr>
             <td>zahnpflege</td>
+            <td>stinah</td>
           </tr>
           <tr>
             <td>gesundheit</td>
+            <td>stinah</td>
+          </tr>
+          <tr>
+            <td>bewegung</td>
+            <td>stinah</td>
           </tr>
         </tbody>
       </v-table>

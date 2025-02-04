@@ -4,5 +4,6 @@ enum Roles
     RegularUser,
     Hoofcare,
     Toothcare,
-    Healthcare
+    Healthcare,
+    Movementcare
 }

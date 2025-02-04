@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +38,7 @@ public class SetupController : ControllerBase
         await CreateHoofcareUser();
         await CreateToothcareUser();
         await CreateHealthcareUser();
+        await CreateMovementcareUser();
         return Ok();
     }
 
@@ -71,6 +71,7 @@ public class SetupController : ControllerBase
         await _userManager.AddToRoleAsync(admin, Roles.Hoofcare.ToString());
         await _userManager.AddToRoleAsync(admin, Roles.Toothcare.ToString());
         await _userManager.AddToRoleAsync(admin, Roles.Healthcare.ToString());
+        await _userManager.AddToRoleAsync(admin, Roles.Movementcare.ToString());
     }
 
     private async Task CreateStinahUser()
@@ -87,6 +88,7 @@ public class SetupController : ControllerBase
         await _userManager.AddToRoleAsync(user, Roles.Hoofcare.ToString());
         await _userManager.AddToRoleAsync(user, Roles.Toothcare.ToString());
         await _userManager.AddToRoleAsync(user, Roles.Healthcare.ToString());
+        await _userManager.AddToRoleAsync(user, Roles.Movementcare.ToString());
     }
 
     private async Task CreateHoofcareUser()
@@ -129,6 +131,20 @@ public class SetupController : ControllerBase
 
         await _userManager.AddToRoleAsync(user, Roles.RegularUser.ToString());
         await _userManager.AddToRoleAsync(user, Roles.Healthcare.ToString());
+    }
+
+    private async Task CreateMovementcareUser()
+    {
+        var user = await _userManager.FindByNameAsync(Roles.Movementcare.ToString());
+        if (user == null)
+        {
+            user = new IdentityUser { UserName = Roles.Movementcare.ToString() };
+            string? password = Environment.GetEnvironmentVariable("REGULAR_USER_PASSWORD");
+            await _userManager.CreateAsync(user, password!);
+        }
+
+        await _userManager.AddToRoleAsync(user, Roles.RegularUser.ToString());
+        await _userManager.AddToRoleAsync(user, Roles.Movementcare.ToString());
     }
 
     private async Task CreateTreatmentCategories()

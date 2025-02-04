@@ -2,5 +2,6 @@ enum CareAreas
 {
     Hoofcare,
     Toothcare,
-    Healthcare
+    Healthcare,
+    Movementcare
 }

@@ -7,6 +7,7 @@ export class Translator {
     Hoofcare: "Hufpflege",
     Toothcare: "Zahnpflege",
     Healthcare: "Gesundheit",
+    Movementcare: "Bewegung",
     general: "Allgemein",
     IHorse: "Pferd",
     ITreatment: "Behandlung",
