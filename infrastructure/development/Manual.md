@@ -47,3 +47,13 @@ Then:
 Then:
 
     Select \* From "Treatments"
+
+# Restore backup from infomaniak
+
+First, inside infomaniak-server folder:
+
+    ./create-backup-from-infomaniak-server.sh /home/sandro/backups/stinah-pflege
+
+Then, inside development folder:
+
+    ./pg-restore-from-dump-file.sh /home/sandro/backups/stinah-pflege/dump_2025-02-04_23_17_57.dump
