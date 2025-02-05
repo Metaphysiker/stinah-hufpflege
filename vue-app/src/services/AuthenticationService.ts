@@ -23,6 +23,19 @@ export class AuthenticationService implements IService {
     });
   }
 
+  refreshToken() {
+    return new Promise<IUser>((resolve, reject) => {
+      this.axiosInstance
+        .get("api/auth/refresh-token")
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
+  }
+
   isLoggedIn(user: IUser) {
     return new Promise<boolean>((resolve) => {
       const jwtToken = user?.token;

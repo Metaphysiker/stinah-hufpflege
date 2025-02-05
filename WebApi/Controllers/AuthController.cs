@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -72,8 +73,37 @@ public class AuthController : ControllerBase
 
         return Ok(new AuthResponse
         {
+            UserId = managedUser.Id,
             Username = managedUser.UserName ?? "",
             Email = managedUser.Email ?? "",
+            Token = accessToken,
+        });
+    }
+
+    [HttpGet, Authorize]
+    [Route("refresh-token")]
+    public async Task<ActionResult<AuthResponse>> RefreshToken()
+    {
+        if (User.Identity == null || !User.Identity.IsAuthenticated)
+        {
+            return BadRequest("User not authenticated");
+        }
+
+        var claimsWithId = User.Claims.Where(c => c.Type == "UserId");
+        var foundUser = await _userManager.FindByIdAsync(claimsWithId.First().Value);
+
+        if (foundUser == null)
+        {
+            return BadRequest("User not found");
+        }
+
+        var accessToken = await _tokenService.CreateToken(foundUser);
+
+        return Ok(new AuthResponse
+        {
+            UserId = foundUser.Id,
+            Username = foundUser.UserName ?? "",
+            Email = foundUser.Email ?? "",
             Token = accessToken,
         });
     }

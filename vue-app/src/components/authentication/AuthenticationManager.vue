@@ -62,8 +62,20 @@ const redirectToLogin = () => {
 };
 
 const showUser = ref(false);
+
+const refreshToken = () => {
+  authentificationService.refreshToken().then((response) => {
+    if (response) {
+      currentUser.value = response;
+    }
+  });
+};
 </script>
 <template>
+  <v-container v-if="false">
+    <v-btn @click="refreshToken()">Refresh Token</v-btn>
+  </v-container>
+
   <v-card v-if="showUser">
     <v-card-text>
       <div v-if="currentUser">
