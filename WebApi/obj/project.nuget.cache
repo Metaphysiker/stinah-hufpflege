@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+EC4Q6rmljF5j8ptSU12A6h2gY8k33TO/dMZssv/ZSTLczZ5et3H3qfKOj+Y5EMZDtiUhXa37hbcLB0pjiTNgw==",
+  "dgSpecHash": "sqHWGG/e8Xk=",
   "success": true,
   "projectFilePath": "/home/sandro/workspace/stinah-hufpflege/WebApi/WebApi.csproj",
   "expectedPackageFiles": [
@@ -66,7 +66,10 @@
     "/home/sandro/.nuget/packages/system.text.encoding.codepages/6.0.0/system.text.encoding.codepages.6.0.0.nupkg.sha512",
     "/home/sandro/.nuget/packages/system.text.encodings.web/8.0.0/system.text.encodings.web.8.0.0.nupkg.sha512",
     "/home/sandro/.nuget/packages/system.text.json/8.0.0/system.text.json.8.0.0.nupkg.sha512",
-    "/home/sandro/.nuget/packages/system.threading.channels/6.0.0/system.threading.channels.6.0.0.nupkg.sha512"
+    "/home/sandro/.nuget/packages/system.threading.channels/6.0.0/system.threading.channels.6.0.0.nupkg.sha512",
+    "/home/sandro/.nuget/packages/microsoft.netcore.app.ref/8.0.13/microsoft.netcore.app.ref.8.0.13.nupkg.sha512",
+    "/home/sandro/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.13/microsoft.aspnetcore.app.ref.8.0.13.nupkg.sha512",
+    "/home/sandro/.nuget/packages/microsoft.netcore.app.host.linux-x64/8.0.13/microsoft.netcore.app.host.linux-x64.8.0.13.nupkg.sha512"
   ],
   "logs": []
 }
