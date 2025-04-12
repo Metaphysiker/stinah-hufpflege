@@ -12,6 +12,9 @@ export class TreatmentConverter implements IConverter<ITreatment> {
     model.createdAt = new Date(input.createdAt);
     model.updatedAt = new Date(input.updatedAt);
     model.date = new Date(input.date);
+    if (input.hoofCheckString) {
+      model.hoofCheck = JSON.parse(input.hoofCheckString);
+    }
     return model;
   }
 
