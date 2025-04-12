@@ -9,6 +9,13 @@ const treatmentToBeEdited = defineModel({
   type: Object as () => ITreatment,
 });
 
+defineProps({
+  readonly: {
+    default: false,
+    type: Boolean,
+  },
+});
+
 onMounted(() => {
   if (treatmentToBeEdited.value.hoofCheckString) {
     treatmentToBeEdited.value.hoofCheck = JSON.parse(
@@ -38,17 +45,19 @@ watch(
 }
 </style>
 <template>
-  <h1>Hufe</h1>
+  <h3>Hufe</h3>
   <template v-if="treatmentToBeEdited.hoofCheck">
     <v-row>
       <v-col col-6 class="text-center">
         <HoofCheckSingleHoof
+          :readonly="readonly"
           v-model="treatmentToBeEdited.hoofCheck.frontLeft"
           position="Vorne Links"
         ></HoofCheckSingleHoof>
       </v-col>
       <v-col col-6 class="text-center">
         <HoofCheckSingleHoof
+          :readonly="readonly"
           v-model="treatmentToBeEdited.hoofCheck.frontRight"
           position="Vorne Rechts"
         ></HoofCheckSingleHoof>
@@ -57,12 +66,14 @@ watch(
     <v-row>
       <v-col col-6 class="text-center">
         <HoofCheckSingleHoof
+          :readonly="readonly"
           v-model="treatmentToBeEdited.hoofCheck.backLeft"
           position="Hinten Links"
         ></HoofCheckSingleHoof>
       </v-col>
       <v-col col-6 class="text-center">
         <HoofCheckSingleHoof
+          :readonly="readonly"
           v-model="treatmentToBeEdited.hoofCheck.backRight"
           position="Hinten Rechts"
         ></HoofCheckSingleHoof

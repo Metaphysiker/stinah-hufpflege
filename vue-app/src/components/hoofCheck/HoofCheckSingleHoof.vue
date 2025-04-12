@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { HoofCheckStatuses } from "@/enum/HoofCheckStates";
-import { computed } from "vue";
+import { computed, PropType } from "vue";
 
 const hoofCheckModel = defineModel({
-  type: Object as () => HoofCheckStatuses,
+  type: String as PropType<HoofCheckStatuses>,
 });
 
-defineProps({
+const props = defineProps({
   position: {
     required: true,
     type: String,
+  },
+  readonly: {
+    default: false,
+    type: Boolean,
   },
 });
 
@@ -36,16 +40,18 @@ const colorForIconAboveHoofDrawing = computed(() => {
 });
 
 const switchHoofCheckStatus = () => {
-  switch (hoofCheckModel.value) {
-    case HoofCheckStatuses.Neutral:
-      hoofCheckModel.value = HoofCheckStatuses.Okay;
-      break;
-    case HoofCheckStatuses.Okay:
-      hoofCheckModel.value = HoofCheckStatuses.NotOkay;
-      break;
-    case HoofCheckStatuses.NotOkay:
-      hoofCheckModel.value = HoofCheckStatuses.Neutral;
-      break;
+  if (!props.readonly) {
+    switch (hoofCheckModel.value) {
+      case HoofCheckStatuses.Neutral:
+        hoofCheckModel.value = HoofCheckStatuses.Okay;
+        break;
+      case HoofCheckStatuses.Okay:
+        hoofCheckModel.value = HoofCheckStatuses.NotOkay;
+        break;
+      case HoofCheckStatuses.NotOkay:
+        hoofCheckModel.value = HoofCheckStatuses.Neutral;
+        break;
+    }
   }
 };
 </script>
