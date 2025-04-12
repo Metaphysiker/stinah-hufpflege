@@ -1,5 +1,6 @@
 import { IEntityWithFiles } from "./IEntityWithFiles";
 import { IEntityWithIdentity } from "./IEntityWithIdentity";
+import { IHoofCheck } from "./IHoofCheck";
 import { IModel } from "./IModel";
 
 export interface ITreatment
@@ -16,4 +17,6 @@ export interface ITreatment
   category: string;
   fileKeysString: string;
   treatmentIds: number[];
+  hoofCheck: IHoofCheck | undefined;
+  hoofCheckString: string | undefined;
 }
