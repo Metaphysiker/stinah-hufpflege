@@ -11,5 +11,5 @@ public class Treatment : IModel, IEnityWithFiles
     public string Category { get; set; } = string.Empty;
     public string FileKeysString { get; set; } = string.Empty;
     public ICollection<File> Files { get; set; } = new List<File>();
-
+    public string HoofCheckString { get; set; } = string.Empty;
 }
