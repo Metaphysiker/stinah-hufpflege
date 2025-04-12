@@ -322,6 +322,10 @@ namespace WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("HoofCheckString")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int?>("HorseId")
                         .HasColumnType("integer");
 
