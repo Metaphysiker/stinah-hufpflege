@@ -1,5 +1,6 @@
 import { LocalIDFactory } from "@/helpers/LocalIDFactory";
 import { IFile } from "@/interfaces/IFile";
+import { IHoofCheck } from "@/interfaces/IHoofCheck";
 import { ITreatment } from "@/interfaces/ITreatment";
 
 export class Treatment implements ITreatment {
@@ -16,6 +17,8 @@ export class Treatment implements ITreatment {
   name: string;
   files: IFile[];
   treatmentIds: number[];
+  hoofCheck: IHoofCheck | undefined;
+  hoofCheckString: string | undefined;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();

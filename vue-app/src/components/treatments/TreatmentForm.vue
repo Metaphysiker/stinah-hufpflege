@@ -22,6 +22,8 @@ const treatmentCategoriesCopy = ref<ITreatmentCategory[]>([]);
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { treatmentCategories } = storeToRefs(treatmentCategoryStore);
 const translator = new Translator();
+import { CareAreas } from "@/enum/CareAreas";
+import HoofChecker from "../hoofCheck/HoofChecker.vue";
 
 onBeforeMount(() => {
   treatmentCategoriesCopy.value = [...treatmentCategories.value];
@@ -73,4 +75,8 @@ const horseSelected = () => {
     variant="outlined"
     rows="15"
   ></v-textarea>
+
+  <template v-if="treatmentToBeEdited.category === CareAreas.Hoofcare.toString()">
+    <HoofChecker v-model="treatmentToBeEdited"></HoofChecker>
+  </template>
 </template>
