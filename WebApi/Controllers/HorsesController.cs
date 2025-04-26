@@ -10,6 +10,7 @@ namespace WebApi.Controllers;
 [Route("api/[controller]")]
 public class HorsesController : ControllerBase, IModelController<HorseDTO, HorseSearch>
 {
+    private readonly HoofCheckHelper _hoofCheckHelper = new HoofCheckHelper();
     private readonly DatabaseContext _db;
     private readonly HorseDTOConverter _horseDTOConveter;
 
