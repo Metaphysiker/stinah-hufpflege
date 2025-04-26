@@ -70,7 +70,7 @@ const isHoofcareCurrentTreatmentCategory = computed(() => {
 
 <template>
   <v-app>
-    <v-app-bar app :elevation="2">
+    <v-app-bar app :elevation="2" class="noprint">
       <v-container fluid class="h-100">
         <div class="d-flex align-center h-100">
           <div class="me-10" @click="goToHome()">
@@ -100,7 +100,7 @@ const isHoofcareCurrentTreatmentCategory = computed(() => {
       border
       app
       absolute
-      class="bg-lightgray font-size-rem-6"
+      class="bg-lightgray font-size-rem-6 noprint"
       height="25"
       v-if="currentUser"
     >
