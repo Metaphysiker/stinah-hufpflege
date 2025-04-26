@@ -3,9 +3,11 @@ import HorsesOverviewView from "../views/HorsesOverviewView.vue";
 import LoginView from "@/views/LoginView.vue";
 import TreatmentsOveriewview from "@/views/TreatmentsOveriewview.vue";
 import FilesOverviewView from "@/views/FilesOverviewView.vue";
+import HorsesHoofOverviewView from "@/views/HorsesHoofOverviewView.vue";
 
 const routes = [
   { path: "/horses", component: HorsesOverviewView },
+  { path: "/horses-hoof-overview", component: HorsesHoofOverviewView },
   { path: "/treatments", component: TreatmentsOveriewview },
   { path: "/files", component: FilesOverviewView },
   { path: "/login", name: "login", component: LoginView },
