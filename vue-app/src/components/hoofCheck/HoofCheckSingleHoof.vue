@@ -15,6 +15,10 @@ const props = defineProps({
     default: false,
     type: Boolean,
   },
+  addTextField: {
+    default: false,
+    type: Boolean,
+  },
 });
 
 const iconAboveHoofDrawing = computed(() => {
@@ -80,5 +84,13 @@ const switchHoofCheckStatus = () => {
       class="mt-8"
       :icon="iconAboveHoofDrawing"
     ></v-icon>
+  </div>
+  <div v-if="addTextField">
+    <v-textarea
+      variant="outlined"
+      rows="3"
+      label="Aufgabe"
+      class="my-2"
+    ></v-textarea>
   </div>
 </template>
