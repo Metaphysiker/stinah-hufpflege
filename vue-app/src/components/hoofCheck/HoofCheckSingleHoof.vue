@@ -43,10 +43,11 @@ const switchHoofCheckStatus = () => {
   if (!props.readonly) {
     switch (hoofCheckModel.value) {
       case HoofCheckStatuses.Neutral:
-        hoofCheckModel.value = HoofCheckStatuses.Okay;
-        break;
-      case HoofCheckStatuses.Okay:
         hoofCheckModel.value = HoofCheckStatuses.NotOkay;
+        break;
+      // The following case is not needed, but added for backwards compatibility
+      case HoofCheckStatuses.Okay:
+        hoofCheckModel.value = HoofCheckStatuses.Neutral;
         break;
       case HoofCheckStatuses.NotOkay:
         hoofCheckModel.value = HoofCheckStatuses.Neutral;
