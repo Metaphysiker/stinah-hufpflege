@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, watch } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useTreatmentCategoryStore } from "./stores/treatmentCategoryStore";
 import { storeToRefs } from "pinia";
 import WaitingComponent from "./components/waiting/WaitingComponent.vue";
@@ -11,6 +11,7 @@ import AuthenticationManager from "./components/authentication/AuthenticationMan
 import router from "./router";
 import { LocalStorageHelper } from "./helpers/LocalStorageHelper";
 import { Translator } from "./helpers/Translator";
+import { CareAreas } from "./enum/CareAreas";
 const translator = new Translator();
 const localStorageHelper = new LocalStorageHelper();
 const userStore = useUserStore();
@@ -48,6 +49,23 @@ const logout = () => {
 
   router.push("/login");
 };
+
+const goToHome = () => {
+  router.push("/");
+};
+
+const goToHorsesHoofOverview = () => {
+  router.push("/horses-hoof-overview");
+};
+
+const isHoofcareCurrentTreatmentCategory = computed(() => {
+  if (selectedTreatmentCategory.value) {
+    return (
+      selectedTreatmentCategory.value?.name === CareAreas.Hoofcare.toString()
+    );
+  }
+  return false;
+});
 </script>
 
 <template>
@@ -55,7 +73,9 @@ const logout = () => {
     <v-app-bar app :elevation="2">
       <v-container fluid class="h-100">
         <div class="d-flex align-center h-100">
-          <div class="me-10"><v-app-bar-title>Pflege</v-app-bar-title></div>
+          <div class="me-10" @click="goToHome()">
+            <v-app-bar-title>Pflege</v-app-bar-title>
+          </div>
           <div>
             <div
               style="width: 12rem"
@@ -64,6 +84,11 @@ const logout = () => {
             >
               <TreatmentCategorySelecter />
             </div>
+          </div>
+          <div class="ms-1" v-if="isHoofcareCurrentTreatmentCategory">
+            <v-btn size="x-small" @click="goToHorsesHoofOverview()"
+              >Schlechte Hufe</v-btn
+            >
           </div>
         </div>
       </v-container>
