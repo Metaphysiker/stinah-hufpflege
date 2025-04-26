@@ -15,4 +15,5 @@ public class HorseDTO : IDTO
     public ICollection<int> FileIds { get; set; } = new List<int>();
     public ICollection<TreatmentDate> TreatmentDates { get; set; } = new List<TreatmentDate>();
     public string Patenschaften { get; set; } = string.Empty;
+    public string SummaryHoofCheckStatusOfLastTreatment { get; set; } = string.Empty;
 }

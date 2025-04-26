@@ -20,6 +20,7 @@ export class Horse implements IHorse {
   treatmentDates: ITreatmentDate[];
   fileIds: number[];
   patenschaften: string;
+  summaryHoofCheckStatusOfLastTreatment: string;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
@@ -37,5 +38,6 @@ export class Horse implements IHorse {
     this.treatmentDates = [];
     this.fileIds = [];
     this.patenschaften = "";
+    this.summaryHoofCheckStatusOfLastTreatment = "";
   }
 }
