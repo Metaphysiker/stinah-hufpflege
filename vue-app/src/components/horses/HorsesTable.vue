@@ -100,7 +100,23 @@ const getHeaders = () => {
       selected: showNumberOfWeeksUntilNextTreatmentToothcare,
     },
     { key: "birthYear", title: "Alter", selected: true },
-
+    {
+      key: "summaryHoofCheckStatusOfLastTreatment",
+      title: "Huf-Status",
+      selected: true,
+      sortRaw(a: IHorse, b: IHorse) {
+        // Sort by SummaryHoofCheckStatusOfLastTreatment
+        const aStatus = a.summaryHoofCheckStatusOfLastTreatment;
+        const bStatus = b.summaryHoofCheckStatusOfLastTreatment;
+        if (aStatus === "NotOkay" && bStatus !== "NotOkay") {
+          return 1;
+        } else if (aStatus !== "NotOkay" && bStatus === "NotOkay") {
+          return -1;
+        } else {
+          return 0;
+        }
+      },
+    },
     { key: "action", title: "Aktion", selected: false },
   ];
 };
@@ -112,6 +128,8 @@ const isSpecialColumn = (header: string) => {
     "birthYear",
     "nextTreatmentDate",
     "action",
+    "hoofCheckStatusTotal",
+    "summaryHoofCheckStatusOfLastTreatment",
   ].includes(header);
 };
 
@@ -222,6 +240,19 @@ const nextTreatmentDateForCategory = (
                 )
               }}
             </div>
+          </template>
+          <template
+            v-if="header.key === 'summaryHoofCheckStatusOfLastTreatment'"
+          >
+            <template
+              v-if="
+                row.item.summaryHoofCheckStatusOfLastTreatment.includes(
+                  'NotOkay'
+                )
+              "
+            >
+              <v-icon> mdi-close </v-icon>
+            </template>
           </template>
           <template v-if="header.key === 'action'">
             <div class="d-flex">
