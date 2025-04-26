@@ -14,6 +14,14 @@ defineProps({
     default: false,
     type: Boolean,
   },
+  showHoofTitle: {
+    default: true,
+    type: Boolean,
+  },
+  addTextField: {
+    default: false,
+    type: Boolean,
+  },
 });
 
 onMounted(() => {
@@ -45,7 +53,7 @@ watch(
 }
 </style>
 <template>
-  <h3>Hufe</h3>
+  <h3 v-if="showHoofTitle">Hufe</h3>
   <template v-if="treatmentToBeEdited.hoofCheck">
     <v-row>
       <v-col col-6 class="text-center">
@@ -53,6 +61,7 @@ watch(
           :readonly="readonly"
           v-model="treatmentToBeEdited.hoofCheck.frontLeft"
           position="Vorne Links"
+          :add-text-field="addTextField"
         ></HoofCheckSingleHoof>
       </v-col>
       <v-col col-6 class="text-center">
@@ -60,6 +69,7 @@ watch(
           :readonly="readonly"
           v-model="treatmentToBeEdited.hoofCheck.frontRight"
           position="Vorne Rechts"
+          :add-text-field="addTextField"
         ></HoofCheckSingleHoof>
       </v-col>
     </v-row>
@@ -69,6 +79,7 @@ watch(
           :readonly="readonly"
           v-model="treatmentToBeEdited.hoofCheck.backLeft"
           position="Hinten Links"
+          :add-text-field="addTextField"
         ></HoofCheckSingleHoof>
       </v-col>
       <v-col col-6 class="text-center">
@@ -76,6 +87,7 @@ watch(
           :readonly="readonly"
           v-model="treatmentToBeEdited.hoofCheck.backRight"
           position="Hinten Rechts"
+          :add-text-field="addTextField"
         ></HoofCheckSingleHoof
       ></v-col>
     </v-row>
