@@ -1,6 +1,7 @@
 public class HorseDTOConverter : IDtoConverter<Horse, HorseDTO>
 {
 
+    private readonly HoofCheckHelper _hoofCheckHelper = new HoofCheckHelper();
     private readonly AutoMapperService _mapperService;
     public HorseDTOConverter(AutoMapperService mapperService)
     {
@@ -20,6 +21,7 @@ public class HorseDTOConverter : IDtoConverter<Horse, HorseDTO>
         horseDTO.TreatmentIds = horse.Treatments.Select(t => t.Id).ToList();
         horseDTO.FileIds = horse.Files.Select(f => f.Id).ToList();
         horseDTO.TreatmentDates = GetLastTimeTreatedForEachCategory(horse);
+        horseDTO.SummaryHoofCheckStatusOfLastTreatment = _hoofCheckHelper.GetSummaryHoofCheckStatusOfLastTreatment(horse);
         return horseDTO;
     }
 
