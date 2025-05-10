@@ -22,7 +22,7 @@ defineProps({
   <div class="d-flex flex-wrap">
     <div v-for="horse in horses" class="" :key="horse.id">
       <div class="border ma-2 pa-2 rounded">
-        <HorseHoof :horse="horse"></HorseHoof>
+        <HorseHoof :horse="horse" :show-save-button="true"></HorseHoof>
       </div>
     </div>
   </div>

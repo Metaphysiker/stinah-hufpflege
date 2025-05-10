@@ -6,6 +6,10 @@ import { inject, onMounted, ref, Ref } from "vue";
 import { AxiosStatic } from "axios";
 import { TreatmentService } from "@/services/TreatmentService";
 import { ITreatmentSearch } from "@/interfaces/ITreatmentSearch";
+import { useWaitingStore } from "@/stores/waitingStore";
+import { storeToRefs } from "pinia";
+const waitingStore = useWaitingStore();
+const { waiting } = storeToRefs(waitingStore);
 const axios: AxiosStatic | undefined = inject("axios");
 const treatmentService = new TreatmentService(axios);
 const lastTreatment: Ref<ITreatment | undefined> = ref(undefined);
@@ -14,6 +18,10 @@ const props = defineProps({
   horse: {
     required: true,
     type: Object as () => IHorse,
+  },
+  showSaveButton: {
+    default: false,
+    type: Boolean,
   },
 });
 
@@ -32,6 +40,16 @@ onMounted(() => {
     }
   });
 });
+
+const save = () => {
+  if (lastTreatment.value) {
+    waiting.value = true;
+    treatmentService.Update(lastTreatment.value).then((updatedTreatment) => {
+      lastTreatment.value = updatedTreatment;
+      waiting.value = false;
+    });
+  }
+};
 </script>
 <template>
   <h3 class="text-center">{{ horse.name }}</h3>
@@ -43,5 +61,8 @@ onMounted(() => {
       :model-value="lastTreatment"
       :addTextField="true"
     ></HoofChecker>
+    <div v-if="showSaveButton">
+      <v-btn @click="save">Speichern</v-btn>
+    </div>
   </template>
 </template>
