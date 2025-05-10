@@ -59,7 +59,8 @@ watch(
       <v-col col-6 class="text-center">
         <HoofCheckSingleHoof
           :readonly="readonly"
-          v-model="treatmentToBeEdited.hoofCheck.frontLeft"
+          v-model:hoof-check-status="treatmentToBeEdited.hoofCheck.frontLeft"
+          v-model:hoof-check-task="treatmentToBeEdited.hoofCheck.frontLeftTask"
           position="Vorne Links"
           :add-text-field="addTextField"
         ></HoofCheckSingleHoof>
@@ -67,7 +68,8 @@ watch(
       <v-col col-6 class="text-center">
         <HoofCheckSingleHoof
           :readonly="readonly"
-          v-model="treatmentToBeEdited.hoofCheck.frontRight"
+          v-model:hoof-check-status="treatmentToBeEdited.hoofCheck.frontRight"
+          v-model:hoof-check-task="treatmentToBeEdited.hoofCheck.frontRightTask"
           position="Vorne Rechts"
           :add-text-field="addTextField"
         ></HoofCheckSingleHoof>
@@ -77,7 +79,8 @@ watch(
       <v-col col-6 class="text-center">
         <HoofCheckSingleHoof
           :readonly="readonly"
-          v-model="treatmentToBeEdited.hoofCheck.backLeft"
+          v-model:hoof-check-status="treatmentToBeEdited.hoofCheck.backLeft"
+          v-model:hoof-check-task="treatmentToBeEdited.hoofCheck.backLeftTask"
           position="Hinten Links"
           :add-text-field="addTextField"
         ></HoofCheckSingleHoof>
@@ -85,7 +88,8 @@ watch(
       <v-col col-6 class="text-center">
         <HoofCheckSingleHoof
           :readonly="readonly"
-          v-model="treatmentToBeEdited.hoofCheck.backRight"
+          v-model:hoof-check-status="treatmentToBeEdited.hoofCheck.backRight"
+          v-model:hoof-check-task="treatmentToBeEdited.hoofCheck.backRightTask"
           position="Hinten Rechts"
           :add-text-field="addTextField"
         ></HoofCheckSingleHoof
