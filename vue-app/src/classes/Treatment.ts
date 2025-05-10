@@ -19,6 +19,7 @@ export class Treatment implements ITreatment {
   treatmentIds: number[];
   hoofCheck: IHoofCheck | undefined;
   hoofCheckString: string | undefined;
+  HoofCheckStringFromLastTreatment: string | undefined;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
 {
     private readonly TreatmentDTOConverter _treatmentDTOConverter;
     private readonly DatabaseContext _db;
+    private readonly HoofCheckHelper _hoofCheckHelper = new HoofCheckHelper();
 
     public TreatmentsController(DatabaseContext db, TreatmentDTOConverter treatmentDTOConverter)
     {
@@ -40,6 +42,7 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
     public async Task<ActionResult<TreatmentDTO>> Create([FromBody] TreatmentDTO treatmentDto)
     {
         var treatment = _treatmentDTOConverter.Convert(treatmentDto);
+
         await _db.AddAsync(treatment);
         await _db.SaveChangesAsync();
 

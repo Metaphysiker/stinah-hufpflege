@@ -19,4 +19,5 @@ export interface ITreatment
   treatmentIds: number[];
   hoofCheck: IHoofCheck | undefined;
   hoofCheckString: string | undefined;
+  HoofCheckStringFromLastTreatment: string | undefined;
 }

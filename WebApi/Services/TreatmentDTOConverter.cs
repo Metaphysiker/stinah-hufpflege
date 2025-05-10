@@ -32,6 +32,15 @@ public class TreatmentDTOConverter : IDtoConverter<Treatment, TreatmentDTO>
         if (horse != null)
         {
             treatmentDTO.HorseName = horse.Name;
+
+            var lastTreatmentOfHorseInSameCategory = _db.Treatments
+                .Where(t => t.HorseId == treatment.HorseId && t.Category == treatment.Category)
+                .OrderByDescending(t => t.Date)
+                .FirstOrDefault();
+            if (lastTreatmentOfHorseInSameCategory != null)
+            {
+                treatmentDTO.HoofCheckStringFromLastTreatment = lastTreatmentOfHorseInSameCategory.HoofCheckString;
+            }
         }
 
 

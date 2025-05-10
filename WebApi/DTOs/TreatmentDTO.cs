@@ -11,4 +11,5 @@ public class TreatmentDTO : IDTO
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public string Category { get; set; } = string.Empty;
     public string HoofCheckString { get; set; } = string.Empty;
+    public string HoofCheckStringFromLastTreatment { get; set; } = string.Empty;
 }
