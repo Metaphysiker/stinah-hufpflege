@@ -23,6 +23,10 @@ const props = defineProps({
     default: false,
     type: Boolean,
   },
+  onlyShowHoofWithProblems: {
+    default: false,
+    type: Boolean,
+  },
 });
 
 onMounted(() => {
@@ -60,6 +64,7 @@ const save = () => {
       :readonly="true"
       :model-value="lastTreatment"
       :addTextField="true"
+      :onlyShowHoofWithProblems="onlyShowHoofWithProblems"
     ></HoofChecker>
     <div v-if="showSaveButton">
       <v-btn @click="save">Speichern</v-btn>

@@ -7,4 +7,8 @@ export class EnumHelper {
   getEnumValues(myEnum: any): any[] {
     return Object.values(myEnum).filter((v) => isNaN(Number(v)));
   }
+
+  isSame(enumValue1: any, enumValue2: any): boolean {
+    return enumValue1.toString() === enumValue2.toString();
+  }
 }
