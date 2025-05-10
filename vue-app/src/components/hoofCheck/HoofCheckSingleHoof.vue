@@ -2,8 +2,12 @@
 import { HoofCheckStatuses } from "@/enum/HoofCheckStates";
 import { computed, PropType } from "vue";
 
-const hoofCheckModel = defineModel({
+const hoofCheckStatus = defineModel("hoofCheckStatus", {
   type: String as PropType<HoofCheckStatuses>,
+});
+
+const hoofCheckTask = defineModel("hoofCheckTask", {
+  type: String,
 });
 
 const props = defineProps({
@@ -22,7 +26,7 @@ const props = defineProps({
 });
 
 const iconAboveHoofDrawing = computed(() => {
-  switch (hoofCheckModel.value) {
+  switch (hoofCheckStatus.value) {
     case HoofCheckStatuses.Neutral:
       return "";
     case HoofCheckStatuses.NotOkay:
@@ -33,7 +37,7 @@ const iconAboveHoofDrawing = computed(() => {
 });
 
 const colorForIconAboveHoofDrawing = computed(() => {
-  switch (hoofCheckModel.value) {
+  switch (hoofCheckStatus.value) {
     case HoofCheckStatuses.Neutral:
       return "grey";
     case HoofCheckStatuses.NotOkay:
@@ -45,16 +49,16 @@ const colorForIconAboveHoofDrawing = computed(() => {
 
 const switchHoofCheckStatus = () => {
   if (!props.readonly) {
-    switch (hoofCheckModel.value) {
+    switch (hoofCheckStatus.value) {
       case HoofCheckStatuses.Neutral:
-        hoofCheckModel.value = HoofCheckStatuses.NotOkay;
+        hoofCheckStatus.value = HoofCheckStatuses.NotOkay;
         break;
       // The following case is not needed, but added for backwards compatibility
       case HoofCheckStatuses.Okay:
-        hoofCheckModel.value = HoofCheckStatuses.Neutral;
+        hoofCheckStatus.value = HoofCheckStatuses.Neutral;
         break;
       case HoofCheckStatuses.NotOkay:
-        hoofCheckModel.value = HoofCheckStatuses.Neutral;
+        hoofCheckStatus.value = HoofCheckStatuses.Neutral;
         break;
     }
   }
@@ -87,6 +91,7 @@ const switchHoofCheckStatus = () => {
   </div>
   <div v-if="addTextField">
     <v-textarea
+      v-model="hoofCheckTask"
       variant="outlined"
       rows="3"
       label="Aufgabe"
