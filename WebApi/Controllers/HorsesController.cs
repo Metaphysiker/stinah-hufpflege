@@ -113,6 +113,9 @@ public class HorsesController : ControllerBase, IModelController<HorseDTO, Horse
         var treatments = _db.Treatments.Where(t => t.Horse != null && t.Horse.Id == id);
         _db.RemoveRange(treatments);
 
+        var files = _db.Files.Where(f => f.Horse != null && f.Horse.Id == id);
+        _db.RemoveRange(files);
+
         _db.Remove(horse);
         await _db.SaveChangesAsync();
         return NoContent();
