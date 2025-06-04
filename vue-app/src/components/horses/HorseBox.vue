@@ -177,6 +177,9 @@ const nextTreatmentDateForCategory = (
       >{{ model.numberOfWeeksUntilNextTreatmentHoofcare }}
     </p>
     <p>
+      <strong>Arbeit am Huf für das nächste Mal: </strong>{{ model.workOnHoof }}
+    </p>
+    <p>
       <strong>Zahnpflegerhythmuspflegerhythmus in Wochen: </strong
       >{{ model.numberOfWeeksUntilNextTreatmentToothcare }}
     </p>
