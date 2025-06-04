@@ -14,6 +14,7 @@ export class Translator {
     IFile: "Datei",
     numberOfWeeksUntilNextTreatmentHoofcare: "Hufpflege-Rhythmus in Wochen",
     numberOfWeeksUntilNextTreatmentToothcare: "Zahnpflege-Rhythmus in Wochen",
+    workOnHoof: "Arbeit am Huf",
   };
 
   translate(key: string | undefined): string {

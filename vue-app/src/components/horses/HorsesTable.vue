@@ -95,6 +95,11 @@ const getHeaders = () => {
       selected: showNumberOfWeeksUntilNextTreatmentHoofcare,
     },
     {
+      key: "workOnHoof",
+      title: translator.translate("workOnHoof"),
+      selected: showNumberOfWeeksUntilNextTreatmentHoofcare,
+    },
+    {
       key: "numberOfWeeksUntilNextTreatmentToothcare",
       title: translator.translate("numberOfWeeksUntilNextTreatmentToothcare"),
       selected: showNumberOfWeeksUntilNextTreatmentToothcare,
