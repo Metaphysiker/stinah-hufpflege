@@ -21,6 +21,7 @@ export class Horse implements IHorse {
   fileIds: number[];
   patenschaften: string;
   summaryHoofCheckStatusOfLastTreatment: string;
+  workOnHoof: string;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
@@ -39,5 +40,6 @@ export class Horse implements IHorse {
     this.fileIds = [];
     this.patenschaften = "";
     this.summaryHoofCheckStatusOfLastTreatment = "";
+    this.workOnHoof = "";
   }
 }

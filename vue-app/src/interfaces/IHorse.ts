@@ -17,4 +17,5 @@ export interface IHorse extends IModel, IEntityWithFiles {
   fileIds: number[];
   patenschaften: string;
   summaryHoofCheckStatusOfLastTreatment: string;
+  workOnHoof: string;
 }

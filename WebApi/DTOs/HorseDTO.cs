@@ -16,4 +16,5 @@ public class HorseDTO : IDTO
     public ICollection<TreatmentDate> TreatmentDates { get; set; } = new List<TreatmentDate>();
     public string Patenschaften { get; set; } = string.Empty;
     public string SummaryHoofCheckStatusOfLastTreatment { get; set; } = string.Empty;
+    public string WorkOnHoof { get; set; } = string.Empty;
 }
