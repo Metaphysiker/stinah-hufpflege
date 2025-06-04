@@ -71,6 +71,12 @@ const age = computed(() => {
     </v-card-text>
   </v-card>
 
+  <v-textarea
+    label="Arbeit am Huf für das nächste Mal"
+    v-model="horseToBeEdited.workOnHoof"
+    variant="outlined"
+  ></v-textarea>
+
   <v-card class="mb-3" variant="outlined">
     <v-card-text>
       <v-text-field
