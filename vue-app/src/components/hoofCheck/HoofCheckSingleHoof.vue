@@ -67,7 +67,7 @@ const switchHoofCheckStatus = () => {
 
 <style scoped lang="scss">
 .div-with-hoof-drawing-as-background {
-  height: 10rem;
+  height: 5rem;
   width: 100%;
   background-size: contain;
   background-position: center;
