@@ -14,6 +14,9 @@ import { ClassFactory } from "@/factories/ClassFactory";
 import { IValidator } from "@/validators/IValidator";
 import { ValidatorFactory } from "@/factories/ValidatorFactory";
 import { ValidationHelper } from "@/helpers/ValidationHelper";
+import { useApiErrorHandlerStore } from "@/stores/apiErrorHandlerStore";
+const apiErrorHanlderStore = useApiErrorHandlerStore();
+const { showDialog, message } = storeToRefs(apiErrorHanlderStore);
 const axios: AxiosStatic | undefined = inject("axios");
 const editModelDialog = ref(false);
 const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
@@ -81,11 +84,19 @@ const validate = () => {
 const createModel = () => {
   if (modelClone.value) {
     waiting.value = true;
-    service.value?.Create(modelClone.value).then((createdModel) => {
-      editModelDialog.value = false;
-      emit("created", createdModel);
-      waiting.value = false;
-    });
+    service.value
+      ?.Create(modelClone.value)
+      .then((createdModel) => {
+        editModelDialog.value = false;
+        emit("created", createdModel);
+        waiting.value = false;
+      })
+      .catch((error) => {
+        waiting.value = false;
+        console.error("Error saving model:", error);
+        showDialog.value = true;
+        message.value = "Fehler beim Entfernen: " + error.message;
+      });
   }
 };
 </script>

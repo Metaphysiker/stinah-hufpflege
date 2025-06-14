@@ -21,6 +21,7 @@ import { useWaitingStore } from "@/stores/waitingStore";
 import { storeToRefs } from "pinia";
 import { IConverter } from "@/interfaces/IConverter";
 import { ConverterFactory } from "@/factories/ConverterFactory";
+import { useApiErrorHandlerStore } from "@/stores/apiErrorHandlerStore";
 const axios: AxiosStatic | undefined = inject("axios");
 const editModelDialog = ref(false);
 const translator = new Translator();
@@ -28,6 +29,9 @@ const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
 const boxComponent: ShallowRef<any | undefined> = shallowRef(undefined);
 const formComponent: ShallowRef<any | undefined> = shallowRef(undefined);
 const converter: Ref<IConverter<T> | undefined> = ref(undefined);
+
+const apiErrorHanlderStore = useApiErrorHandlerStore();
+const { showDialog, message } = storeToRefs(apiErrorHanlderStore);
 
 const waitingStore = useWaitingStore();
 const { waiting } = storeToRefs(waitingStore);
@@ -106,22 +110,38 @@ const deleteModelDialog = ref(false);
 const deleteModel = () => {
   if (props.model.id) {
     waiting.value = true;
-    service.value?.Delete(props.model.id).then(() => {
-      waiting.value = false;
-      emit("deleted");
-      deleteModelDialog.value = false;
-    });
+    service.value
+      ?.Delete(props.model.id)
+      .then(() => {
+        waiting.value = false;
+        emit("deleted");
+        deleteModelDialog.value = false;
+      })
+      .catch((error) => {
+        waiting.value = false;
+        console.error("Error saving model:", error);
+        showDialog.value = true;
+        message.value = "Fehler beim Entfernen: " + error.message;
+      });
   }
 };
 
 const saveModel = () => {
   if (modelClone.value) {
     waiting.value = true;
-    service.value?.Update(modelClone.value).then((updatedModel) => {
-      waiting.value = false;
-      editModelDialog.value = false;
-      emit("saved", updatedModel);
-    });
+    service.value
+      ?.Update(modelClone.value)
+      .then((updatedModel) => {
+        waiting.value = false;
+        editModelDialog.value = false;
+        emit("saved", updatedModel);
+      })
+      .catch((error) => {
+        waiting.value = false;
+        console.error("Error saving model:", error);
+        showDialog.value = true;
+        message.value = "Fehler beim Speichern: " + error.message;
+      });
   }
 };
 

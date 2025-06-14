@@ -25,6 +25,12 @@ const { showDialog, message } = storeToRefs(apiErrorHanlderStore);
         <div class="d-flex justify-center">
           <div style="white-space: pre-line">{{ message }}</div>
         </div>
+        <div>
+          <p>
+            <strong>Network Error: </strong>Keine oder schlechte
+            Internet-Verbindung.
+          </p>
+        </div>
       </v-card-text>
     </v-card>
   </v-dialog>

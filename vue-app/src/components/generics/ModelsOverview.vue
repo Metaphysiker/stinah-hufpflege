@@ -21,7 +21,9 @@ import { EntityFinder } from "@/helpers/EntityFinder";
 import { useWaitingStore } from "@/stores/waitingStore";
 import { storeToRefs } from "pinia";
 import { Translator } from "@/helpers/Translator";
-
+import { useApiErrorHandlerStore } from "@/stores/apiErrorHandlerStore";
+const apiErrorHanlderStore = useApiErrorHandlerStore();
+const { showDialog, message } = storeToRefs(apiErrorHanlderStore);
 const axios: AxiosStatic | undefined = inject("axios");
 const models: Ref<T[]> = ref([]);
 const service: Ref<IModelController<T, ISearch> | undefined> = ref(undefined);
@@ -44,11 +46,19 @@ const reload = () => {
     }
 
     waiting.value = true;
-    service.value?.Search(search).then((response) => {
-      models.value = response.data;
-      waiting.value = false;
-      resolve();
-    });
+    service.value
+      ?.Search(search)
+      .then((response) => {
+        models.value = response.data;
+        waiting.value = false;
+        resolve();
+      })
+      .catch((error) => {
+        waiting.value = false;
+        console.error("Error saving model:", error);
+        showDialog.value = true;
+        message.value = "Fehler beim Suchen: " + error.message;
+      });
   });
 };
 
