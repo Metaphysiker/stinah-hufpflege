@@ -1,4 +1,4 @@
-import { AxiosStatic } from "axios";
+import { AxiosError, AxiosResponse, AxiosStatic } from "axios";
 import { AxiosInstanceFactory } from "../factories/AxiosInstanceFactory";
 import { IHorse } from "../interfaces/IHorse";
 import { Horse } from "../classes/Horse";
@@ -19,11 +19,11 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
     return new Promise<IHorse>((resolve, reject) => {
       this.axiosInstance
         .get("api/horses/" + id)
-        .then((response: any) => {
+        .then((response: AxiosResponse<IHorse>) => {
           const horse = this.horseConverter.convert(response.data);
           resolve(horse);
         })
-        .catch((e: any) => {
+        .catch((e: AxiosError) => {
           reject(e);
         });
     });
@@ -33,11 +33,11 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
     return new Promise<IHorse[]>((resolve, reject) => {
       this.axiosInstance
         .get("api/horses")
-        .then((response: any) => {
+        .then((response: AxiosResponse<IHorse>) => {
           const horses = this.horseConverter.convertMany(response.data);
           resolve(horses);
         })
-        .catch((e: any) => {
+        .catch((e: AxiosError) => {
           reject(e);
         });
     });
@@ -47,11 +47,11 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
     return new Promise<IHorse>((resolve, reject) => {
       this.axiosInstance
         .post("api/horses", horse)
-        .then((response: any) => {
+        .then((response: AxiosResponse<IHorse>) => {
           const horse = this.horseConverter.convert(response.data);
           resolve(horse);
         })
-        .catch((e: any) => {
+        .catch((e: AxiosError) => {
           reject(e);
         });
     });
@@ -61,11 +61,11 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
     return new Promise<IHorse>((resolve, reject) => {
       this.axiosInstance
         .put("api/horses", horse)
-        .then((response: any) => {
+        .then((response: AxiosResponse<IHorse>) => {
           const horse = this.horseConverter.convert(response.data);
           resolve(horse);
         })
-        .catch((e: any) => {
+        .catch((e: AxiosError) => {
           reject(e);
         });
     });
@@ -75,10 +75,10 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
     return new Promise<void>((resolve, reject) => {
       this.axiosInstance
         .delete("api/horses/" + id)
-        .then((response: any) => {
+        .then((response: AxiosResponse<IHorse>) => {
           resolve();
         })
-        .catch((e: any) => {
+        .catch((e: AxiosError) => {
           reject(e);
         });
     });
@@ -88,12 +88,12 @@ export class HorseService implements IModelController<IHorse, IHorseSearch> {
     return new Promise<IPagination<IHorse>>((resolve, reject) => {
       this.axiosInstance
         .post("api/horses/search", search)
-        .then((response: any) => {
+        .then((response: AxiosResponse<IPagination<IHorse>>) => {
           const pagination = response.data as IPagination<IHorse>;
           pagination.data = this.horseConverter.convertMany(pagination.data);
           resolve(pagination);
         })
-        .catch((e: any) => {
+        .catch((e: AxiosError) => {
           reject(e);
         });
     });
