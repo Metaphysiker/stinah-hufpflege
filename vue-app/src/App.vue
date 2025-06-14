@@ -12,6 +12,7 @@ import router from "./router";
 import { LocalStorageHelper } from "./helpers/LocalStorageHelper";
 import { Translator } from "./helpers/Translator";
 import { CareAreas } from "./enum/CareAreas";
+import ApiErrorHandler from "./components/ApiErrorHandler.vue";
 const translator = new Translator();
 const localStorageHelper = new LocalStorageHelper();
 const userStore = useUserStore();
@@ -95,6 +96,7 @@ const isHoofcareCurrentTreatmentCategory = computed(() => {
     </v-app-bar>
     <v-main :key="mainKey"> <RouterView /></v-main>
     <WaitingComponent />
+    <ApiErrorHandler />
     <AuthenticationManager />
     <v-footer
       border
