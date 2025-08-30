@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject } from "vue";
+import { computed, inject } from "vue";
 import type { IHorse } from "../../interfaces/IHorse";
 import { DateFormatter } from "../../helpers/DateFormatter";
 import { UrgencyHelper } from "../../helpers/UrgencyHelper";
@@ -10,6 +10,7 @@ import { useTreatmentCategoryStore } from "@/stores/treatmentCategoryStore";
 import { storeToRefs } from "pinia";
 import { Translator } from "@/helpers/Translator";
 import { CareAreas } from "@/enum/CareAreas";
+import { ISortItem } from "@/interfaces/ISortItem";
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -31,9 +32,7 @@ const getHeaders = () => {
   if (selectedTreatmentCategory.value?.name === CareAreas.Hoofcare.toString()) {
     showNumberOfWeeksUntilNextTreatmentHoofcare = true;
     showNextTreatmentDate = true;
-  } else if (
-    selectedTreatmentCategory.value?.name === CareAreas.Toothcare.toString()
-  ) {
+  } else if (selectedTreatmentCategory.value?.name === CareAreas.Toothcare.toString()) {
     showNumberOfWeeksUntilNextTreatmentToothcare = true;
     showNextTreatmentDate = true;
   } else if (!selectedTreatmentCategory.value) {
@@ -51,17 +50,11 @@ const getHeaders = () => {
       sortRaw(a: IHorse, b: IHorse) {
         const aDate =
           horseHelper
-            .getLastTimeTreatedForCategory(
-              a,
-              selectedTreatmentCategory.value?.name
-            )
+            .getLastTimeTreatedForCategory(a, selectedTreatmentCategory.value?.name)
             ?.getTime() || 0;
         const bDate =
           horseHelper
-            .getLastTimeTreatedForCategory(
-              b,
-              selectedTreatmentCategory.value?.name
-            )
+            .getLastTimeTreatedForCategory(b, selectedTreatmentCategory.value?.name)
             ?.getTime() || 0;
         return aDate - bDate;
       },
@@ -73,17 +66,11 @@ const getHeaders = () => {
       sortRaw(a: IHorse, b: IHorse) {
         const aDate =
           horseHelper
-            .calculateNextTreatmentDate(
-              a,
-              selectedTreatmentCategory.value?.name
-            )
+            .calculateNextTreatmentDate(a, selectedTreatmentCategory.value?.name)
             ?.getTime() || 0;
         const bDate =
           horseHelper
-            .calculateNextTreatmentDate(
-              b,
-              selectedTreatmentCategory.value?.name
-            )
+            .calculateNextTreatmentDate(b, selectedTreatmentCategory.value?.name)
             ?.getTime() || 0;
 
         return aDate - bDate;
@@ -138,10 +125,18 @@ const isSpecialColumn = (header: string) => {
   ].includes(header);
 };
 
-defineProps({
+const props = defineProps({
   models: {
     required: true,
     type: Object as () => IHorse[],
+  },
+  sortBy: {
+    required: false,
+    type: String,
+  },
+  sortByOrder: {
+    required: false,
+    type: String,
   },
 });
 
@@ -171,31 +166,33 @@ const emit = defineEmits<{
 const lastTimeTreatedForCategory = (horse: IHorse) => {
   if (selectedTreatmentCategory.value?.name) {
     const foundLastTreatmentDate = horse.treatmentDates.find(
-      (treatmentDate) =>
-        treatmentDate.category === selectedTreatmentCategory.value?.name
+      (treatmentDate) => treatmentDate.category === selectedTreatmentCategory.value?.name
     );
 
     if (foundLastTreatmentDate?.lastTimeTreated) {
-      return dateFormatter.dddotmmdotyyyy(
-        foundLastTreatmentDate.lastTimeTreated
-      );
+      return dateFormatter.dddotmmdotyyyy(foundLastTreatmentDate.lastTimeTreated);
     }
   }
 
   return "";
 };
 
-const nextTreatmentDateForCategory = (
-  horse: IHorse,
-  category: string | undefined
-) => {
-  const nextTreatmentDate = horseHelper.calculateNextTreatmentDate(
-    horse,
-    category
-  );
+const nextTreatmentDateForCategory = (horse: IHorse, category: string | undefined) => {
+  const nextTreatmentDate = horseHelper.calculateNextTreatmentDate(horse, category);
   if (!nextTreatmentDate) return "";
   return dateFormatter.dddotmmdotyyyy(nextTreatmentDate);
 };
+
+const sortByKey = computed(() => {
+  if (!props.sortBy) return [];
+  let sortItem: ISortItem = {
+    key: props.sortBy,
+    order: props.sortByOrder === "desc" ? "desc" : "asc",
+  };
+  return [sortItem];
+});
+
+const sortDesc = computed(() => (props.sortBy ? [props.sortByOrder === "desc"] : []));
 </script>
 
 <template>
@@ -204,13 +201,12 @@ const nextTreatmentDateForCategory = (
     :items="models"
     hide-default-footer
     :items-per-page="100"
+    :sort-by="sortByKey"
+    :sort-desc="sortDesc"
   >
     <template v-slot:item="row">
       <tr>
-        <td
-          v-for="header in getHeaders().filter((h) => h.selected)"
-          :key="header.key"
-        >
+        <td v-for="header in getHeaders().filter((h) => h.selected)" :key="header.key">
           <div v-if="row.item && row.item.hasOwnProperty(header.key)">
             <template v-if="!isSpecialColumn(header.key)">
               {{ row.item[header.key as keyof IHorse] }}
@@ -220,9 +216,7 @@ const nextTreatmentDateForCategory = (
               {{ new Date().getFullYear() - row.item["birthYear"] }}
             </template>
             <template v-if="header.key === 'name'">
-              <v-btn @click="clickOnName(row.item)">{{
-                row.item["name"]
-              }}</v-btn>
+              <v-btn @click="clickOnName(row.item)">{{ row.item["name"] }}</v-btn>
             </template>
           </div>
           <template v-if="header.key === 'lastTimeTreated'">
@@ -239,34 +233,22 @@ const nextTreatmentDateForCategory = (
               "
             >
               {{
-                nextTreatmentDateForCategory(
-                  row.item,
-                  selectedTreatmentCategory?.name
-                )
+                nextTreatmentDateForCategory(row.item, selectedTreatmentCategory?.name)
               }}
             </div>
           </template>
-          <template
-            v-if="header.key === 'summaryHoofCheckStatusOfLastTreatment'"
-          >
+          <template v-if="header.key === 'summaryHoofCheckStatusOfLastTreatment'">
             <template
-              v-if="
-                row.item.summaryHoofCheckStatusOfLastTreatment.includes(
-                  'NotOkay'
-                )
-              "
+              v-if="row.item.summaryHoofCheckStatusOfLastTreatment.includes('NotOkay')"
             >
               <v-icon> mdi-close </v-icon>
             </template>
           </template>
           <template v-if="header.key === 'action'">
             <div class="d-flex">
-              <v-btn
-                color="primary"
-                class="me-2"
-                @click="clickOnBehandelt(row.item)"
-                >{{ horseHelper.getLabelForBehandeltButton(row.item) }}</v-btn
-              >
+              <v-btn color="primary" class="me-2" @click="clickOnBehandelt(row.item)">{{
+                horseHelper.getLabelForBehandeltButton(row.item)
+              }}</v-btn>
               <v-btn color="green" class="me-2" @click="clickOnEdit(row.item)"
                 ><v-icon> mdi-pencil </v-icon></v-btn
               >

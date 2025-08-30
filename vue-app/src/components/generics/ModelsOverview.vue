@@ -71,6 +71,14 @@ const props = defineProps({
     required: false,
     type: Object as () => ISearch,
   },
+  sortBy: {
+    required: false,
+    type: String,
+  },
+  sortByOrder: {
+    required: false,
+    type: String,
+  },
 });
 
 onMounted(() => {
@@ -94,10 +102,7 @@ onBeforeMount(() => {
     axios
   ) as IModelController<T, ISearch>;
 
-  tableComponent.value = ComponentFactory.createComponent(
-    props.interfaceName,
-    "Table"
-  );
+  tableComponent.value = ComponentFactory.createComponent(props.interfaceName, "Table");
 });
 
 const modelToEdit: Ref<T | undefined> = ref(undefined);
@@ -157,6 +162,8 @@ const createModelText = computed(() => {
   <tableComponent
     :models="models"
     @clickOnName="(model: T) => clickOnName(model)"
+    :sortBy="props.sortBy"
+    :sortByOrder="props.sortByOrder"
   ></tableComponent>
   <v-container fluid>
     <div class="d-flex justify-end">
