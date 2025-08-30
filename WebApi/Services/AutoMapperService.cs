@@ -12,6 +12,7 @@ public class AutoMapperService
             cfg.CreateMap<Horse, HorseDTO>().ReverseMap();
             cfg.CreateMap<Treatment, TreatmentDTO>().ReverseMap();
             cfg.CreateMap<File, FileDTO>().ReverseMap();
+            cfg.CreateMap<Routine, RoutineDTO>().ReverseMap();
         }
         );
 

@@ -1,5 +1,6 @@
 import { IEntityWithFiles } from "./IEntityWithFiles";
 import { IModel } from "./IModel";
+import { IRoutine } from "./IRoutine";
 import { ITreatmentDate } from "./ITreatmentDate";
 
 export interface IHorse extends IModel, IEntityWithFiles {
@@ -19,4 +20,5 @@ export interface IHorse extends IModel, IEntityWithFiles {
   patenschaften: string;
   summaryHoofCheckStatusOfLastTreatment: string;
   workOnHoof: string;
+  routines: IRoutine[];
 }

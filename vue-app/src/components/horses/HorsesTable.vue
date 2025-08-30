@@ -11,6 +11,7 @@ import { storeToRefs } from "pinia";
 import { Translator } from "@/helpers/Translator";
 import { CareAreas } from "@/enum/CareAreas";
 import { ISortItem } from "@/interfaces/ISortItem";
+import { RoutineHelper } from "@/helpers/RoutineHelper";
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -19,6 +20,7 @@ const horseHelper = new HorseHelper(horseService);
 const urgencyHelper = new UrgencyHelper(horseHelper);
 const dateFormatter = new DateFormatter();
 const translator = new Translator();
+const routineHelper = new RoutineHelper();
 
 const getHeaders = () => {
   const category =
@@ -46,7 +48,16 @@ const getHeaders = () => {
     showNextTreatmentDate = true;
   }
 
-  return [
+  const headersForRoutines = [];
+  for (let i = 0; i < numberOfMostRoutinesOfAHorse.value; i++) {
+    headersForRoutines.push({
+      key: `routine_${i}`,
+      title: `Routine ${i + 1}`,
+      selected: true,
+    });
+  }
+
+  const headers = [
     { key: "name", title: "Name", selected: true },
     {
       key: "lastTimeTreated",
@@ -121,9 +132,18 @@ const getHeaders = () => {
     },
     { key: "action", title: "Aktion", selected: false },
   ];
+
+  return headers.concat(headersForRoutines);
+};
+
+const getIndexFromRoutineHeader = (header: string) => {
+  const match = header.match(/routine_(\d+)/);
+  return match ? parseInt(match[1], 10) : -1;
 };
 
 const isSpecialColumn = (header: string) => {
+  if (header.startsWith("routine_")) return true;
+
   return [
     "name",
     "lastTimeTreated",
@@ -148,6 +168,20 @@ const props = defineProps({
     required: false,
     type: String,
   },
+});
+
+const getRoutinesInSameArea = (horse: IHorse) => {
+  if (!selectedTreatmentCategory.value?.name) return horse.routines;
+  return horse.routines.filter(
+    (routine) => routine.treatmentCategoryName === selectedTreatmentCategory.value?.name
+  );
+};
+
+const numberOfMostRoutinesOfAHorse = computed(() => {
+  return props.models.reduce((max, horse) => {
+    const routinesInSameArea = getRoutinesInSameArea(horse);
+    return Math.max(max, routinesInSameArea.length);
+  }, 0);
 });
 
 const clickOnBehandelt = (horse: IHorse) => {
@@ -203,6 +237,38 @@ const sortByKey = computed(() => {
 });
 
 const sortDesc = computed(() => (props.sortBy ? [props.sortByOrder === "desc"] : []));
+
+const getRoutineNote = (horse: IHorse, headerKey: string) => {
+  const routineIndex = getIndexFromRoutineHeader(headerKey);
+  if (routineIndex === -1) return "";
+
+  const routinesInSameArea = getRoutinesInSameArea(horse);
+  const routine = routinesInSameArea[routineIndex];
+  return routine ? routine.note : "";
+};
+
+const getRoutineDate = (horse: IHorse, headerKey: string) => {
+  const routineIndex = getIndexFromRoutineHeader(headerKey);
+  if (routineIndex === -1) return "";
+
+  const routinesInSameArea = getRoutinesInSameArea(horse);
+  const routine = routinesInSameArea[routineIndex];
+  if (!routine) return "";
+  const nextDate = routineHelper.calculateHypotheticalNextTreatmentDate(routine);
+  return nextDate ? dateFormatter.dddotmmdotyyyy(nextDate) : "";
+};
+
+const getRoutineUrgencyClass = (horse: IHorse, headerKey: string) => {
+  const routineIndex = getIndexFromRoutineHeader(headerKey);
+  if (routineIndex === -1) return "";
+
+  const routinesInSameArea = getRoutinesInSameArea(horse);
+  const routine = routinesInSameArea[routineIndex];
+  if (!routine) return "";
+  const nextDate = routineHelper.calculateHypotheticalNextTreatmentDate(routine);
+  if (!nextDate) return "";
+  return urgencyHelper.getClassForUrgencyWithDate(nextDate);
+};
 </script>
 
 <template>
@@ -229,6 +295,17 @@ const sortDesc = computed(() => (props.sortBy ? [props.sortByOrder === "desc"] :
               <v-btn @click="clickOnName(row.item)">{{ row.item["name"] }}</v-btn>
             </template>
           </div>
+
+          <template v-if="header.key.startsWith('routine_')">
+            <div
+              class="text-center"
+              :class="getRoutineUrgencyClass(row.item, header.key)"
+            >
+              {{ getRoutineDate(row.item, header.key) }}<br />
+            </div>
+            {{ getRoutineNote(row.item, header.key) }}
+          </template>
+
           <template v-if="header.key === 'lastTimeTreated'">
             {{ lastTimeTreatedForCategory(row.item) }}
           </template>

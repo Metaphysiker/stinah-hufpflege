@@ -1,5 +1,6 @@
 import { FileConverter } from "@/converters/FileConverter";
 import { HorseConverter } from "@/converters/HorseConverter";
+import { RoutineConverter } from "@/converters/RoutineConverter";
 import { TreatmentConverter } from "@/converters/TreatmentConverter";
 import { IConverter } from "@/interfaces/IConverter";
 import { IModel } from "@/interfaces/IModel";
@@ -13,6 +14,8 @@ export class ConverterFactory {
         return new TreatmentConverter();
       case "IFile":
         return new FileConverter();
+      case "IRoutine":
+        return new RoutineConverter();
       default:
         throw new Error("Unknown type");
     }

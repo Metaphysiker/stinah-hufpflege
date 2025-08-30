@@ -2,6 +2,7 @@
 import { IHorse } from "@/interfaces/IHorse";
 import { computed, inject, onBeforeMount, Ref, ref, watch } from "vue";
 import TreatmentList from "../treatments/TreatmentList.vue";
+import RoutineList from "../routines/RoutineList.vue";
 import { ITreatmentSearch } from "@/interfaces/ITreatmentSearch";
 import { ITreatment } from "@/interfaces/ITreatment";
 import { Treatment } from "@/classes/Treatment";
@@ -18,6 +19,9 @@ import FileList from "../files/FileList.vue";
 import { IFileSearch } from "@/interfaces/IFileSearch";
 import { File } from "@/classes/File";
 import { IFile } from "@/interfaces/IFile";
+import { Routine } from "@/classes/Routine";
+import { IRoutine } from "@/interfaces/IRoutine";
+import { IRoutineSearch } from "@/interfaces/IRoutineSearch";
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
 const translator = new Translator();
@@ -66,6 +70,14 @@ const treatmentSearch: Ref<ITreatmentSearch> = ref({
   page: 0,
 });
 
+const routineSearch: Ref<IRoutineSearch> = ref({
+  horseId: props.model.id,
+  sortBy: "Date",
+  sortOrder: "descending",
+  pageSize: 5,
+  page: 0,
+});
+
 const fileSearch: Ref<IFileSearch> = ref({
   horseId: props.model.id,
   sortBy: "CreatedAt",
@@ -84,6 +96,10 @@ const labelForTreatments = computed(() => {
   return `Letzte Behandlungen` + ` (${translatedCategory})`;
 });
 
+const labelForRoutines = computed(() => {
+  return `Routinen`;
+});
+
 const labelForFiles = computed(() => {
   if (props.model.fileIds.length === 0) {
     return "Keine Dateien vorhanden";
@@ -93,6 +109,7 @@ const labelForFiles = computed(() => {
 });
 
 const newTreatment: Ref<ITreatment> = ref(new Treatment());
+const newRoutine: Ref<IRoutine> = ref(new Routine());
 const newFile: Ref<IFile> = ref(new File());
 
 const assignNewTreatment = () => {
@@ -100,6 +117,13 @@ const assignNewTreatment = () => {
   treatment.horseId = props.model.id;
   treatment.category = selectedTreatmentCategory.value?.name || "";
   newTreatment.value = treatment;
+};
+
+const assignNewRoutine = () => {
+  const routine = new Routine();
+  routine.horseId = props.model.id;
+  routine.treatmentCategoryName = selectedTreatmentCategory.value?.name || "";
+  newRoutine.value = routine;
 };
 
 const assignNewFile = () => {
@@ -124,11 +148,18 @@ const updateTreatmentSearch = () => {
 };
 
 const createTreatmentDialog = ref(false);
+const createRoutineDialog = ref(false);
 const createFileDialog = ref(false);
 
 const treatmentCreated = () => {
   treatmentListKey.value++;
   createTreatmentDialog.value = false;
+  emit("saved", props.model);
+};
+
+const routineCreated = () => {
+  routineListKey.value++;
+  createRoutineDialog.value = false;
   emit("saved", props.model);
 };
 
@@ -139,11 +170,17 @@ const fileCreated = () => {
 };
 
 const treatmentListKey = ref(0);
+const routineListKey = ref(0);
 const fileListKey = ref(0);
 
 const addTreatment = () => {
   assignNewTreatment();
   createTreatmentDialog.value = true;
+};
+
+const addRoutine = () => {
+  assignNewRoutine();
+  createRoutineDialog.value = true;
 };
 
 const addFile = () => {
@@ -209,6 +246,19 @@ const nextTreatmentDateForCategory = (horse: IHorse, category: string | undefine
     ></TreatmentList>
 
     <div class="d-flex justify-start">
+      <v-btn @click="addRoutine()" elevation="3" class="my-3"> Routine hinzufügen </v-btn>
+    </div>
+    <v-divider class="my-2"> </v-divider>
+    <div>
+      <strong>{{ labelForRoutines }}</strong>
+    </div>
+    <RoutineList
+      :key="routineListKey"
+      :routine-search="routineSearch"
+      @reload="emit('reload')"
+    ></RoutineList>
+
+    <div class="d-flex justify-start">
       <v-btn @click="addFile()" elevation="3" class="my-3"> Datei hinzufügen </v-btn>
     </div>
     <v-divider class="my-2"> </v-divider>
@@ -229,6 +279,17 @@ const nextTreatmentDateForCategory = (horse: IHorse, category: string | undefine
         :model-blueprint="newTreatment"
         @created="treatmentCreated()"
         @close="createTreatmentDialog = false"
+      ></NewModelCard>
+    </v-card>
+  </v-dialog>
+
+  <v-dialog fullscreen v-model="createRoutineDialog">
+    <v-card>
+      <NewModelCard
+        interface-name="IRoutine"
+        :model-blueprint="newRoutine"
+        @created="routineCreated()"
+        @close="createRoutineDialog = false"
       ></NewModelCard>
     </v-card>
   </v-dialog>

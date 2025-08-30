@@ -7,6 +7,7 @@ public class DatabaseContext : IdentityDbContext<IdentityUser>
     public DbSet<Horse> Horses { get; set; }
     public DbSet<Treatment> Treatments { get; set; }
     public DbSet<TreatmentCategory> TreatmentCategories { get; set; }
+    public DbSet<Routine> Routines { get; set; }
     public DbSet<File> Files { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -30,5 +31,11 @@ public class DatabaseContext : IdentityDbContext<IdentityUser>
             .HasMany(e => e.Files)
             .WithOne(e => e.Horse)
             .IsRequired(false);
+
+        modelBuilder.Entity<Horse>()
+            .HasMany(e => e.Routines)
+            .WithOne(e => e.Horse)
+            .IsRequired(false);
+
     }
 }

@@ -12,6 +12,7 @@ export class Translator {
     IHorse: "Pferd",
     ITreatment: "Behandlung",
     IFile: "Datei",
+    IRoutine: "Routine",
     numberOfWeeksUntilNextTreatmentHoofcare: "Hufpflege-Rhythmus in Wochen",
     numberOfWeeksUntilNextTreatmentToothcare: "Zahnpflege-Rhythmus in Wochen",
     numberOfWeeksUntilNextTreatmentHealthcare: "Gesundheits-Rhythmus in Wochen",

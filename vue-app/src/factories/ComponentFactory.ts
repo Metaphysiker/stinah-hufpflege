@@ -7,6 +7,10 @@ import TreatmentCard from "@/components/treatments/TreatmentCard.vue";
 import TreatmentForm from "@/components/treatments/TreatmentForm.vue";
 import TreatmentBox from "@/components/treatments/TreatmentBox.vue";
 import TreatmentsTable from "@/components/treatments/TreatmentsTable.vue";
+import RoutineBox from "@/components/routines/RoutineBox.vue";
+import RoutineForm from "@/components/routines/RoutineForm.vue";
+import RoutineCard from "@/components/routines/RoutineCard.vue";
+import RoutinesTable from "@/components/routines/RoutinesTable.vue";
 import FileBox from "@/components/files/FileBox.vue";
 import FileForm from "@/components/files/FileForm.vue";
 import FilesTable from "@/components/files/FilesTable.vue";
@@ -46,6 +50,21 @@ export class ComponentFactory {
               throw new Error("Unknown component");
           }
         }
+      case "IRoutine":
+        if (componentName) {
+          switch (componentName) {
+            case "Box":
+              return RoutineBox;
+            case "Card":
+              return RoutineCard;
+            case "Form":
+              return RoutineForm;
+            case "Table":
+              return RoutinesTable;
+            default:
+              throw new Error("Unknown component");
+          }
+        }
       case "IFile":
         if (componentName) {
           switch (componentName) {
@@ -61,6 +80,7 @@ export class ComponentFactory {
               throw new Error("Unknown component");
           }
         }
+
       default:
         throw new Error("Unknown type");
     }

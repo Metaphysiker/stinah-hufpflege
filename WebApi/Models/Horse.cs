@@ -14,6 +14,7 @@ public class Horse : IModel, IEnityWithTreatments, IEnityWithFiles
     public string FileKeysString { get; set; } = string.Empty;
     public ICollection<Treatment> Treatments { get; set; } = new List<Treatment>();
     public ICollection<File> Files { get; set; } = new List<File>();
+    public ICollection<Routine> Routines { get; set; } = new List<Routine>();
     public string Patenschaften { get; set; } = string.Empty;
     public string WorkOnHoof { get; set; } = string.Empty;
 }

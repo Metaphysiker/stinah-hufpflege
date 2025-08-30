@@ -41,7 +41,7 @@ export class UrgencyHelper {
     }
   }
 
-  getClassForUrgency(horse: IHorse, category: string | undefined) {
+    getClassForUrgency(horse: IHorse, category: string | undefined) {
     if (this.isNextWeek(horse, category)) {
       return "bg-red";
     } else if (this.isNextMonth(horse, category)) {
@@ -50,4 +50,26 @@ export class UrgencyHelper {
       return "bg-white";
     }
   }
+
+getClassForUrgencyWithDate(date: Date) {
+  if (this.isNextWeekWithDate(date)) {
+    return "bg-red"; // urgent - within a week
+  } else if (this.isNextMonthWithDate(date)) {
+    return "bg-yellow"; // less urgent - within a month
+  } else {
+    return "bg-white"; // not urgent
+  }
+}
+
+isNextWeekWithDate(date: Date) {
+  const now = new Date();
+  const difference = date.getTime() - now.getTime();
+  return difference > 0 && difference / (1000 * 60 * 60 * 24) < 7;
+}
+
+isNextMonthWithDate(date: Date) {
+  const now = new Date();
+  const difference = date.getTime() - now.getTime();
+  return difference > 0 && difference / (1000 * 60 * 60 * 24) < 30;
+}
 }

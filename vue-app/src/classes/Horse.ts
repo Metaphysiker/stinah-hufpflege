@@ -1,6 +1,7 @@
 import { IHorse } from "../interfaces/IHorse";
 import { LocalIDFactory } from "@/helpers/LocalIDFactory";
 import { IFile } from "@/interfaces/IFile";
+import { IRoutine } from "@/interfaces/IRoutine";
 import { ITreatmentDate } from "@/interfaces/ITreatmentDate";
 
 export class Horse implements IHorse {
@@ -23,6 +24,7 @@ export class Horse implements IHorse {
   patenschaften: string;
   summaryHoofCheckStatusOfLastTreatment: string;
   workOnHoof: string;
+  routines: IRoutine[];
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
@@ -43,5 +45,6 @@ export class Horse implements IHorse {
     this.patenschaften = "";
     this.summaryHoofCheckStatusOfLastTreatment = "";
     this.workOnHoof = "";
+    this.routines = [];
   }
 }

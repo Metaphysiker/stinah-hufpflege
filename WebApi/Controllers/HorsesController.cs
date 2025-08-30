@@ -54,8 +54,11 @@ public class HorsesController : ControllerBase, IModelController<HorseDTO, Horse
     [HttpGet]
     public async Task<ActionResult<List<HorseDTO>>> ReadAll()
     {
-        var horses = await _db.Horses.Include(a => a.Treatments)
-        .Include(a => a.Files).ToListAsync();
+        var horses = await _db.Horses
+        .Include(a => a.Treatments)
+        .Include(a => a.Files)
+        .Include(a => a.Routines)
+        .ToListAsync();
 
         return _horseDTOConveter.Convert(horses);
     }
@@ -64,6 +67,7 @@ public class HorsesController : ControllerBase, IModelController<HorseDTO, Horse
     public async Task<ActionResult<HorseDTO>> Read(int id)
     {
         var horse = await _db.Horses.FindAsync(id);
+
         if (horse == null)
         {
             return NotFound();
@@ -116,6 +120,9 @@ public class HorsesController : ControllerBase, IModelController<HorseDTO, Horse
         var files = _db.Files.Where(f => f.Horse != null && f.Horse.Id == id);
         _db.RemoveRange(files);
 
+        var routines = _db.Routines.Where(r => r.Horse != null && r.Horse.Id == id);
+        _db.RemoveRange(routines);
+
         _db.Remove(horse);
         await _db.SaveChangesAsync();
         return NoContent();
@@ -139,6 +146,7 @@ public class HorsesController : ControllerBase, IModelController<HorseDTO, Horse
             .Take(search.PageSize)
             .Include(a => a.Treatments)
             .Include(a => a.Files)
+            .Include(a => a.Routines)
             .ToListAsync();
 
         paginationDTO.TotalPages = (int)Math.Ceiling((double)paginationDTO.TotalItems / search.PageSize);

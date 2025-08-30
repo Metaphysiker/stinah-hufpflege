@@ -59,6 +59,10 @@ export class HorseHelper {
       return this.dateHelper.addDays(lastTimeTreated, numberOfWeeks * 7);
     }
 
+    if (category === CareAreas.Healthcare.toString()) {
+      return this.dateHelper.addDays(lastTimeTreated, numberOfWeeks * 7);
+    }
+
     return undefined;
   }
 
