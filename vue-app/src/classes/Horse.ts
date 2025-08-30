@@ -24,7 +24,8 @@ export class Horse implements IHorse {
   patenschaften: string;
   summaryHoofCheckStatusOfLastTreatment: string;
   workOnHoof: string;
-  routines: IRoutine[];
+  includedRoutines: IRoutine[];
+  routineIds: number[];
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
@@ -45,6 +46,7 @@ export class Horse implements IHorse {
     this.patenschaften = "";
     this.summaryHoofCheckStatusOfLastTreatment = "";
     this.workOnHoof = "";
-    this.routines = [];
+    this.includedRoutines = [];
+    this.routineIds = [];
   }
 }

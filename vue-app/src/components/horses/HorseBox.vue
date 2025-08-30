@@ -97,6 +97,9 @@ const labelForTreatments = computed(() => {
 });
 
 const labelForRoutines = computed(() => {
+  if (props.model.routineIds.length === 0) {
+    return "Keine Routinen vorhanden";
+  }
   return `Routinen`;
 });
 

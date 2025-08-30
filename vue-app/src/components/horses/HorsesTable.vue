@@ -171,8 +171,8 @@ const props = defineProps({
 });
 
 const getRoutinesInSameArea = (horse: IHorse) => {
-  if (!selectedTreatmentCategory.value?.name) return horse.routines;
-  return horse.routines.filter(
+  if (!selectedTreatmentCategory.value?.name) return horse.includedRoutines;
+  return horse.includedRoutines.filter(
     (routine) => routine.treatmentCategoryName === selectedTreatmentCategory.value?.name
   );
 };

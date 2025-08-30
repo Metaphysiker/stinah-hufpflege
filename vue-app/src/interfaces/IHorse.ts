@@ -20,5 +20,6 @@ export interface IHorse extends IModel, IEntityWithFiles {
   patenschaften: string;
   summaryHoofCheckStatusOfLastTreatment: string;
   workOnHoof: string;
-  routines: IRoutine[];
+  includedRoutines: IRoutine[];
+  routineIds: number[];
 }
