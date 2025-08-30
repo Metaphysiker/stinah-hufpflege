@@ -9,6 +9,7 @@ export class Horse implements IHorse {
   name: string;
   numberOfWeeksUntilNextTreatmentHoofcare: number;
   numberOfWeeksUntilNextTreatmentToothcare: number;
+  numberOfWeeksUntilNextTreatmentHealthcare: number;
   birthYear: number;
   noteForNextTreatment: string;
   createdAt: Date;
@@ -28,6 +29,7 @@ export class Horse implements IHorse {
     this.name = "";
     this.numberOfWeeksUntilNextTreatmentHoofcare = 8;
     this.numberOfWeeksUntilNextTreatmentToothcare = 8;
+    this.numberOfWeeksUntilNextTreatmentHealthcare = 8;
     this.birthYear = 0;
     this.noteForNextTreatment = "";
     this.createdAt = new Date();

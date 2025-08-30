@@ -33,6 +33,13 @@ export class HorseHelper {
       );
     }
 
+    if (category === CareAreas.Healthcare.toString()) {
+      return this.dateHelper.addDays(
+        lastTimeTreated,
+        horse.numberOfWeeksUntilNextTreatmentHealthcare * 7
+      );
+    }
+
     return undefined;
   }
 

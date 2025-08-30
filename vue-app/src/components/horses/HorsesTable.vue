@@ -27,6 +27,7 @@ const getHeaders = () => {
 
   let showNumberOfWeeksUntilNextTreatmentHoofcare = false;
   let showNumberOfWeeksUntilNextTreatmentToothcare = false;
+  let showNumberOfWeeksUntilNextTreatmentHealthcare = false;
   let showNextTreatmentDate = false;
 
   if (selectedTreatmentCategory.value?.name === CareAreas.Hoofcare.toString()) {
@@ -35,9 +36,13 @@ const getHeaders = () => {
   } else if (selectedTreatmentCategory.value?.name === CareAreas.Toothcare.toString()) {
     showNumberOfWeeksUntilNextTreatmentToothcare = true;
     showNextTreatmentDate = true;
+  } else if (selectedTreatmentCategory.value?.name === CareAreas.Healthcare.toString()) {
+    showNumberOfWeeksUntilNextTreatmentHealthcare = true;
+    showNextTreatmentDate = true;
   } else if (!selectedTreatmentCategory.value) {
     showNumberOfWeeksUntilNextTreatmentHoofcare = true;
     showNumberOfWeeksUntilNextTreatmentToothcare = true;
+    showNumberOfWeeksUntilNextTreatmentHealthcare = true;
     showNextTreatmentDate = true;
   }
 
@@ -90,6 +95,11 @@ const getHeaders = () => {
       key: "numberOfWeeksUntilNextTreatmentToothcare",
       title: translator.translate("numberOfWeeksUntilNextTreatmentToothcare"),
       selected: showNumberOfWeeksUntilNextTreatmentToothcare,
+    },
+    {
+      key: "numberOfWeeksUntilNextTreatmentHealthcare",
+      title: translator.translate("numberOfWeeksUntilNextTreatmentHealthcare"),
+      selected: showNumberOfWeeksUntilNextTreatmentHealthcare,
     },
     { key: "birthYear", title: "Alter", selected: true },
     {

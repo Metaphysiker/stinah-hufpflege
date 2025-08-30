@@ -6,6 +6,7 @@ export interface IHorse extends IModel, IEntityWithFiles {
   name: string;
   numberOfWeeksUntilNextTreatmentHoofcare: number;
   numberOfWeeksUntilNextTreatmentToothcare: number;
+  numberOfWeeksUntilNextTreatmentHealthcare: number;
   birthYear: number;
   noteForNextTreatment: string;
   createdAt: Date;

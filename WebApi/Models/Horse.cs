@@ -5,6 +5,7 @@ public class Horse : IModel, IEnityWithTreatments, IEnityWithFiles
     public string Name { get; set; } = string.Empty;
     public int NumberOfWeeksUntilNextTreatmentHoofcare { get; set; } = 0;
     public int NumberOfWeeksUntilNextTreatmentToothcare { get; set; } = 0;
+    public int NumberOfWeeksUntilNextTreatmentHealthcare { get; set; } = 0;
     public int BirthYear { get; set; } = 0;
     public string NoteForNextTreatment { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

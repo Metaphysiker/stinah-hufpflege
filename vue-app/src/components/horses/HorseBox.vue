@@ -79,9 +79,7 @@ const labelForTreatments = computed(() => {
     return "Keine Behandlungen vorhanden";
   }
 
-  const translatedCategory = translator.translate(
-    selectedTreatmentCategory.value?.name
-  );
+  const translatedCategory = translator.translate(selectedTreatmentCategory.value?.name);
 
   return `Letzte Behandlungen` + ` (${translatedCategory})`;
 });
@@ -153,14 +151,8 @@ const addFile = () => {
   createFileDialog.value = true;
 };
 
-const nextTreatmentDateForCategory = (
-  horse: IHorse,
-  category: string | undefined
-) => {
-  const nextTreatmentDate = horseHelper.calculateNextTreatmentDate(
-    horse,
-    category
-  );
+const nextTreatmentDateForCategory = (horse: IHorse, category: string | undefined) => {
+  const nextTreatmentDate = horseHelper.calculateNextTreatmentDate(horse, category);
   if (!nextTreatmentDate) return "";
   return dateFormatter.dddotmmdotyyyy(nextTreatmentDate);
 };
@@ -176,12 +168,15 @@ const nextTreatmentDateForCategory = (
       <strong>Hufpflegerhythmus in Wochen: </strong
       >{{ model.numberOfWeeksUntilNextTreatmentHoofcare }}
     </p>
-    <p>
-      <strong>Arbeit am Huf für das nächste Mal: </strong>{{ model.workOnHoof }}
-    </p>
+    <p><strong>Arbeit am Huf für das nächste Mal: </strong>{{ model.workOnHoof }}</p>
     <p>
       <strong>Zahnpflegerhythmuspflegerhythmus in Wochen: </strong
       >{{ model.numberOfWeeksUntilNextTreatmentToothcare }}
+    </p>
+
+    <p>
+      <strong>Gesundheitsrhythmus in Wochen: </strong
+      >{{ model.numberOfWeeksUntilNextTreatmentHealthcare }}
     </p>
 
     <div style="white-space: pre-line">
@@ -190,14 +185,9 @@ const nextTreatmentDateForCategory = (
     </div>
 
     <v-divider class="my-2"> </v-divider>
-    <div
-      v-for="treatmentDate of model.treatmentDates"
-      :key="treatmentDate.category"
-    >
+    <div v-for="treatmentDate of model.treatmentDates" :key="treatmentDate.category">
       <strong
-        >Nächste Behandlung ({{
-          translator.translate(treatmentDate.category)
-        }})</strong
+        >Nächste Behandlung ({{ translator.translate(treatmentDate.category) }})</strong
       >:
       {{ nextTreatmentDateForCategory(model, treatmentDate.category) }}
       <v-divider class="my-2"> </v-divider>
@@ -219,9 +209,7 @@ const nextTreatmentDateForCategory = (
     ></TreatmentList>
 
     <div class="d-flex justify-start">
-      <v-btn @click="addFile()" elevation="3" class="my-3">
-        Datei hinzufügen
-      </v-btn>
+      <v-btn @click="addFile()" elevation="3" class="my-3"> Datei hinzufügen </v-btn>
     </div>
     <v-divider class="my-2"> </v-divider>
     <div>

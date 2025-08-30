@@ -102,6 +102,27 @@ const age = computed(() => {
     <v-card-text>
       <v-text-field
         :readonly="props.readonly"
+        label="Gesundheitsrhythmus in Wochen"
+        v-model="horseToBeEdited.numberOfWeeksUntilNextTreatmentHealthcare"
+        variant="underlined"
+        type="number"
+      ></v-text-field>
+      <div class="my-2" elevation-2>
+        Nächste Behandlung:
+        <strong>{{
+          nextTreatmentDateForCategory(
+            CareAreas.Healthcare.toString(),
+            horseToBeEdited.numberOfWeeksUntilNextTreatmentHealthcare
+          )
+        }}</strong>
+      </div>
+    </v-card-text>
+  </v-card>
+
+  <v-card class="mb-3" variant="outlined">
+    <v-card-text>
+      <v-text-field
+        :readonly="props.readonly"
         label="Jahrgang"
         v-model="horseToBeEdited.birthYear"
         variant="underlined"

@@ -12,6 +12,10 @@ export class TreatmentCategoryHelper {
       return "numberOfWeeksUntilNextTreatmentToothcare";
     }
 
+    if (treatmentCategory.name === CareAreas.Healthcare.toString()) {
+      return "numberOfWeeksUntilNextTreatmentHealthcare";
+    }
+
     return undefined;
   }
 }
