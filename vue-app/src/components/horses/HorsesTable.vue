@@ -57,7 +57,7 @@ const getHeaders = () => {
     });
   }
 
-  const headers = [
+  const headersPart1 = [
     { key: "name", title: "Name", selected: true },
     {
       key: "lastTimeTreated",
@@ -92,6 +92,11 @@ const getHeaders = () => {
         return aDate - bDate;
       },
     },
+  ];
+
+  const headersPart2 = headersForRoutines;
+
+  const headersPart3 = [
     {
       key: "numberOfWeeksUntilNextTreatmentHoofcare",
       title: translator.translate("numberOfWeeksUntilNextTreatmentHoofcare"),
@@ -133,7 +138,7 @@ const getHeaders = () => {
     { key: "action", title: "Aktion", selected: false },
   ];
 
-  return headers.concat(headersForRoutines);
+  return [...headersPart1, ...headersPart2, ...headersPart3];
 };
 
 const getIndexFromRoutineHeader = (header: string) => {

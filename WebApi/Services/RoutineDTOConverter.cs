@@ -38,7 +38,7 @@ public class RoutineDTOConverter : IDtoConverter<Routine, RoutineDTO>
                 .FirstOrDefault();
             if (lastRoutineOfHorseInSameCategory != null)
             {
-                Console.WriteLine("Found last routine of horse in same category: " + lastRoutineOfHorseInSameCategory.Id);
+                //Console.WriteLine("Found last routine of horse in same category: " + lastRoutineOfHorseInSameCategory.Id);
             }
         }
 
