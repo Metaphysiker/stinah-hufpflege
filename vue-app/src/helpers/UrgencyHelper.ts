@@ -52,7 +52,11 @@ export class UrgencyHelper {
   }
 
 getClassForUrgencyWithDate(date: Date) {
-  if (this.isNextWeekWithDate(date)) {
+  const now = new Date();
+  // If the date is in the past or today, return bg-red
+  if (date.getTime() <= now.setHours(0,0,0,0)) {
+    return "bg-red"; // urgent - past or today
+  } else if (this.isNextWeekWithDate(date)) {
     return "bg-red"; // urgent - within a week
   } else if (this.isNextMonthWithDate(date)) {
     return "bg-yellow"; // less urgent - within a month
