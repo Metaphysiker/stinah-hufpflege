@@ -82,11 +82,11 @@ const getHeaders = () => {
       sortRaw(a: IHorse, b: IHorse) {
         const aDate =
           horseHelper
-            .calculateNextTreatmentDate(a, selectedTreatmentCategory.value?.name)
+            .calculateNextTreatmentDateWithRoutines(a, selectedTreatmentCategory.value)
             ?.getTime() || 0;
         const bDate =
           horseHelper
-            .calculateNextTreatmentDate(b, selectedTreatmentCategory.value?.name)
+            .calculateNextTreatmentDateWithRoutines(b, selectedTreatmentCategory.value)
             ?.getTime() || 0;
 
         return aDate - bDate;
@@ -175,16 +175,12 @@ const props = defineProps({
   },
 });
 
-const getRoutinesInSameArea = (horse: IHorse) => {
-  if (!selectedTreatmentCategory.value?.name) return horse.includedRoutines;
-  return horse.includedRoutines.filter(
-    (routine) => routine.treatmentCategoryName === selectedTreatmentCategory.value?.name
-  );
-};
-
 const numberOfMostRoutinesOfAHorse = computed(() => {
   return props.models.reduce((max, horse) => {
-    const routinesInSameArea = getRoutinesInSameArea(horse);
+    const routinesInSameArea = routineHelper.getRoutinesInSameArea(
+      horse,
+      selectedTreatmentCategory.value
+    );
     return Math.max(max, routinesInSameArea.length);
   }, 0);
 });
@@ -247,7 +243,10 @@ const getRoutineNote = (horse: IHorse, headerKey: string) => {
   const routineIndex = getIndexFromRoutineHeader(headerKey);
   if (routineIndex === -1) return "";
 
-  const routinesInSameArea = getRoutinesInSameArea(horse);
+  const routinesInSameArea = routineHelper.getRoutinesInSameArea(
+    horse,
+    selectedTreatmentCategory.value
+  );
   const routine = routinesInSameArea[routineIndex];
   return routine ? routine.note : "";
 };
@@ -256,7 +255,10 @@ const getRoutineDate = (horse: IHorse, headerKey: string) => {
   const routineIndex = getIndexFromRoutineHeader(headerKey);
   if (routineIndex === -1) return "";
 
-  const routinesInSameArea = getRoutinesInSameArea(horse);
+  const routinesInSameArea = routineHelper.getRoutinesInSameArea(
+    horse,
+    selectedTreatmentCategory.value
+  );
   const routine = routinesInSameArea[routineIndex];
   if (!routine) return "";
   const nextDate = routineHelper.calculateHypotheticalNextTreatmentDate(routine);
@@ -267,7 +269,10 @@ const getRoutineUrgencyClass = (horse: IHorse, headerKey: string) => {
   const routineIndex = getIndexFromRoutineHeader(headerKey);
   if (routineIndex === -1) return "";
 
-  const routinesInSameArea = getRoutinesInSameArea(horse);
+  const routinesInSameArea = routineHelper.getRoutinesInSameArea(
+    horse,
+    selectedTreatmentCategory.value
+  );
   const routine = routinesInSameArea[routineIndex];
   if (!routine) return "";
   const nextDate = routineHelper.calculateHypotheticalNextTreatmentDate(routine);
