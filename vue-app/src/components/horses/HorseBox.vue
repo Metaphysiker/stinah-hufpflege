@@ -370,22 +370,25 @@ const followUp2Treatments = computed(() => {
       :treatment-search="treatmentSearchFollowUp2"
       @reload="emit('reload')"
     ></TreatmentList>
-    abccccccccccccccccccccccccccc
     <v-divider class="my-2"> </v-divider>
 
-    <div class="d-flex justify-start">
-      <v-btn @click="addRoutine()" elevation="3" class="my-3"> Routine hinzufügen </v-btn>
-    </div>
-    <v-divider class="my-2"> </v-divider>
+    <template v-if="false">
+      <div class="d-flex justify-start">
+        <v-btn @click="addRoutine()" elevation="3" class="my-3">
+          Routine hinzufügen
+        </v-btn>
+      </div>
+      <v-divider class="my-2"> </v-divider>
 
-    <div>
-      <strong>{{ labelForRoutines }}</strong>
-    </div>
-    <RoutineList
-      :key="routineListKey"
-      :routine-search="routineSearch"
-      @reload="emit('reload')"
-    ></RoutineList>
+      <div>
+        <strong>{{ labelForRoutines }}</strong>
+      </div>
+      <RoutineList
+        :key="routineListKey"
+        :routine-search="routineSearch"
+        @reload="emit('reload')"
+      ></RoutineList>
+    </template>
 
     <div class="d-flex justify-start">
       <v-btn @click="addFile()" elevation="3" class="my-3"> Datei hinzufügen </v-btn>

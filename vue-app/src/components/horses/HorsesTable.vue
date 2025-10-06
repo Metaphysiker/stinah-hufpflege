@@ -194,7 +194,7 @@ const getHeaders = () => {
     { key: "action", title: "Aktion", selected: false },
   ];
 
-  return [...headersPart1, ...headersPart2, ...headersPart3];
+  return [...headersPart1, ...headersPart3];
 };
 
 const getIndexFromRoutineHeader = (header: string) => {
