@@ -20,6 +20,7 @@ export class Treatment implements ITreatment {
   hoofCheck: IHoofCheck | undefined;
   hoofCheckString: string | undefined;
   HoofCheckStringFromLastTreatment: string | undefined;
+  subCategory: string;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
@@ -33,5 +34,6 @@ export class Treatment implements ITreatment {
     this.name = "";
     this.files = [];
     this.treatmentIds = [];
+    this.subCategory = "";
   }
 }

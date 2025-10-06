@@ -24,12 +24,14 @@ const props = defineProps({
 
 const nextTreatmentDateForCategory = (
   category: string | undefined,
+  subCategory: string | undefined,
   numberOfWeeks: number
 ) => {
   if (horseToBeEdited.value) {
     const lastTimeTreated = horseHelper.calculateHypotheticalNextTreatmentDate(
       horseToBeEdited.value,
       category,
+      subCategory,
       numberOfWeeks
     );
     if (!lastTimeTreated) return "";
@@ -60,11 +62,56 @@ const age = computed(() => {
         type="number"
       ></v-text-field>
       <div class="my-2">
-        Nächste Behandlung:
+        Nächste Vollbehandlung:
         <strong>{{
           nextTreatmentDateForCategory(
             CareAreas.Hoofcare.toString(),
+            "",
             horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcare
+          )
+        }}</strong>
+      </div>
+    </v-card-text>
+  </v-card>
+
+  <v-card class="mb-3" variant="outlined">
+    <v-card-text>
+      <v-text-field
+        :readonly="props.readonly"
+        label="Nachbehandlungsrhythmus (1) in Wochen"
+        v-model="horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1"
+        variant="underlined"
+        type="number"
+      ></v-text-field>
+      <div class="my-2">
+        Nächste Nachbehandlung (1):
+        <strong>{{
+          nextTreatmentDateForCategory(
+            CareAreas.Hoofcare.toString(),
+            "followUp1",
+            horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1
+          )
+        }}</strong>
+      </div>
+    </v-card-text>
+  </v-card>
+
+  <v-card class="mb-3" variant="outlined">
+    <v-card-text>
+      <v-text-field
+        :readonly="props.readonly"
+        label="Nachbehandlungsrhythmus (2) in Wochen"
+        v-model="horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2"
+        variant="underlined"
+        type="number"
+      ></v-text-field>
+      <div class="my-2">
+        Nächste Nachbehandlung (2):
+        <strong>{{
+          nextTreatmentDateForCategory(
+            CareAreas.Hoofcare.toString(),
+            "followUp2",
+            horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2
           )
         }}</strong>
       </div>
@@ -91,6 +138,7 @@ const age = computed(() => {
         <strong>{{
           nextTreatmentDateForCategory(
             CareAreas.Toothcare.toString(),
+            "",
             horseToBeEdited.numberOfWeeksUntilNextTreatmentToothcare
           )
         }}</strong>
@@ -112,6 +160,7 @@ const age = computed(() => {
         <strong>{{
           nextTreatmentDateForCategory(
             CareAreas.Healthcare.toString(),
+            "",
             horseToBeEdited.numberOfWeeksUntilNextTreatmentHealthcare
           )
         }}</strong>

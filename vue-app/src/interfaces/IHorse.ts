@@ -6,6 +6,8 @@ import { ITreatmentDate } from "./ITreatmentDate";
 export interface IHorse extends IModel, IEntityWithFiles {
   name: string;
   numberOfWeeksUntilNextTreatmentHoofcare: number;
+  numberOfWeeksUntilNextTreatmentHoofcareFollowUp1: number;
+  numberOfWeeksUntilNextTreatmentHoofcareFollowUp2: number;
   numberOfWeeksUntilNextTreatmentToothcare: number;
   numberOfWeeksUntilNextTreatmentHealthcare: number;
   birthYear: number;

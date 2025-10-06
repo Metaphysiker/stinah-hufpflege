@@ -17,11 +17,13 @@ export class HorseHelper {
 
   calculateNextTreatmentDateWithRoutines(
     horse: IHorse,
-    category: ITreatmentCategory | undefined
+    category: ITreatmentCategory | undefined,
+    subCategory: string | undefined
   ): Date | undefined {
     const regularNextDate = this.calculateNextRegularTreatmentDate(
       horse,
-      category
+      category,
+      subCategory
     );
 
     const routineNextDate = this.calculateNextRoutineDate(horse, category);
@@ -56,9 +58,10 @@ export class HorseHelper {
 
   calculateNextRegularTreatmentDate(
     horse: IHorse,
-    category: ITreatmentCategory | undefined
+    category: ITreatmentCategory | undefined,
+    subCategory: string | undefined
   ): Date | undefined {
-        const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category?.name);
+        const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category?.name, subCategory);
     if (!lastTimeTreated) return undefined;
     if (category?.name === CareAreas.Hoofcare.toString()) {
       return this.dateHelper.addDays(
@@ -85,12 +88,28 @@ export class HorseHelper {
 
   calculateNextTreatmentDate(
     horse: IHorse,
-    category: string | undefined
+    category: string | undefined,
+    subCategory: string | undefined
   ): Date | undefined {
-    const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category);
+    const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category, subCategory);
     if (!lastTimeTreated) return undefined;
 
     if (category === CareAreas.Hoofcare.toString()) {
+
+      if(subCategory === "followUp1") {
+        return this.dateHelper.addDays(
+          lastTimeTreated,
+          horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 * 7
+        );
+      }
+
+      if(subCategory === "followUp2") {
+        return this.dateHelper.addDays(
+          lastTimeTreated,
+          horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 * 7
+        );
+      }
+
       return this.dateHelper.addDays(
         lastTimeTreated,
         horse.numberOfWeeksUntilNextTreatmentHoofcare * 7
@@ -117,9 +136,10 @@ export class HorseHelper {
   calculateHypotheticalNextTreatmentDate(
     horse: IHorse,
     category: string | undefined,
+    subCategory: string | undefined,
     numberOfWeeks: number
   ): Date | undefined {
-    const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category);
+    const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category, subCategory);
     if (!lastTimeTreated) return undefined;
 
     if (category === CareAreas.Hoofcare.toString()) {
@@ -144,7 +164,8 @@ export class HorseHelper {
 
   getLastTimeTreatedForCategory = (
     horse: IHorse,
-    category: string | undefined
+    category: string | undefined,
+    subCategory: string | undefined
   ): Date | undefined => {
     if (!horse.treatmentDates || horse.treatmentDates.length == 0)
       return undefined;
@@ -164,7 +185,9 @@ export class HorseHelper {
     }
 
     const foundLastTreatmentDate = horse.treatmentDates.find(
-      (treatmentDate) => treatmentDate.category === category
+      (treatmentDate) =>
+        treatmentDate.category === category &&
+        ((treatmentDate.subCategory ?? "") === (subCategory ?? ""))
     );
 
     if (foundLastTreatmentDate?.lastTimeTreated) {

@@ -20,4 +20,5 @@ export interface ITreatment
   hoofCheck: IHoofCheck | undefined;
   hoofCheckString: string | undefined;
   HoofCheckStringFromLastTreatment: string | undefined;
+  subCategory: string;
 }

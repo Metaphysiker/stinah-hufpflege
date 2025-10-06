@@ -65,6 +65,15 @@ const horseSelected = () => {
     :item-value="(item) => item.name"
     :items="treatmentCategoriesCopy"
   ></v-select>
+  <v-text-field
+    v-if="false"
+    class="my-2"
+    :readonly="true"
+    label="Unterkategorie: "
+    v-model="treatmentToBeEdited.subCategory"
+  >
+  </v-text-field>
+
   <div class="my-2">
     <DateSelecter label="Datum" v-model="treatmentToBeEdited.date" />
   </div>

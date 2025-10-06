@@ -31,10 +31,14 @@ const getHeaders = () => {
   let showNumberOfWeeksUntilNextTreatmentToothcare = false;
   let showNumberOfWeeksUntilNextTreatmentHealthcare = false;
   let showNextTreatmentDate = false;
+  let showNextTreatmentDateFollowUp1 = false;
+  let showNextTreatmentDateFollowUp2 = false;
 
   if (selectedTreatmentCategory.value?.name === CareAreas.Hoofcare.toString()) {
     showNumberOfWeeksUntilNextTreatmentHoofcare = true;
     showNextTreatmentDate = true;
+    showNextTreatmentDateFollowUp1 = true;
+    showNextTreatmentDateFollowUp2 = true;
   } else if (selectedTreatmentCategory.value?.name === CareAreas.Toothcare.toString()) {
     showNumberOfWeeksUntilNextTreatmentToothcare = true;
     showNextTreatmentDate = true;
@@ -45,6 +49,8 @@ const getHeaders = () => {
     showNumberOfWeeksUntilNextTreatmentHoofcare = true;
     showNumberOfWeeksUntilNextTreatmentToothcare = true;
     showNumberOfWeeksUntilNextTreatmentHealthcare = true;
+    showNextTreatmentDateFollowUp1 = true;
+    showNextTreatmentDateFollowUp2 = true;
     showNextTreatmentDate = true;
   }
 
@@ -66,27 +72,77 @@ const getHeaders = () => {
       sortRaw(a: IHorse, b: IHorse) {
         const aDate =
           horseHelper
-            .getLastTimeTreatedForCategory(a, selectedTreatmentCategory.value?.name)
+            .getLastTimeTreatedForCategory(a, selectedTreatmentCategory.value?.name, "")
             ?.getTime() || 0;
         const bDate =
           horseHelper
-            .getLastTimeTreatedForCategory(b, selectedTreatmentCategory.value?.name)
+            .getLastTimeTreatedForCategory(b, selectedTreatmentCategory.value?.name, "")
             ?.getTime() || 0;
         return aDate - bDate;
       },
     },
     {
       key: "nextTreatmentDate",
-      title: "nächstes Mal",
+      title: "nächste Vollbehandlung",
       selected: showNextTreatmentDate,
       sortRaw(a: IHorse, b: IHorse) {
         const aDate =
           horseHelper
-            .calculateNextTreatmentDateWithRoutines(a, selectedTreatmentCategory.value)
+            .calculateNextTreatmentDate(a, selectedTreatmentCategory.value?.name, "")
             ?.getTime() || 0;
         const bDate =
           horseHelper
-            .calculateNextTreatmentDateWithRoutines(b, selectedTreatmentCategory.value)
+            .calculateNextTreatmentDate(b, selectedTreatmentCategory.value?.name, "")
+            ?.getTime() || 0;
+
+        return aDate - bDate;
+      },
+    },
+    {
+      key: "nextTreatmentDateFollowUp1",
+      title: "nächste Nachbehandlung (1)",
+      selected: showNextTreatmentDateFollowUp1,
+      sortRaw(a: IHorse, b: IHorse) {
+        const aDate =
+          horseHelper
+            .calculateNextTreatmentDate(
+              a,
+              selectedTreatmentCategory.value?.name,
+              "followUp1"
+            )
+            ?.getTime() || 0;
+        const bDate =
+          horseHelper
+            .calculateNextTreatmentDate(
+              b,
+              selectedTreatmentCategory.value?.name,
+              "followUp1"
+            )
+            ?.getTime() || 0;
+
+        return aDate - bDate;
+      },
+    },
+    {
+      key: "nextTreatmentDateFollowUp2",
+      title: "nächste Nachbehandlung (2)",
+      selected: showNextTreatmentDateFollowUp2,
+      sortRaw(a: IHorse, b: IHorse) {
+        const aDate =
+          horseHelper
+            .calculateNextTreatmentDate(
+              a,
+              selectedTreatmentCategory.value?.name,
+              "followUp2"
+            )
+            ?.getTime() || 0;
+        const bDate =
+          horseHelper
+            .calculateNextTreatmentDate(
+              b,
+              selectedTreatmentCategory.value?.name,
+              "followUp2"
+            )
             ?.getTime() || 0;
 
         return aDate - bDate;
@@ -154,6 +210,7 @@ const isSpecialColumn = (header: string) => {
     "lastTimeTreated",
     "birthYear",
     "nextTreatmentDate",
+    "nextTreatmentDateFollowUp1",
     "action",
     "hoofCheckStatusTotal",
     "summaryHoofCheckStatusOfLastTreatment",
@@ -222,8 +279,16 @@ const lastTimeTreatedForCategory = (horse: IHorse) => {
   return "";
 };
 
-const nextTreatmentDateForCategory = (horse: IHorse, category: string | undefined) => {
-  const nextTreatmentDate = horseHelper.calculateNextTreatmentDate(horse, category);
+const nextTreatmentDateForCategory = (
+  horse: IHorse,
+  category: string | undefined,
+  subCategory: string | undefined
+) => {
+  const nextTreatmentDate = horseHelper.calculateNextTreatmentDate(
+    horse,
+    category,
+    subCategory
+  );
   if (!nextTreatmentDate) return "";
   return dateFormatter.dddotmmdotyyyy(nextTreatmentDate);
 };
@@ -325,15 +390,63 @@ const getRoutineUrgencyClass = (horse: IHorse, headerKey: string) => {
               :class="
                 urgencyHelper.getClassForUrgency(
                   row.item,
-                  selectedTreatmentCategory?.name
+                  selectedTreatmentCategory?.name,
+                  ''
                 )
               "
             >
               {{
-                nextTreatmentDateForCategory(row.item, selectedTreatmentCategory?.name)
+                nextTreatmentDateForCategory(
+                  row.item,
+                  selectedTreatmentCategory?.name,
+                  ""
+                )
               }}
             </div>
           </template>
+
+          <template v-if="header.key === 'nextTreatmentDateFollowUp1'">
+            <div
+              class="rounded pa-1 text-center"
+              :class="
+                urgencyHelper.getClassForUrgency(
+                  row.item,
+                  selectedTreatmentCategory?.name,
+                  'followUp1'
+                )
+              "
+            >
+              {{
+                nextTreatmentDateForCategory(
+                  row.item,
+                  selectedTreatmentCategory?.name,
+                  "followUp1"
+                )
+              }}
+            </div>
+          </template>
+
+          <template v-if="header.key === 'nextTreatmentDateFollowUp2'">
+            <div
+              class="rounded pa-1 text-center"
+              :class="
+                urgencyHelper.getClassForUrgency(
+                  row.item,
+                  selectedTreatmentCategory?.name,
+                  'followUp2'
+                )
+              "
+            >
+              {{
+                nextTreatmentDateForCategory(
+                  row.item,
+                  selectedTreatmentCategory?.name,
+                  "followUp2"
+                )
+              }}
+            </div>
+          </template>
+
           <template v-if="header.key === 'summaryHoofCheckStatusOfLastTreatment'">
             <template
               v-if="row.item.summaryHoofCheckStatusOfLastTreatment.includes('NotOkay')"

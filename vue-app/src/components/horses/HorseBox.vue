@@ -68,6 +68,34 @@ const treatmentSearch: Ref<ITreatmentSearch> = ref({
   sortOrder: "descending",
   pageSize: 5,
   page: 0,
+  categories: selectedTreatmentCategory.value
+    ? [selectedTreatmentCategory.value.name]
+    : [],
+  subCategories: [""],
+});
+
+const treatmentSearchFollowUp1: Ref<ITreatmentSearch> = ref({
+  horseId: props.model.id,
+  sortBy: "Date",
+  sortOrder: "descending",
+  pageSize: 5,
+  page: 0,
+  categories: selectedTreatmentCategory.value
+    ? [selectedTreatmentCategory.value.name]
+    : [],
+  subCategories: ["followUp1"],
+});
+
+const treatmentSearchFollowUp2: Ref<ITreatmentSearch> = ref({
+  horseId: props.model.id,
+  sortBy: "Date",
+  sortOrder: "descending",
+  pageSize: 5,
+  page: 0,
+  categories: selectedTreatmentCategory.value
+    ? [selectedTreatmentCategory.value.name]
+    : [],
+  subCategories: ["followUp2"],
 });
 
 const routineSearch: Ref<IRoutineSearch> = ref({
@@ -93,7 +121,7 @@ const labelForTreatments = computed(() => {
 
   const translatedCategory = translator.translate(selectedTreatmentCategory.value?.name);
 
-  return `Letzte Behandlungen` + ` (${translatedCategory})`;
+  return `Letzte Vollbehandlungen` + ` (${translatedCategory})`;
 });
 
 const labelForRoutines = computed(() => {
@@ -115,10 +143,11 @@ const newTreatment: Ref<ITreatment> = ref(new Treatment());
 const newRoutine: Ref<IRoutine> = ref(new Routine());
 const newFile: Ref<IFile> = ref(new File());
 
-const assignNewTreatment = () => {
+const assignNewTreatment = (subCategory: string) => {
   const treatment = new Treatment();
   treatment.horseId = props.model.id;
   treatment.category = selectedTreatmentCategory.value?.name || "";
+  treatment.subCategory = subCategory;
   newTreatment.value = treatment;
 };
 
@@ -136,7 +165,7 @@ const assignNewFile = () => {
 };
 
 onBeforeMount(() => {
-  assignNewTreatment();
+  assignNewTreatment("");
   assignNewFile();
   updateTreatmentSearch();
 });
@@ -156,6 +185,8 @@ const createFileDialog = ref(false);
 
 const treatmentCreated = () => {
   treatmentListKey.value++;
+  treatmentListKeyFollowUp1.value++;
+  treatmentListKeyFollowUp2.value++;
   createTreatmentDialog.value = false;
   emit("saved", props.model);
 };
@@ -173,11 +204,13 @@ const fileCreated = () => {
 };
 
 const treatmentListKey = ref(0);
+const treatmentListKeyFollowUp1 = ref(0);
+const treatmentListKeyFollowUp2 = ref(0);
 const routineListKey = ref(0);
 const fileListKey = ref(0);
 
-const addTreatment = () => {
-  assignNewTreatment();
+const addTreatment = (subCategory: string) => {
+  assignNewTreatment(subCategory);
   createTreatmentDialog.value = true;
 };
 
@@ -191,11 +224,37 @@ const addFile = () => {
   createFileDialog.value = true;
 };
 
-const nextTreatmentDateForCategory = (horse: IHorse, category: string | undefined) => {
-  const nextTreatmentDate = horseHelper.calculateNextTreatmentDate(horse, category);
+const nextTreatmentDateForCategory = (
+  horse: IHorse,
+  category: string | undefined,
+  subCategory: string | undefined
+) => {
+  const nextTreatmentDate = horseHelper.calculateNextTreatmentDate(
+    horse,
+    category,
+    subCategory
+  );
   if (!nextTreatmentDate) return "";
   return dateFormatter.dddotmmdotyyyy(nextTreatmentDate);
 };
+
+const fullTreatments = computed(() => {
+  return props.model.treatmentDates.filter((td) => (td.subCategory ?? "") === "");
+});
+
+const followUp1Treatments = computed(() => {
+  if (props.model.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 === 0) {
+    return [];
+  }
+  return props.model.treatmentDates.filter((td) => td.subCategory === "followUp1");
+});
+
+const followUp2Treatments = computed(() => {
+  if (props.model.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 === 0) {
+    return [];
+  }
+  return props.model.treatmentDates.filter((td) => td.subCategory === "followUp2");
+});
 </script>
 
 <template>
@@ -207,6 +266,14 @@ const nextTreatmentDateForCategory = (horse: IHorse, category: string | undefine
     <p>
       <strong>Hufpflegerhythmus in Wochen: </strong
       >{{ model.numberOfWeeksUntilNextTreatmentHoofcare }}
+    </p>
+    <p>
+      <strong>Nachbehandlungsrhythmus (1) in Wochen: </strong
+      >{{ model.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 }}
+    </p>
+    <p>
+      <strong>Nachbehandlungsrhythmus (2) in Wochen: </strong
+      >{{ model.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 }}
     </p>
     <p><strong>Arbeit am Huf für das nächste Mal: </strong>{{ model.workOnHoof }}</p>
     <p>
@@ -225,20 +292,43 @@ const nextTreatmentDateForCategory = (horse: IHorse, category: string | undefine
     </div>
 
     <v-divider class="my-2"> </v-divider>
-    <div v-for="treatmentDate of model.treatmentDates" :key="treatmentDate.category">
+    <div v-for="treatmentDate of fullTreatments" :key="treatmentDate.category">
       <strong
-        >Nächste Behandlung ({{ translator.translate(treatmentDate.category) }})</strong
+        >Nächste Vollbehandlung ({{
+          translator.translate(treatmentDate.category)
+        }})</strong
       >:
-      {{ nextTreatmentDateForCategory(model, treatmentDate.category) }}
+      {{ nextTreatmentDateForCategory(model, treatmentDate.category, "") }}
+      <v-divider class="my-2"> </v-divider>
+    </div>
+
+    <div v-for="treatmentDate of followUp1Treatments" :key="treatmentDate.category">
+      <strong
+        >Nächste Nachbehandlung (1) ({{
+          translator.translate(treatmentDate.category)
+        }})</strong
+      >:
+      {{ nextTreatmentDateForCategory(model, treatmentDate.category, "followUp1") }}
+      <v-divider class="my-2"> </v-divider>
+    </div>
+
+    <div v-for="treatmentDate of followUp2Treatments" :key="treatmentDate.category">
+      <strong
+        >Nächste Nachbehandlung (2) ({{
+          translator.translate(treatmentDate.category)
+        }})</strong
+      >:
+      {{ nextTreatmentDateForCategory(model, treatmentDate.category, "followUp2") }}
       <v-divider class="my-2"> </v-divider>
     </div>
 
     <div class="d-flex justify-start">
-      <v-btn @click="addTreatment()" elevation="3" class="my-3">
-        Behandlung hinzufügen
+      <v-btn @click="addTreatment('')" elevation="3" class="my-3">
+        Vollbehandlung hinzufügen
       </v-btn>
     </div>
     <v-divider class="my-2"> </v-divider>
+
     <div>
       <strong>{{ labelForTreatments }}</strong>
     </div>
@@ -249,9 +339,45 @@ const nextTreatmentDateForCategory = (horse: IHorse, category: string | undefine
     ></TreatmentList>
 
     <div class="d-flex justify-start">
+      <v-btn @click="addTreatment('followUp1')" elevation="3" class="my-3">
+        Nachbehandlung hinzufügen (1)
+      </v-btn>
+    </div>
+    <v-divider class="my-2"> </v-divider>
+
+    <div>
+      <strong>Letzte Nachbehandlungen (1)</strong>
+    </div>
+    <TreatmentList
+      :key="treatmentListKeyFollowUp1"
+      :treatment-search="treatmentSearchFollowUp1"
+      @reload="emit('reload')"
+    ></TreatmentList>
+    <v-divider class="my-2"> </v-divider>
+
+    <div class="d-flex justify-start">
+      <v-btn @click="addTreatment('followUp2')" elevation="3" class="my-3">
+        Nachbehandlung hinzufügen (2)
+      </v-btn>
+    </div>
+    <v-divider class="my-2"> </v-divider>
+
+    <div>
+      <strong>Letzte Nachbehandlungen (2)</strong>
+    </div>
+    <TreatmentList
+      :key="treatmentListKeyFollowUp2"
+      :treatment-search="treatmentSearchFollowUp2"
+      @reload="emit('reload')"
+    ></TreatmentList>
+    abccccccccccccccccccccccccccc
+    <v-divider class="my-2"> </v-divider>
+
+    <div class="d-flex justify-start">
       <v-btn @click="addRoutine()" elevation="3" class="my-3"> Routine hinzufügen </v-btn>
     </div>
     <v-divider class="my-2"> </v-divider>
+
     <div>
       <strong>{{ labelForRoutines }}</strong>
     </div>

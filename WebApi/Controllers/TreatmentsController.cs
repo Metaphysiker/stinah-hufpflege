@@ -104,6 +104,11 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
             query = query.Where(t => search.Categories.Contains(t.Category));
         }
 
+        if (search.SubCategories.Count > 0)
+        {
+            query = query.Where(t => search.SubCategories.Contains(t.SubCategory));
+        }
+
         if (search.SortBy != null)
         {
             if (search.SortBy == "Date")

@@ -17,6 +17,7 @@ export class HorseConverter implements IConverter<IHorse> {
       const treatmentDateDate = new Date(treatmentDate.lastTimeTreated);
       const newTreatmentDate: ITreatmentDate = {
         category: treatmentDate.category,
+        subCategory: treatmentDate.subCategory,
         lastTimeTreated: treatmentDateDate,
       };
       horse.treatmentDates.push(newTreatmentDate);

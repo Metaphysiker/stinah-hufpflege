@@ -9,6 +9,8 @@ export class Horse implements IHorse {
   id?: number;
   name: string;
   numberOfWeeksUntilNextTreatmentHoofcare: number;
+  numberOfWeeksUntilNextTreatmentHoofcareFollowUp1: number;
+  numberOfWeeksUntilNextTreatmentHoofcareFollowUp2: number;
   numberOfWeeksUntilNextTreatmentToothcare: number;
   numberOfWeeksUntilNextTreatmentHealthcare: number;
   birthYear: number;
@@ -31,6 +33,8 @@ export class Horse implements IHorse {
     this.localID = LocalIDFactory.createLocalID();
     this.name = "";
     this.numberOfWeeksUntilNextTreatmentHoofcare = 8;
+    this.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 = 0;
+    this.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 = 0;
     this.numberOfWeeksUntilNextTreatmentToothcare = 8;
     this.numberOfWeeksUntilNextTreatmentHealthcare = 8;
     this.birthYear = 0;

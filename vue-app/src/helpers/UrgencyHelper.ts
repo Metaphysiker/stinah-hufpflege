@@ -10,11 +10,12 @@ export class UrgencyHelper {
     this.horseHelper = horseHelper;
   }
 
-  calculateUrgencyInDays(horse: IHorse, category: string | undefined) {
+  calculateUrgencyInDays(horse: IHorse, category: string | undefined, subCategory: string | undefined) {
     const now = new Date();
     const nextTreatmentDate = this.horseHelper.calculateNextTreatmentDate(
       horse,
-      category
+      category,
+      subCategory
     );
     if (nextTreatmentDate) {
       const difference = nextTreatmentDate.getTime() - now.getTime();
@@ -23,28 +24,31 @@ export class UrgencyHelper {
     return 0;
   }
 
-  isNextWeek(horse: IHorse, category: string | undefined) {
-    return this.calculateUrgencyInDays(horse, category) < 7;
+  isNextWeek(horse: IHorse, category: string | undefined, subCategory: string | undefined) {
+    return this.calculateUrgencyInDays(horse, category, subCategory) < 7;
   }
 
-  isNextMonth(horse: IHorse, category: string | undefined) {
-    return this.calculateUrgencyInDays(horse, category) < 30;
+  isNextMonth(horse: IHorse, category: string | undefined, subCategory: string | undefined) {
+    return this.calculateUrgencyInDays(horse, category, subCategory) < 30;
   }
 
-  getColorForUrgency(horse: IHorse, category: string | undefined) {
-    if (this.isNextWeek(horse, category)) {
-      return "red";
-    } else if (this.isNextMonth(horse, category)) {
-      return "yellow";
-    } else {
-      return "white";
+    getClassForUrgency(horse: IHorse, category: string | undefined, subCategory: string | undefined) {
+
+    if(subCategory === "followUp1") {
+      if(horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 == 0){
+        return "bg-white";
+      }
     }
-  }
 
-    getClassForUrgency(horse: IHorse, category: string | undefined) {
-    if (this.isNextWeek(horse, category)) {
+    if(subCategory === "followUp2") {
+      if(horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 == 0){
+        return "bg-white";
+      }
+    }
+
+    if (this.isNextWeek(horse, category, subCategory)) {
       return "bg-red";
-    } else if (this.isNextMonth(horse, category)) {
+    } else if (this.isNextMonth(horse, category, subCategory)) {
       return "bg-yellow";
     } else {
       return "bg-white";

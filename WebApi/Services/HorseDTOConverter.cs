@@ -57,8 +57,15 @@ public class HorseDTOConverter : IDtoConverter<Horse, HorseDTO>
             treatmentDate.Category = category;
             if (horse.Treatments.Where(t => t.Category == category).Count() > 0)
             {
-                treatmentDate.LastTimeTreated = horse.Treatments.Where(t => t.Category == category).Max(t => t.Date);
-                treatmentDates.Add(treatmentDate);
+                var subCategories = horse.Treatments.Where(t => t.Category == category).Select(t => t.SubCategory).Distinct();
+                foreach (var subCategory in subCategories)
+                {
+                    TreatmentDate subTreatmentDate = new TreatmentDate();
+                    subTreatmentDate.Category = category;
+                    subTreatmentDate.SubCategory = subCategory;
+                    subTreatmentDate.LastTimeTreated = horse.Treatments.Where(t => t.Category == category && t.SubCategory == subCategory).Max(t => t.Date);
+                    treatmentDates.Add(subTreatmentDate);
+                }
             }
 
         }
