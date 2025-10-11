@@ -5,7 +5,7 @@ import ModelsOverview from "../generics/ModelsOverview.vue";
 <template>
   <ModelsOverview
     interface-name="IHorse"
-    sortBy="nextTreatmentDate"
+    sortBy="nextAnyTreatmentDate"
     sortByOrder="asc"
   ></ModelsOverview>
 </template>

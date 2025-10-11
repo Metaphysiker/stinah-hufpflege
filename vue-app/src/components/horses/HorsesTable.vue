@@ -12,6 +12,7 @@ import { Translator } from "@/helpers/Translator";
 import { CareAreas } from "@/enum/CareAreas";
 import { ISortItem } from "@/interfaces/ISortItem";
 import { RoutineHelper } from "@/helpers/RoutineHelper";
+import AnyTreatmentNextDateUrgencyBox from "./AnyTreatmentNextDateUrgencyBox.vue";
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -78,6 +79,23 @@ const getHeaders = () => {
           horseHelper
             .getLastTimeTreatedForCategory(b, selectedTreatmentCategory.value?.name, "")
             ?.getTime() || 0;
+        return aDate - bDate;
+      },
+    },
+    {
+      key: "nextAnyTreatmentDate",
+      title: "nächste Behandlung",
+      selected: true,
+      sortRaw(a: IHorse, b: IHorse) {
+        const aDate =
+          horseHelper
+            .calculateAnyNextTreatmentDate(a, selectedTreatmentCategory.value?.name)
+            ?.getTime() || 0;
+        const bDate =
+          horseHelper
+            .calculateAnyNextTreatmentDate(b, selectedTreatmentCategory.value?.name)
+            ?.getTime() || 0;
+
         return aDate - bDate;
       },
     },
@@ -209,6 +227,7 @@ const isSpecialColumn = (header: string) => {
     "name",
     "lastTimeTreated",
     "birthYear",
+    "nextAnyTreatmentDate",
     "nextTreatmentDate",
     "nextTreatmentDateFollowUp1",
     "action",
@@ -403,6 +422,13 @@ const getRoutineUrgencyClass = (horse: IHorse, headerKey: string) => {
                 )
               }}
             </div>
+          </template>
+
+          <template v-if="header.key === 'nextAnyTreatmentDate'">
+            <AnyTreatmentNextDateUrgencyBox
+              :horse="row.item"
+              :selectedTreatmentCategory="selectedTreatmentCategory"
+            />
           </template>
 
           <template v-if="header.key === 'nextTreatmentDateFollowUp1'">

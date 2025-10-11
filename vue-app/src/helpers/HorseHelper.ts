@@ -43,17 +43,18 @@ export class HorseHelper {
     horse: IHorse,
     category: ITreatmentCategory | undefined
   ): Date | undefined {
-        const routines = this.routineHelper.getRoutinesInSameArea(horse, category);
-      const routinesWithNextDate = routines
-        .map(routine => ({
-          ...routine,
-          nextDate: this.routineHelper.calculateHypotheticalNextTreatmentDate(routine)
-        }))
-        .filter(routine => routine.nextDate !== undefined)
-        .sort((a, b) => (a.nextDate! > b.nextDate! ? 1 : -1));
+    const routines = this.routineHelper.getRoutinesInSameArea(horse, category);
+    const routinesWithNextDate = routines
+      .map((routine) => ({
+        ...routine,
+        nextDate:
+          this.routineHelper.calculateHypotheticalNextTreatmentDate(routine),
+      }))
+      .filter((routine) => routine.nextDate !== undefined)
+      .sort((a, b) => (a.nextDate! > b.nextDate! ? 1 : -1));
 
-      const routineNextDate = routinesWithNextDate[0]?.nextDate;
-      return routineNextDate;
+    const routineNextDate = routinesWithNextDate[0]?.nextDate;
+    return routineNextDate;
   }
 
   calculateNextRegularTreatmentDate(
@@ -61,7 +62,11 @@ export class HorseHelper {
     category: ITreatmentCategory | undefined,
     subCategory: string | undefined
   ): Date | undefined {
-        const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category?.name, subCategory);
+    const lastTimeTreated = this.getLastTimeTreatedForCategory(
+      horse,
+      category?.name,
+      subCategory
+    );
     if (!lastTimeTreated) return undefined;
     if (category?.name === CareAreas.Hoofcare.toString()) {
       return this.dateHelper.addDays(
@@ -91,19 +96,22 @@ export class HorseHelper {
     category: string | undefined,
     subCategory: string | undefined
   ): Date | undefined {
-    const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category, subCategory);
+    const lastTimeTreated = this.getLastTimeTreatedForCategory(
+      horse,
+      category,
+      subCategory
+    );
     if (!lastTimeTreated) return undefined;
 
     if (category === CareAreas.Hoofcare.toString()) {
-
-      if(subCategory === "followUp1") {
+      if (subCategory === "followUp1") {
         return this.dateHelper.addDays(
           lastTimeTreated,
           horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 * 7
         );
       }
 
-      if(subCategory === "followUp2") {
+      if (subCategory === "followUp2") {
         return this.dateHelper.addDays(
           lastTimeTreated,
           horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 * 7
@@ -133,13 +141,59 @@ export class HorseHelper {
     return undefined;
   }
 
+  calculateAnyNextTreatmentDate(
+    horse: IHorse,
+    category: string | undefined
+  ): Date | undefined {
+
+    const treatmentDatesInCategory = horse.treatmentDates?.filter(td => td.category === category);
+    console.log("xxxxxxxxxxxxxxxxxxxxx")
+    console.log(treatmentDatesInCategory);
+
+    let earliestHypotheticalNextTreatmentDate = undefined;
+
+    for (const td of treatmentDatesInCategory ?? []) {
+      if(td.subCategory === "followUp1" && horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 != 0) {
+        const hypotheticalDate = this.calculateHypotheticalNextTreatmentDate(horse, td.category, td.subCategory, horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1);
+        if(!earliestHypotheticalNextTreatmentDate || (hypotheticalDate && hypotheticalDate < earliestHypotheticalNextTreatmentDate)) {
+          earliestHypotheticalNextTreatmentDate = hypotheticalDate;
+        }
+      }
+
+      if(td.subCategory === "followUp2" && horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 != 0) {
+        const hypotheticalDate = this.calculateHypotheticalNextTreatmentDate(horse, td.category, td.subCategory, horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2);
+        if(!earliestHypotheticalNextTreatmentDate || (hypotheticalDate && hypotheticalDate < earliestHypotheticalNextTreatmentDate)) {
+          earliestHypotheticalNextTreatmentDate = hypotheticalDate;
+        }
+      }
+
+      if(!td.subCategory || td.subCategory === "") {
+        const hypotheticalDate = this.calculateHypotheticalNextTreatmentDate(horse, td.category, td.subCategory,  horse.numberOfWeeksUntilNextTreatmentHoofcare);
+        if(!earliestHypotheticalNextTreatmentDate || (hypotheticalDate && hypotheticalDate < earliestHypotheticalNextTreatmentDate)) {
+          earliestHypotheticalNextTreatmentDate = hypotheticalDate;
+        }
+      }
+    }
+
+    if(earliestHypotheticalNextTreatmentDate) {
+      return earliestHypotheticalNextTreatmentDate;
+    }
+
+    return undefined;
+  }
+
+
   calculateHypotheticalNextTreatmentDate(
     horse: IHorse,
     category: string | undefined,
     subCategory: string | undefined,
     numberOfWeeks: number
   ): Date | undefined {
-    const lastTimeTreated = this.getLastTimeTreatedForCategory(horse, category, subCategory);
+    const lastTimeTreated = this.getLastTimeTreatedForCategory(
+      horse,
+      category,
+      subCategory
+    );
     if (!lastTimeTreated) return undefined;
 
     if (category === CareAreas.Hoofcare.toString()) {
@@ -187,7 +241,7 @@ export class HorseHelper {
     const foundLastTreatmentDate = horse.treatmentDates.find(
       (treatmentDate) =>
         treatmentDate.category === category &&
-        ((treatmentDate.subCategory ?? "") === (subCategory ?? ""))
+        (treatmentDate.subCategory ?? "") === (subCategory ?? "")
     );
 
     if (foundLastTreatmentDate?.lastTimeTreated) {
