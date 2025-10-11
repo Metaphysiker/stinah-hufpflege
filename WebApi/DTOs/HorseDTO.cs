@@ -9,7 +9,9 @@ public class HorseDTO : IDTO
     public string NoteForNextTreatment { get; set; } = string.Empty;
     public int NumberOfWeeksUntilNextTreatmentHoofcare { get; set; } = 0;
     public int NumberOfWeeksUntilNextTreatmentHoofcareFollowUp1 { get; set; } = 0;
+    public string FollowUp1AdvanceNotice { get; set; } = string.Empty;
     public int NumberOfWeeksUntilNextTreatmentHoofcareFollowUp2 { get; set; } = 0;
+    public string FollowUp2AdvanceNotice { get; set; } = string.Empty;
     public int NumberOfWeeksUntilNextTreatmentToothcare { get; set; } = 0;
     public int NumberOfWeeksUntilNextTreatmentHealthcare { get; set; } = 0;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

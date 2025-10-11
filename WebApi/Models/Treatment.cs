@@ -13,5 +13,7 @@ public class Treatment : IModel, IEnityWithFiles
     public ICollection<File> Files { get; set; } = new List<File>();
     public string HoofCheckString { get; set; } = string.Empty;
     public string SubCategory { get; set; } = string.Empty;
+    public bool ClearFollowUp1AdvanceNotice { get; set; } = false;
+    public bool ClearFollowUp2AdvanceNotice { get; set; } = false;
 
 }

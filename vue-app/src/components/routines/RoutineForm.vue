@@ -12,6 +12,7 @@ import { ITreatmentCategory } from "@/interfaces/ITreatmentCategory";
 import { Translator } from "@/helpers/Translator";
 import { RoutineHelper } from "@/helpers/RoutineHelper";
 import { DateFormatter } from "@/helpers/DateFormatter";
+import { CrudOperations } from "@/enum/CrudOperations";
 const routineToBeEdited = defineModel({
   required: true,
   type: Object as () => IRoutine,
@@ -20,6 +21,10 @@ const props = defineProps({
   readonly: {
     required: false,
     type: Boolean,
+  },
+  crudOperation: {
+    default: CrudOperations.update,
+    type: Object as () => CrudOperations,
   },
 });
 

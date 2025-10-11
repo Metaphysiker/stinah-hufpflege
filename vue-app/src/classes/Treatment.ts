@@ -21,6 +21,8 @@ export class Treatment implements ITreatment {
   hoofCheckString: string | undefined;
   HoofCheckStringFromLastTreatment: string | undefined;
   subCategory: string;
+  clearFollowUp1AdvanceNotice: boolean;
+  clearFollowUp2AdvanceNotice: boolean;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
@@ -35,5 +37,7 @@ export class Treatment implements ITreatment {
     this.files = [];
     this.treatmentIds = [];
     this.subCategory = "";
+    this.clearFollowUp1AdvanceNotice = false;
+    this.clearFollowUp2AdvanceNotice = false;
   }
 }

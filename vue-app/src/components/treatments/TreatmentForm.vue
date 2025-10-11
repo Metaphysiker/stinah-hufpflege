@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DateSelecter from "@/dates/DateSelecter.vue";
 import { ITreatment } from "@/interfaces/ITreatment";
-import { inject, onBeforeMount, ref, Ref } from "vue";
+import { computed, inject, onBeforeMount, ref, Ref } from "vue";
 import { IHorse } from "@/interfaces/IHorse";
 import { HorseService } from "@/services/HorseService";
 import { AxiosStatic } from "axios";
@@ -24,6 +24,18 @@ const { treatmentCategories } = storeToRefs(treatmentCategoryStore);
 const translator = new Translator();
 import { CareAreas } from "@/enum/CareAreas";
 import HoofChecker from "../hoofCheck/HoofChecker.vue";
+import { CrudOperations } from "@/enum/CrudOperations";
+
+const props = defineProps({
+  readonly: {
+    required: false,
+    type: Boolean,
+  },
+  crudOperation: {
+    default: CrudOperations.update,
+    type: Object as () => CrudOperations,
+  },
+});
 
 onBeforeMount(() => {
   treatmentCategoriesCopy.value = [...treatmentCategories.value];
@@ -46,6 +58,10 @@ const horseSelected = () => {
     treatmentToBeEdited.value.horseId = undefined;
   }
 };
+
+const selectedHorse = computed(() => {
+  return horses.value.find((h) => h.id === selectedHorseId.value);
+});
 </script>
 <template>
   <v-autocomplete
@@ -84,6 +100,34 @@ const horseSelected = () => {
     variant="outlined"
     rows="15"
   ></v-textarea>
+
+  <div
+  class="border rounded pa-1 my-2"
+    v-if="
+      selectedHorse &&
+      treatmentToBeEdited.subCategory === 'followUp1' &&
+      selectedHorse.followUp1AdvanceNotice &&
+      props.crudOperation === CrudOperations.create
+    "
+  >
+    <strong>Nachbehandlung (1): </strong> {{ selectedHorse.followUp1AdvanceNotice }}
+    <br></br>
+    <v-checkbox v-model="treatmentToBeEdited.clearFollowUp1AdvanceNotice" label="Nach Speichern leeren?"></v-checkbox>
+  </div>
+
+  <div
+  class="border rounded pa-1 my-2"
+    v-if="
+      selectedHorse &&
+      treatmentToBeEdited.subCategory === 'followUp2' &&
+      selectedHorse.followUp2AdvanceNotice &&
+      props.crudOperation === CrudOperations.create
+    "
+  >
+    <strong>Nachbehandlung (2): </strong> {{ selectedHorse.followUp2AdvanceNotice }}
+    <br></br>
+    <v-checkbox v-model="treatmentToBeEdited.clearFollowUp2AdvanceNotice" label="Nach Speichern leeren?"></v-checkbox>
+  </div>
 
   <template v-if="treatmentToBeEdited.category === CareAreas.Hoofcare.toString()">
     <HoofChecker v-model="treatmentToBeEdited"></HoofChecker>

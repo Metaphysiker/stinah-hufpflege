@@ -6,6 +6,7 @@ import { Routine } from "@/classes/Routine";
 import { RoutineService } from "@/services/RoutineService";
 import RoutineForm from "./RoutineForm.vue";
 import { IHorse } from "@/interfaces/IHorse";
+import { CrudOperations } from "@/enum/CrudOperations";
 const props = defineProps({
   horseInput: {
     required: true,
@@ -47,7 +48,7 @@ onBeforeMount(() => {
 const loading = ref(false);
 </script>
 <template>
-  <RoutineForm v-model="newRoutine"></RoutineForm>
+  <RoutineForm v-model="newRoutine" :crud-operation="CrudOperations.create"></RoutineForm>
   <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
   <v-btn class="mb-2" @click="create()">Speichern</v-btn>
   <v-divider class="mb-2"></v-divider>

@@ -6,6 +6,7 @@ import { IHorseSearch } from "@/interfaces/IHorseSearch";
 import { IFile } from "@/interfaces/IFile";
 import { HorseService } from "@/services/HorseService";
 import NewFile from "./NewFile.vue";
+import { CrudOperations } from "@/enum/CrudOperations";
 const fileToBeEdited = defineModel({
   required: true,
   type: Object as () => IFile,
@@ -14,6 +15,17 @@ const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
 const horses: Ref<IHorse[]> = ref([]);
 const selectedHorseId: Ref<number | null> = ref(null);
+
+const props = defineProps({
+  readonly: {
+    required: false,
+    type: Boolean,
+  },
+  crudOperation: {
+    default: CrudOperations.update,
+    type: Object as () => CrudOperations,
+  },
+});
 
 onBeforeMount(() => {
   const horseSearch: IHorseSearch = {
@@ -63,10 +75,7 @@ const filesUploaded = (fileKeyStrings: string[]) => {
   <div v-if="fileToBeEdited.fileKeysString">
     <p><strong>Hochgeladene Dateien:</strong></p>
     <ul>
-      <li
-        v-for="fileKey in fileToBeEdited.fileKeysString.split(',')"
-        :key="fileKey"
-      >
+      <li v-for="fileKey in fileToBeEdited.fileKeysString.split(',')" :key="fileKey">
         - {{ fileKey }}
       </li>
     </ul>

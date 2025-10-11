@@ -6,6 +6,7 @@ import { DateFormatter } from "@/helpers/DateFormatter";
 import { HorseService } from "@/services/HorseService";
 import { AxiosStatic } from "axios";
 import { CareAreas } from "@/enum/CareAreas";
+import { CrudOperations } from "@/enum/CrudOperations";
 const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
 const dateFormatter = new DateFormatter();
@@ -19,6 +20,10 @@ const props = defineProps({
   readonly: {
     required: false,
     type: Boolean,
+  },
+  crudOperation: {
+    default: CrudOperations.update,
+    type: Object as () => CrudOperations,
   },
 });
 
@@ -93,6 +98,15 @@ const age = computed(() => {
           )
         }}</strong>
       </div>
+      <v-divider></v-divider>
+      <div class="my-2">
+        <v-text-field
+          label="Ankündigung"
+          v-model="horseToBeEdited.followUp1AdvanceNotice"
+          variant="underlined"
+          type="text"
+        ></v-text-field>
+      </div>
     </v-card-text>
   </v-card>
 
@@ -114,6 +128,15 @@ const age = computed(() => {
             horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2
           )
         }}</strong>
+      </div>
+      <v-divider></v-divider>
+      <div class="my-2">
+        <v-text-field
+          label="Ankündigung"
+          v-model="horseToBeEdited.followUp2AdvanceNotice"
+          variant="underlined"
+          type="text"
+        ></v-text-field>
       </div>
     </v-card-text>
   </v-card>

@@ -5,6 +5,7 @@ import { HorseService } from "../../services/HorseService";
 import { Ref, inject, ref } from "vue";
 import { IHorse } from "../../interfaces/IHorse";
 import { AxiosStatic } from "axios";
+import { CrudOperations } from "@/enum/CrudOperations";
 const emit = defineEmits(["created"]);
 const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
@@ -16,6 +17,6 @@ const create = () => {
 };
 </script>
 <template>
-  <HorseForm v-model="newHorse"></HorseForm>
+  <HorseForm v-model="newHorse" :crud-operation="CrudOperations.create"></HorseForm>
   <v-btn @click="create()">Speichern</v-btn>
 </template>

@@ -13,4 +13,6 @@ public class TreatmentDTO : IDTO
     public string SubCategory { get; set; } = string.Empty;
     public string HoofCheckString { get; set; } = string.Empty;
     public string HoofCheckStringFromLastTreatment { get; set; } = string.Empty;
+    public bool ClearFollowUp1AdvanceNotice { get; set; } = false;
+    public bool ClearFollowUp2AdvanceNotice { get; set; } = false;
 }

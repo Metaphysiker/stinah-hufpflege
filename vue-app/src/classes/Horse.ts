@@ -10,7 +10,9 @@ export class Horse implements IHorse {
   name: string;
   numberOfWeeksUntilNextTreatmentHoofcare: number;
   numberOfWeeksUntilNextTreatmentHoofcareFollowUp1: number;
+  followUp1AdvanceNotice: string;
   numberOfWeeksUntilNextTreatmentHoofcareFollowUp2: number;
+  followUp2AdvanceNotice: string;
   numberOfWeeksUntilNextTreatmentToothcare: number;
   numberOfWeeksUntilNextTreatmentHealthcare: number;
   birthYear: number;
@@ -34,7 +36,9 @@ export class Horse implements IHorse {
     this.name = "";
     this.numberOfWeeksUntilNextTreatmentHoofcare = 8;
     this.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 = 0;
+    this.followUp1AdvanceNotice = "";
     this.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 = 0;
+    this.followUp2AdvanceNotice = "";
     this.numberOfWeeksUntilNextTreatmentToothcare = 8;
     this.numberOfWeeksUntilNextTreatmentHealthcare = 8;
     this.birthYear = 0;

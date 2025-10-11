@@ -52,6 +52,21 @@ public class TreatmentsController : ControllerBase, IModelController<TreatmentDT
             return BadRequest();
         }
 
+        if ((treatment.ClearFollowUp1AdvanceNotice || treatment.ClearFollowUp2AdvanceNotice) && treatment.HorseId != null)
+        {
+            var horse = await _db.Horses.FindAsync(treatment.HorseId);
+            if (horse != null)
+            {
+                if (treatment.ClearFollowUp1AdvanceNotice)
+                    horse.FollowUp1AdvanceNotice = string.Empty;
+                if (treatment.ClearFollowUp2AdvanceNotice)
+                    horse.FollowUp2AdvanceNotice = string.Empty;
+
+                _db.Update(horse);
+                await _db.SaveChangesAsync();
+            }
+        }
+
         return _treatmentDTOConverter.Convert(createdTreatment);
     }
 

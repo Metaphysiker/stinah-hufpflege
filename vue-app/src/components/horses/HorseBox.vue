@@ -269,11 +269,13 @@ const followUp2Treatments = computed(() => {
     </p>
     <p>
       <strong>Nachbehandlungsrhythmus (1) in Wochen: </strong
-      >{{ model.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 }}
+      >{{ model.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 }} |
+      {{ model.followUp1AdvanceNotice }}
     </p>
     <p>
       <strong>Nachbehandlungsrhythmus (2) in Wochen: </strong
-      >{{ model.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 }}
+      >{{ model.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 }} |
+      {{ model.followUp2AdvanceNotice }}
     </p>
     <p><strong>Arbeit am Huf für das nächste Mal: </strong>{{ model.workOnHoof }}</p>
     <p>

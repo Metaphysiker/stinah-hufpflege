@@ -6,6 +6,7 @@ import { Treatment } from "@/classes/Treatment";
 import { TreatmentService } from "@/services/TreatmentService";
 import TreatmentForm from "./TreatmentForm.vue";
 import { IHorse } from "@/interfaces/IHorse";
+import { CrudOperations } from "@/enum/CrudOperations";
 const props = defineProps({
   horseInput: {
     required: true,
@@ -37,8 +38,7 @@ const create = () => {
 
 onBeforeMount(() => {
   newTreatment.value.horseId = props.horseInput.id;
-  newTreatment.value.noteForNextTreatment =
-    props.horseInput.noteForNextTreatment;
+  newTreatment.value.noteForNextTreatment = props.horseInput.noteForNextTreatment;
 
   if (props.contentInput) {
     newTreatment.value.note = props.contentInput;
@@ -49,7 +49,10 @@ onBeforeMount(() => {
 const loading = ref(false);
 </script>
 <template>
-  <TreatmentForm v-model="newTreatment"></TreatmentForm>
+  <TreatmentForm
+    v-model="newTreatment"
+    :crud-operation="CrudOperations.create"
+  ></TreatmentForm>
   <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
   <v-btn class="mb-2" @click="create()">Speichern</v-btn>
   <v-divider class="mb-2"></v-divider>

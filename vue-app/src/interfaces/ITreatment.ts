@@ -21,4 +21,6 @@ export interface ITreatment
   hoofCheckString: string | undefined;
   HoofCheckStringFromLastTreatment: string | undefined;
   subCategory: string;
+  clearFollowUp1AdvanceNotice: boolean;
+  clearFollowUp2AdvanceNotice: boolean;
 }

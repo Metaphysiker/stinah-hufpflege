@@ -15,6 +15,7 @@ import { IValidator } from "@/validators/IValidator";
 import { ValidatorFactory } from "@/factories/ValidatorFactory";
 import { ValidationHelper } from "@/helpers/ValidationHelper";
 import { useApiErrorHandlerStore } from "@/stores/apiErrorHandlerStore";
+import { CrudOperations } from "@/enum/CrudOperations";
 const apiErrorHanlderStore = useApiErrorHandlerStore();
 const { showDialog, message } = storeToRefs(apiErrorHanlderStore);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -52,10 +53,7 @@ onBeforeMount(() => {
     props.interfaceName
   ) as IConverter<T>;
 
-  formComponent.value = ComponentFactory.createComponent(
-    props.interfaceName,
-    "Form"
-  );
+  formComponent.value = ComponentFactory.createComponent(props.interfaceName, "Form");
 
   validator.value = ValidatorFactory.createValidator(
     props.interfaceName
@@ -64,9 +62,7 @@ onBeforeMount(() => {
   if (props.modelBlueprint) {
     modelClone.value = converter.value.convert(props.modelBlueprint);
   } else {
-    modelClone.value = ClassFactory.createClassInstance(
-      props.interfaceName
-    ) as T;
+    modelClone.value = ClassFactory.createClassInstance(props.interfaceName) as T;
   }
   validate();
 });
@@ -102,7 +98,12 @@ const createModel = () => {
 </script>
 <template>
   <div class="" v-if="modelClone">
-    <formComponent v-model="modelClone" @validate="validate()"> </formComponent>
+    <formComponent
+      v-model="modelClone"
+      @validate="validate()"
+      :crud-operation="CrudOperations.create"
+    >
+    </formComponent>
     <v-divider class="mt-3"></v-divider>
     <div>
       <v-btn
