@@ -30,6 +30,7 @@ export class Horse implements IHorse {
   workOnHoof: string;
   includedRoutines: IRoutine[];
   routineIds: number[];
+  color: string;
 
   constructor() {
     this.localID = LocalIDFactory.createLocalID();
@@ -56,5 +57,6 @@ export class Horse implements IHorse {
     this.workOnHoof = "";
     this.includedRoutines = [];
     this.routineIds = [];
+    this.color = "#FFFFFF";
   }
 }

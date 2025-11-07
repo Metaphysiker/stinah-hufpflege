@@ -386,7 +386,11 @@ const getRoutineUrgencyClass = (horse: IHorse, headerKey: string) => {
               {{ new Date().getFullYear() - row.item["birthYear"] }}
             </template>
             <template v-if="header.key === 'name'">
-              <v-btn @click="clickOnName(row.item)">{{ row.item["name"] }}</v-btn>
+              <v-btn
+                @click="clickOnName(row.item)"
+                :style="{ backgroundColor: row.item.color }"
+                >{{ row.item["name"] }}</v-btn
+              >
             </template>
           </div>
 

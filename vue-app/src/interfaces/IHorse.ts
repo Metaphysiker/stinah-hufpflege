@@ -26,4 +26,5 @@ export interface IHorse extends IModel, IEntityWithFiles {
   workOnHoof: string;
   includedRoutines: IRoutine[];
   routineIds: number[];
+  color: string;
 }

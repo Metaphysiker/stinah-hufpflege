@@ -7,6 +7,7 @@ import { HorseService } from "@/services/HorseService";
 import { AxiosStatic } from "axios";
 import { CareAreas } from "@/enum/CareAreas";
 import { CrudOperations } from "@/enum/CrudOperations";
+import ColorSelecter from "../ColorSelecter.vue";
 const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
 const dateFormatter = new DateFormatter();
@@ -65,7 +66,13 @@ const age = computed(() => {
         v-model="horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcare"
         variant="underlined"
         type="number"
+        @update:modelValue="
+          (val) =>
+            (horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcare =
+              val === '' ? 0 : Number(val))
+        "
       ></v-text-field>
+
       <div class="my-2">
         Nächste Vollbehandlung:
         <strong>{{
@@ -87,6 +94,11 @@ const age = computed(() => {
         v-model="horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1"
         variant="underlined"
         type="number"
+        @update:modelValue="
+          (val) =>
+            (horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 =
+              val === '' ? 0 : Number(val))
+        "
       ></v-text-field>
       <div class="my-2">
         Nächste Nachbehandlung (1):
@@ -118,6 +130,11 @@ const age = computed(() => {
         v-model="horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2"
         variant="underlined"
         type="number"
+        @update:modelValue="
+          (val) =>
+            (horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 =
+              val === '' ? 0 : Number(val))
+        "
       ></v-text-field>
       <div class="my-2">
         Nächste Nachbehandlung (2):
@@ -155,6 +172,11 @@ const age = computed(() => {
         v-model="horseToBeEdited.numberOfWeeksUntilNextTreatmentToothcare"
         variant="underlined"
         type="number"
+        @update:modelValue="
+          (val) =>
+            (horseToBeEdited.numberOfWeeksUntilNextTreatmentToothcare =
+              val === '' ? 0 : Number(val))
+        "
       ></v-text-field>
       <div class="my-2" elevation-2>
         Nächste Behandlung:
@@ -177,6 +199,11 @@ const age = computed(() => {
         v-model="horseToBeEdited.numberOfWeeksUntilNextTreatmentHealthcare"
         variant="underlined"
         type="number"
+        @update:modelValue="
+          (val) =>
+            (horseToBeEdited.numberOfWeeksUntilNextTreatmentHealthcare =
+              val === '' ? 0 : Number(val))
+        "
       ></v-text-field>
       <div class="my-2" elevation-2>
         Nächste Behandlung:
@@ -216,4 +243,9 @@ const age = computed(() => {
     label="Beschlagen?"
     v-model="horseToBeEdited.beschlagen"
   ></v-checkbox>
+
+  <ColorSelecter
+    v-model="horseToBeEdited.color"
+    :example-string="horseToBeEdited.name"
+  ></ColorSelecter>
 </template>

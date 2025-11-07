@@ -28,4 +28,5 @@ public class HorseDTO : IDTO
     public string Patenschaften { get; set; } = string.Empty;
     public string SummaryHoofCheckStatusOfLastTreatment { get; set; } = string.Empty;
     public string WorkOnHoof { get; set; } = string.Empty;
+    public string Color { get; set; } = string.Empty;
 }

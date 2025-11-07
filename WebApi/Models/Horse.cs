@@ -21,4 +21,5 @@ public class Horse : IModel, IEnityWithTreatments, IEnityWithFiles
     public ICollection<Routine> Routines { get; set; } = new List<Routine>();
     public string Patenschaften { get; set; } = string.Empty;
     public string WorkOnHoof { get; set; } = string.Empty;
+    public string Color { get; set; } = string.Empty;
 }
