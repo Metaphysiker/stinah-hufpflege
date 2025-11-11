@@ -30,18 +30,16 @@ const props = defineProps({
 
 const nextTreatmentDateForCategory = (
   category: string | undefined,
-  subCategory: string | undefined,
-  numberOfWeeks: number
+  subCategory: string | undefined
 ) => {
   if (horseToBeEdited.value) {
-    const lastTimeTreated = horseHelper.calculateHypotheticalNextTreatmentDate(
+    const nextTreatment = horseHelper.calculateNextTreatmentDate(
       horseToBeEdited.value,
       category,
-      subCategory,
-      numberOfWeeks
+      subCategory
     );
-    if (!lastTimeTreated) return "";
-    return dateFormatter.dddotmmdotyyyy(lastTimeTreated);
+    if (!nextTreatment) return "";
+    return dateFormatter.dddotmmdotyyyy(nextTreatment);
   }
   return "";
 };
@@ -76,11 +74,7 @@ const age = computed(() => {
       <div class="my-2">
         Nächste Vollbehandlung:
         <strong>{{
-          nextTreatmentDateForCategory(
-            CareAreas.Hoofcare.toString(),
-            "",
-            horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcare
-          )
+          nextTreatmentDateForCategory(CareAreas.Hoofcare.toString(), "")
         }}</strong>
       </div>
     </v-card-text>
@@ -103,11 +97,7 @@ const age = computed(() => {
       <div class="my-2">
         Nächste Nachbehandlung (1):
         <strong>{{
-          nextTreatmentDateForCategory(
-            CareAreas.Hoofcare.toString(),
-            "followUp1",
-            horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1
-          )
+          nextTreatmentDateForCategory(CareAreas.Hoofcare.toString(), "followUp1")
         }}</strong>
       </div>
       <v-divider></v-divider>
@@ -139,11 +129,7 @@ const age = computed(() => {
       <div class="my-2">
         Nächste Nachbehandlung (2):
         <strong>{{
-          nextTreatmentDateForCategory(
-            CareAreas.Hoofcare.toString(),
-            "followUp2",
-            horseToBeEdited.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2
-          )
+          nextTreatmentDateForCategory(CareAreas.Hoofcare.toString(), "followUp2")
         }}</strong>
       </div>
       <v-divider></v-divider>
@@ -181,11 +167,7 @@ const age = computed(() => {
       <div class="my-2" elevation-2>
         Nächste Behandlung:
         <strong>{{
-          nextTreatmentDateForCategory(
-            CareAreas.Toothcare.toString(),
-            "",
-            horseToBeEdited.numberOfWeeksUntilNextTreatmentToothcare
-          )
+          nextTreatmentDateForCategory(CareAreas.Toothcare.toString(), "")
         }}</strong>
       </div>
     </v-card-text>
@@ -208,11 +190,7 @@ const age = computed(() => {
       <div class="my-2" elevation-2>
         Nächste Behandlung:
         <strong>{{
-          nextTreatmentDateForCategory(
-            CareAreas.Healthcare.toString(),
-            "",
-            horseToBeEdited.numberOfWeeksUntilNextTreatmentHealthcare
-          )
+          nextTreatmentDateForCategory(CareAreas.Healthcare.toString(), "")
         }}</strong>
       </div>
     </v-card-text>
