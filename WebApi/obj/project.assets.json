@@ -3312,19 +3312,19 @@
     ]
   },
   "packageFolders": {
-    "/root/.nuget/packages/": {}
+    "/home/sandro/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/app/WebApi/WebApi.csproj",
+      "projectUniqueName": "/home/sandro/workspace/stinah-hufpflege/WebApi/WebApi.csproj",
       "projectName": "WebApi",
-      "projectPath": "/app/WebApi/WebApi.csproj",
-      "packagesPath": "/root/.nuget/packages/",
-      "outputPath": "/app/WebApi/obj/",
+      "projectPath": "/home/sandro/workspace/stinah-hufpflege/WebApi/WebApi.csproj",
+      "packagesPath": "/home/sandro/.nuget/packages/",
+      "outputPath": "/home/sandro/workspace/stinah-hufpflege/WebApi/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/root/.nuget/NuGet/NuGet.Config"
+        "/home/sandro/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -3347,7 +3347,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -3399,6 +3400,20 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[8.0.11, 8.0.11]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.linux-x64",
+            "version": "[8.0.11, 8.0.11]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[8.0.11, 8.0.11]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -3407,7 +3422,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.415/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/home/sandro/.dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
