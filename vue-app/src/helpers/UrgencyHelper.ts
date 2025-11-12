@@ -1,16 +1,22 @@
 import { IHorse } from "@/interfaces/IHorse";
 import { HorseHelper } from "./HorseHelper";
 import { HorseService } from "@/services/HorseService";
+import { DateFormatter } from "./DateFormatter";
 
 export class UrgencyHelper {
   horseService: HorseService = new HorseService(undefined);
   horseHelper = new HorseHelper(this.horseService);
+  dateFormatter = new DateFormatter();
 
   constructor(horseHelper: HorseHelper) {
     this.horseHelper = horseHelper;
   }
 
-  calculateUrgencyInDays(horse: IHorse, category: string | undefined, subCategory: string | undefined) {
+  calculateUrgencyInDays(
+    horse: IHorse,
+    category: string | undefined,
+    subCategory: string | undefined
+  ) {
     const now = new Date();
     const nextTreatmentDate = this.horseHelper.calculateNextTreatmentDate(
       horse,
@@ -24,24 +30,35 @@ export class UrgencyHelper {
     return 0;
   }
 
-  isNextWeek(horse: IHorse, category: string | undefined, subCategory: string | undefined) {
+  isNextWeek(
+    horse: IHorse,
+    category: string | undefined,
+    subCategory: string | undefined
+  ) {
     return this.calculateUrgencyInDays(horse, category, subCategory) < 7;
   }
 
-  isNextMonth(horse: IHorse, category: string | undefined, subCategory: string | undefined) {
+  isNextMonth(
+    horse: IHorse,
+    category: string | undefined,
+    subCategory: string | undefined
+  ) {
     return this.calculateUrgencyInDays(horse, category, subCategory) < 30;
   }
 
-    getClassForUrgency(horse: IHorse, category: string | undefined, subCategory: string | undefined) {
-
-    if(subCategory === "followUp1") {
-      if(horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 == 0){
+  getClassForUrgency(
+    horse: IHorse,
+    category: string | undefined,
+    subCategory: string | undefined
+  ) {
+    if (subCategory === "followUp1") {
+      if (horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp1 == 0) {
         return "bg-white";
       }
     }
 
-    if(subCategory === "followUp2") {
-      if(horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 == 0){
+    if (subCategory === "followUp2") {
+      if (horse.numberOfWeeksUntilNextTreatmentHoofcareFollowUp2 == 0) {
         return "bg-white";
       }
     }
@@ -55,29 +72,30 @@ export class UrgencyHelper {
     }
   }
 
-getClassForUrgencyWithDate(date: Date) {
-  const now = new Date();
-  // If the date is in the past or today, return bg-red
-  if (date.getTime() <= now.setHours(0,0,0,0)) {
-    return "bg-red"; // urgent - past or today
-  } else if (this.isNextWeekWithDate(date)) {
-    return "bg-red"; // urgent - within a week
-  } else if (this.isNextMonthWithDate(date)) {
-    return "bg-yellow"; // less urgent - within a month
-  } else {
-    return "bg-white"; // not urgent
+  getClassForUrgencyWithDate(date: Date) {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    if (dateOnly.getTime() <= todayStart.getTime()) {
+      return "bg-red";
+    } else if (this.isNextWeekWithDate(date)) {
+      return "bg-red";
+    } else if (this.isNextMonthWithDate(date)) {
+      return "bg-yellow";
+    } else {
+      return "bg-white";
+    }
   }
-}
 
-isNextWeekWithDate(date: Date) {
-  const now = new Date();
-  const difference = date.getTime() - now.getTime();
-  return difference > 0 && difference / (1000 * 60 * 60 * 24) < 7;
-}
+  isNextWeekWithDate(date: Date) {
+    const now = new Date();
+    const difference = date.getTime() - now.getTime();
+    return difference > 0 && difference / (1000 * 60 * 60 * 24) < 7;
+  }
 
-isNextMonthWithDate(date: Date) {
-  const now = new Date();
-  const difference = date.getTime() - now.getTime();
-  return difference > 0 && difference / (1000 * 60 * 60 * 24) < 30;
-}
+  isNextMonthWithDate(date: Date) {
+    const now = new Date();
+    const difference = date.getTime() - now.getTime();
+    return difference > 0 && difference / (1000 * 60 * 60 * 24) < 30;
+  }
 }
