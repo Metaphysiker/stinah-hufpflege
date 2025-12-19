@@ -74,7 +74,7 @@ const capitalize = (string: string) => {
       <v-text-field v-model="password" label="Password" type="password" />
       <v-btn @click="login()">Login</v-btn>
       <v-divider class="my-2"> </v-divider>
-      <v-table density="compact">
+      <v-table density="compact" v-if="false">
         <thead>
           <tr>
             <th class="text-left">Vorhandene Logins</th>

@@ -8,6 +8,10 @@ import { AxiosStatic } from "axios";
 import { CareAreas } from "@/enum/CareAreas";
 import { CrudOperations } from "@/enum/CrudOperations";
 import ColorSelecter from "../ColorSelecter.vue";
+import { useUserStore } from "@/stores/userStore";
+import { storeToRefs } from "pinia";
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
 const axios: AxiosStatic | undefined = inject("axios");
 const horseService = new HorseService(axios);
 const dateFormatter = new DateFormatter();
@@ -46,6 +50,13 @@ const nextTreatmentDateForCategory = (
 
 const age = computed(() => {
   return new Date().getFullYear() - horseToBeEdited.value.birthYear;
+});
+
+const isCurrentUserStinahOrAdmin = computed(() => {
+  return (
+    currentUser.value?.username.toLowerCase() === "stinah" ||
+    currentUser.value?.username.toLowerCase() === "admin"
+  );
 });
 </script>
 <template>
@@ -211,6 +222,7 @@ const age = computed(() => {
   </v-card>
 
   <v-textarea
+    v-if="isCurrentUserStinahOrAdmin"
     label="Paten / Patenschaften"
     v-model="horseToBeEdited.patenschaften"
     variant="outlined"

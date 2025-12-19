@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -6,10 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 public class MigrationController : ControllerBase
 {
     private readonly DatabaseContext _db;
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public MigrationController(DatabaseContext db)
+    public MigrationController(DatabaseContext db, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
     {
         _db = db;
+        _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     [HttpGet("clean")]
@@ -121,6 +126,27 @@ public class MigrationController : ControllerBase
 
     [HttpGet("migrate")]
     public async Task<HttpStatusCode> migrate()
+    {
+
+        // Update Hoofcare user password
+        var hufPfleger = await _userManager.FindByNameAsync(Roles.Hoofcare.ToString());
+        if (hufPfleger != null)
+        {
+            string? password = Environment.GetEnvironmentVariable("NEW_HOOFCARE_USER_PASSWORD");
+            var token = await _userManager.GeneratePasswordResetTokenAsync(hufPfleger);
+            var result = await _userManager.ResetPasswordAsync(hufPfleger, token, password!);
+            // if fails return error
+            if (!result.Succeeded)
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+        }
+
+        return HttpStatusCode.OK;
+    }
+
+    [HttpGet("migrateOld2")]
+    public async Task<HttpStatusCode> migrateOld2()
     {
         var treatments = _db.Treatments.ToList();
         foreach (var treatment in treatments)

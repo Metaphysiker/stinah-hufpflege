@@ -22,6 +22,9 @@ import { IFile } from "@/interfaces/IFile";
 import { Routine } from "@/classes/Routine";
 import { IRoutine } from "@/interfaces/IRoutine";
 import { IRoutineSearch } from "@/interfaces/IRoutineSearch";
+import { useUserStore } from "@/stores/userStore";
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
 const treatmentCategoryStore = useTreatmentCategoryStore();
 const { selectedTreatmentCategory } = storeToRefs(treatmentCategoryStore);
 const translator = new Translator();
@@ -255,6 +258,13 @@ const followUp2Treatments = computed(() => {
   }
   return props.model.treatmentDates.filter((td) => td.subCategory === "followUp2");
 });
+
+const isCurrentUserStinahOrAdmin = computed(() => {
+  return (
+    currentUser.value?.username.toLowerCase() === "stinah" ||
+    currentUser.value?.username.toLowerCase() === "admin"
+  );
+});
 </script>
 
 <template>
@@ -288,7 +298,7 @@ const followUp2Treatments = computed(() => {
       >{{ model.numberOfWeeksUntilNextTreatmentHealthcare }}
     </p>
 
-    <div style="white-space: pre-line">
+    <div style="white-space: pre-line" v-if="isCurrentUserStinahOrAdmin">
       <strong>Patenschaften: </strong><br />
       {{ model.patenschaften }}
     </div>
