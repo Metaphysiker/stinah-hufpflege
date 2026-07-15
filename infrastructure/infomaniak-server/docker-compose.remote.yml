@@ -2,14 +2,17 @@ name: stinah-pflege-production
 services:
   webapi:
     image: stinah-pflege-production-webapi
+    restart: unless-stopped
     ports:
       - "${PORT_BACKEND}:8080"
     env_file:
       - .env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
   vue:
     image: stinah-pflege-production-vue
+    restart: unless-stopped
     env_file:
       - .env
     ports:
@@ -18,10 +21,17 @@ services:
       - webapi
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     env_file:
       - .env
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 volumes:
   postgres-data:
