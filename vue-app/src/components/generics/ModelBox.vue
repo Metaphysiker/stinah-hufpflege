@@ -164,7 +164,11 @@ watch(
     >
       <v-row class="mb-1">
         <v-col @click="clickOnEdit()">
-          <v-btn color="green" size="large" class="me-2"
+          <v-btn
+            color="green"
+            size="large"
+            class="me-2"
+            :data-testid="`edit-${props.interfaceName.replace(/^I/, '').toLowerCase()}-button`"
             ><v-icon> mdi-pencil </v-icon></v-btn
           >
         </v-col>
@@ -174,6 +178,9 @@ watch(
             size="large"
             class="me-2"
             @click="deleteModelDialog = true"
+            :data-testid="`delete-${props.interfaceName
+              .replace(/^I/, '')
+              .toLowerCase()}-button`"
             ><v-icon> mdi-close-circle-outline </v-icon></v-btn
           >
         </v-col>
@@ -192,7 +199,12 @@ watch(
       <v-card-text v-if="modelClone" class="pa-1">
         <formComponent v-model="modelClone"></formComponent>
         <div>
-          <v-btn @click="saveModel()">Speichern</v-btn>
+          <v-btn
+            @click="saveModel()"
+            :data-testid="`${props.interfaceName
+              .replace(/^I/, '')
+              .toLowerCase()}-form-update-button`"
+            >Speichern</v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -206,7 +218,12 @@ watch(
       ></StandardToolbar>
       <v-card-text>
         <div class="mb-5">{{ textForDeletingModel }}</div>
-        <v-btn @click="deleteModel()">Ja, entfernen</v-btn>
+        <v-btn
+          @click="deleteModel()"
+          :data-testid="`confirm-delete-${props.interfaceName
+            .replace(/^I/, '')
+            .toLowerCase()}-button`"
+          >Ja, entfernen</v-btn>
       </v-card-text>
     </v-card>
   </v-dialog>

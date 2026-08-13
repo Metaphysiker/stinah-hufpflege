@@ -65,6 +65,7 @@ const isCurrentUserStinahOrAdmin = computed(() => {
     label="Name"
     v-model="horseToBeEdited.name"
     variant="underlined"
+    data-testid="horse-form-name-input"
   ></v-text-field>
 
   <v-card class="mb-3" variant="outlined">
@@ -214,6 +215,7 @@ const isCurrentUserStinahOrAdmin = computed(() => {
         label="Jahrgang"
         v-model="horseToBeEdited.birthYear"
         variant="underlined"
+        data-testid="horse-form-birthYear-input"
         type="number"
       ></v-text-field>
       <br />
@@ -228,14 +230,24 @@ const isCurrentUserStinahOrAdmin = computed(() => {
     variant="outlined"
   ></v-textarea>
 
+  <v-textarea
+    :readonly="props.readonly"
+    label="Notiz"
+    v-model="horseToBeEdited.note"
+    variant="outlined"
+    data-testid="horse-form-note-textarea"
+  ></v-textarea>
+
   <v-checkbox
     :readonly="props.readonly"
     label="Beschlagen?"
     v-model="horseToBeEdited.beschlagen"
+    data-testid="horse-form-beschlagen-checkbox"
   ></v-checkbox>
 
   <ColorSelecter
     v-model="horseToBeEdited.color"
     :example-string="horseToBeEdited.name"
+    data-testid="horse-form-color-input"
   ></ColorSelecter>
 </template>

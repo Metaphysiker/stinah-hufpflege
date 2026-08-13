@@ -109,6 +109,7 @@ const createModel = () => {
       <v-btn
         :disabled="validationHelper.hasValidationIssues(modelClone)"
         @click="createModel()"
+        :data-testid="`${props.interfaceName.replace(/^I/, '').toLowerCase()}-form-save-button`"
         >Speichern</v-btn
       >
     </div>

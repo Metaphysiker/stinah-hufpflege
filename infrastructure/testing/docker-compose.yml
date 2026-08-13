@@ -1,0 +1,89 @@
+name: stinah-hufpflege-testing
+
+services:
+  webapi:
+    build:
+      context: ../../WebApi
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8089:8080"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-abc}
+      POSTGRES_USER: ${POSTGRES_USER:-abc}
+      POSTGRES_DB: ${POSTGRES_DB:-abc}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-password}
+      STINAH_PASSWORD: ${STINAH_PASSWORD:-password}
+      REGULAR_USER_PASSWORD: ${REGULAR_USER_PASSWORD:-password}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-example}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-example}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-eu-central-1}
+      AWS_REGION: ${AWS_REGION:-eu-central-1}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME:-stinahhufpflegetesting}
+      SIGNING_KEY: ${SIGNING_KEY:-example}
+      NEW_HOOFCARE_USER_PASSWORD: ${NEW_HOOFCARE_USER_PASSWORD:-password}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  vue:
+    build:
+      context: ../../vue-app
+      dockerfile: Dockerfile
+      target: development-stage
+      args:
+        VITE_API_BASE_URL: "http://webapi:8080/"
+    restart: unless-stopped
+    ports:
+      - "8088:8080"
+    environment:
+      API_BASE_URL: "http://webapi:8080/"
+      VITE_API_BASE_URL: "http://webapi:8080/"
+    depends_on:
+      - webapi
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-abc}
+      POSTGRES_USER: ${POSTGRES_USER:-abc}
+      POSTGRES_DB: ${POSTGRES_DB:-abc}
+    volumes:
+      - postgres-data-test:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.44.0-jammy
+    working_dir: /app/vue-app
+    volumes:
+      - ../../:/app
+    command: npx playwright test
+    depends_on:
+      - vue
+      - webapi
+    environment:
+      CI: "true"
+      API_BASE_URL: "http://webapi:8080/"
+      VUE_APP_BASE_URL: "http://vue:8080/"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-abc}
+      POSTGRES_USER: ${POSTGRES_USER:-abc}
+      POSTGRES_DB: ${POSTGRES_DB:-abc}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-password}
+      STINAH_PASSWORD: ${STINAH_PASSWORD:-password}
+      REGULAR_USER_PASSWORD: ${REGULAR_USER_PASSWORD:-password}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-example}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-example}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-eu-central-1}
+      AWS_REGION: ${AWS_REGION:-eu-central-1}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME:-stinahhufpflegetesting}
+      SIGNING_KEY: ${SIGNING_KEY:-example}
+      NEW_HOOFCARE_USER_PASSWORD: ${NEW_HOOFCARE_USER_PASSWORD:-password}
+
+volumes:
+  postgres-data-test:

@@ -34,5 +34,5 @@ const create = () => {
 </script>
 <template>
   <HorseForm v-if="horseToBeEdited" v-model="horseToBeEdited"></HorseForm>
-  <v-btn @click="create()">Aktualisieren</v-btn>
+  <v-btn @click="create()" data-testid="horse-form-update-button">Aktualisieren</v-btn>
 </template>
