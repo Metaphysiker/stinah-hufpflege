@@ -52,6 +52,9 @@ const meta = ref<IDicomMetaData>({
 });
 
 // Interactive state
+const currentFrame = ref(0);
+const totalFrames = ref(1);
+
 const windowCenter = ref(128);
 const windowWidth = ref(256);
 const invert = ref(false);
@@ -114,6 +117,17 @@ const loadDicomData = async () => {
         return defaultVal;
       }
     };
+    const getIntString = (tag: string, defaultVal = 1) => {
+      try {
+        const val = dataSet.string(tag);
+        return val ? parseInt(val, 10) : defaultVal;
+      } catch {
+        return defaultVal;
+      }
+    };
+
+    totalFrames.value = getIntString("x00280008", 1);
+    currentFrame.value = 0; // Reset to first frame on new file load
 
     meta.value = {
       patientName: getString("x00100010"),
@@ -223,6 +237,28 @@ const syncCanvasSize = (): boolean => {
   return true;
 };
 
+const displayCurrentFrame = async () => {
+  if (!csViewport.value || !csEnabled || !csImageId) return;
+  try {
+    // Append the frame query parameter for WADO Image Loader
+    const frameImageId =
+      totalFrames.value > 1 ? `${csImageId}?frame=${currentFrame.value}` : csImageId;
+
+    const image = await cornerstone.loadImage(frameImageId);
+
+    // Get the current viewport to preserve zoom/pan/windowing across frames
+    const currentViewport = cornerstone.getViewport(csViewport.value);
+
+    if (currentViewport) {
+      cornerstone.displayImage(csViewport.value, image, currentViewport);
+    } else {
+      cornerstone.displayImage(csViewport.value, image);
+    }
+  } catch (err: any) {
+    console.warn("Cornerstone display error:", err);
+  }
+};
+
 const initCornerstone = async () => {
   if (!arrayBufferData.value) return;
   await nextTick();
@@ -240,12 +276,10 @@ const initCornerstone = async () => {
     const blob = new Blob([arrayBufferData.value], { type: "application/dicom" });
     csImageId = cornerstoneWADOImageLoader.wadouri.fileManager.add(blob);
 
-    const image = await cornerstone.loadImage(csImageId);
-    cornerstone.displayImage(csViewport.value, image);
-
+    await displayCurrentFrame();
     fitAndReset();
   } catch (err: any) {
-    console.warn("Cornerstone display error:", err);
+    console.warn("Cornerstone init error:", err);
     errorMessage.value = "Fehler beim Anzeigen des DICOM-Bilds.";
   }
 };
@@ -296,6 +330,10 @@ const applyViewport = () => {
 };
 
 watch([windowCenter, windowWidth, invert, zoomScale, panX, panY], applyViewport);
+
+watch(currentFrame, () => {
+  displayCurrentFrame();
+});
 
 watch(
   () => props.presignedUrl,
@@ -378,10 +416,22 @@ const onMouseUp = () => {
 
 const onWheel = (e: WheelEvent) => {
   e.preventDefault();
-  if (e.deltaY < 0) {
-    zoomIn();
-  } else {
-    zoomOut();
+
+  // Shift+Wheel or Single-Frame = Zoom
+  if (e.shiftKey || totalFrames.value <= 1) {
+    if (e.deltaY < 0) {
+      zoomIn();
+    } else {
+      zoomOut();
+    }
+  }
+  // Standard Wheel on Multi-Frame = Scroll Slices
+  else {
+    if (e.deltaY < 0) {
+      currentFrame.value = Math.max(0, currentFrame.value - 1);
+    } else {
+      currentFrame.value = Math.min(totalFrames.value - 1, currentFrame.value + 1);
+    }
   }
 };
 
@@ -506,6 +556,26 @@ onBeforeUnmount(() => {
             class="d-flex align-center flex-wrap ga-2 flex-grow-1"
             style="min-width: 280px"
           >
+            <div
+              v-if="totalFrames > 1"
+              class="d-flex align-center ga-1 mr-3"
+              style="width: 220px"
+            >
+              <span class="text-caption font-weight-bold text-primary">Frame:</span>
+              <v-slider
+                v-model="currentFrame"
+                :min="0"
+                :max="totalFrames - 1"
+                :step="1"
+                hide-details
+                density="compact"
+                color="primary"
+              ></v-slider>
+              <span class="text-caption" style="width: 50px">
+                {{ currentFrame + 1 }} / {{ totalFrames }}
+              </span>
+            </div>
+
             <div class="d-flex align-center ga-1" style="width: 190px">
               <span class="text-caption font-weight-bold">W/C:</span>
               <v-slider
@@ -663,7 +733,11 @@ onBeforeUnmount(() => {
         >W/C: {{ Math.round(windowCenter) }} | W/W: {{ Math.round(windowWidth) }} | Zoom:
         {{ Math.round(zoomScale * 100) }}%</span
       >
-      <span>Tipp: Ziehen zum Verschieben, Shift+Ziehen für Helligkeit/Kontrast</span>
+      <span
+        >Tipp: Mausrad für
+        {{ totalFrames > 1 ? "Bildlauf, Shift+Mausrad für Zoom" : "Zoom" }}, Ziehen zum
+        Verschieben, Shift+Ziehen für Helligkeit/Kontrast</span
+      >
     </div>
   </div>
 </template>
