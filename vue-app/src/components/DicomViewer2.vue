@@ -26,6 +26,10 @@ const props = defineProps<{
 const loading = ref(true);
 const errorMessage = ref("");
 
+// Download Progress State
+const isDownloading = ref(false);
+const downloadProgress = ref(0);
+
 // DOM refs
 const outerWrapper = ref<HTMLDivElement | null>(null); // whole component, used for fullscreen
 const csViewport = ref<HTMLDivElement | null>(null); // element cornerstone.enable() attaches to
@@ -76,20 +80,40 @@ const formatDate = (rawStr: string | undefined): string => {
 const loadDicomData = async () => {
   if (!props.fileKey && !props.presignedUrl) return;
   loading.value = true;
+  isDownloading.value = true;
+  downloadProgress.value = 0;
   errorMessage.value = "";
 
   try {
     let buffer: ArrayBuffer;
+
     try {
+      // Direct download from presignedUrl to enable reliable progress tracking.
+      // This is generally preferred for large files to avoid proxying through your backend.
+      const response = await axios.get(props.presignedUrl, {
+        responseType: "arraybuffer",
+        onDownloadProgress: (progressEvent: any) => {
+          if (progressEvent.total) {
+            downloadProgress.value = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+          } else {
+            downloadProgress.value = -1; // Indeterminate if no Content-Length header is present
+          }
+        },
+      });
+      buffer = response.data;
+    } catch (downloadErr) {
+      console.warn(
+        "Direct presigned URL download failed, falling back to proxy...",
+        downloadErr
+      );
+      downloadProgress.value = -1; // Proxy likely won't report progress
       buffer = await fileService.downloadFileArrayBuffer(props.fileKey);
-    } catch (proxyErr) {
-      console.warn("Backend proxy fetch failed, trying presignedUrl...", proxyErr);
-      const response = await fetch(props.presignedUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
-      }
-      buffer = await response.arrayBuffer();
     }
+
+    // Done downloading, now switch to parsing state
+    isDownloading.value = false;
     arrayBufferData.value = buffer;
 
     const byteArray = new Uint8Array(buffer);
@@ -171,9 +195,6 @@ const cleanupCornerstone = () => {
   }
 };
 
-// Wait for the container to report a real, non-zero size before enabling
-// cornerstone on it at all (enable() also creates an initial canvas sized
-// to the container).
 const waitForStableSize = (el: HTMLElement, maxFrames = 20): Promise<void> => {
   return new Promise((resolve) => {
     let lastW = -1;
@@ -204,13 +225,6 @@ const waitForStableSize = (el: HTMLElement, maxFrames = 20): Promise<void> => {
   });
 };
 
-// Force the actual <canvas> element cornerstone created to match its
-// container's real rendered pixel size. Cornerstone's own resize() can
-// leave canvas.height unset (falling back to the browser default ~150px)
-// when it's called while clientHeight briefly reads as 0/unstable during
-// flex layout — that's what produces a full-width-but-short canvas with the
-// image "cut off" at its bottom edge. Bypass that by measuring and setting
-// width/height ourselves.
 const syncCanvasSize = (): boolean => {
   if (!csViewport.value || !csEnabled) return false;
 
@@ -240,13 +254,10 @@ const syncCanvasSize = (): boolean => {
 const displayCurrentFrame = async () => {
   if (!csViewport.value || !csEnabled || !csImageId) return;
   try {
-    // Append the frame query parameter for WADO Image Loader
     const frameImageId =
       totalFrames.value > 1 ? `${csImageId}?frame=${currentFrame.value}` : csImageId;
 
     const image = await cornerstone.loadImage(frameImageId);
-
-    // Get the current viewport to preserve zoom/pan/windowing across frames
     const currentViewport = cornerstone.getViewport(csViewport.value);
 
     if (currentViewport) {
@@ -284,12 +295,10 @@ const initCornerstone = async () => {
   }
 };
 
-// Fit image to container, and reset zoom/pan state to match
 const fitAndReset = () => {
   if (!csViewport.value || !csEnabled) return;
   try {
     if (!syncCanvasSize()) {
-      // Container not measurable yet (e.g. mid-transition) — retry next frame.
       requestAnimationFrame(fitAndReset);
       return;
     }
@@ -311,7 +320,6 @@ const fitAndReset = () => {
   }
 };
 
-// Push current windowing/zoom/pan/invert state into cornerstone
 const applyViewport = () => {
   if (!csViewport.value || !csEnabled) return;
   try {
@@ -378,10 +386,6 @@ const zoomOut = () => {
   zoomScale.value = Math.max(0.2, zoomScale.value - 0.2);
 };
 
-// Drag handlers — pan is stored in IMAGE-SPACE units. Cornerstone applies
-// scale before translation in its transform stack, so raw screen-pixel mouse
-// deltas must be divided by the current effective scale, otherwise at higher
-// zoom the image moves faster than the cursor and flies outside the canvas.
 let isDragging = false;
 let startX = 0;
 let startY = 0;
@@ -400,7 +404,6 @@ const onMouseMove = (e: MouseEvent) => {
   startY = e.clientY;
 
   if (e.buttons === 2 || e.shiftKey) {
-    // Right-drag / shift-drag: window/level
     windowWidth.value = Math.max(1, windowWidth.value + dx * 2);
     windowCenter.value = windowCenter.value + dy * 2;
   } else {
@@ -417,16 +420,13 @@ const onMouseUp = () => {
 const onWheel = (e: WheelEvent) => {
   e.preventDefault();
 
-  // Shift+Wheel or Single-Frame = Zoom
   if (e.shiftKey || totalFrames.value <= 1) {
     if (e.deltaY < 0) {
       zoomIn();
     } else {
       zoomOut();
     }
-  }
-  // Standard Wheel on Multi-Frame = Scroll Slices
-  else {
+  } else {
     if (e.deltaY < 0) {
       currentFrame.value = Math.max(0, currentFrame.value - 1);
     } else {
@@ -435,7 +435,6 @@ const onWheel = (e: WheelEvent) => {
   }
 };
 
-// Touch: single-finger pan, two-finger pinch zoom
 let touchStartDist = 0;
 const onTouchStart = (e: TouchEvent) => {
   if (e.touches.length === 1) {
@@ -679,12 +678,36 @@ onBeforeUnmount(() => {
         class="d-flex flex-column align-center justify-center position-absolute fill-height w-100 bg-black"
         style="z-index: 10"
       >
-        <v-progress-circular
-          indeterminate
-          color="primary"
-          size="50"
-        ></v-progress-circular>
-        <span class="mt-3 text-grey-lighten-1">Lade DICOM Bilddaten...</span>
+        <template v-if="isDownloading">
+          <v-progress-circular
+            v-if="downloadProgress >= 0"
+            :model-value="downloadProgress"
+            color="primary"
+            size="64"
+            width="6"
+          >
+            {{ downloadProgress }}%
+          </v-progress-circular>
+
+          <v-progress-circular
+            v-else
+            indeterminate
+            color="primary"
+            size="64"
+            width="6"
+          ></v-progress-circular>
+          <span class="mt-4 text-grey-lighten-1">Lade DICOM Datei...</span>
+        </template>
+
+        <template v-else>
+          <v-progress-circular
+            indeterminate
+            color="secondary"
+            size="64"
+            width="6"
+          ></v-progress-circular>
+          <span class="mt-4 text-grey-lighten-1">Verarbeite Bilddaten...</span>
+        </template>
       </div>
 
       <div
