@@ -25,10 +25,25 @@ export class FileService
     return file.type.includes("image");
   }
 
+  checkIfFileIsDicom(file: File | string) {
+    if (typeof file === "string") {
+      const ext = file.split(".").pop()?.toLowerCase();
+      return ext === "dcm" || ext === "dicom";
+    }
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    return (
+      ext === "dcm" ||
+      ext === "dicom" ||
+      file.type.includes("dicom")
+    );
+  }
+
   compressFile(file: File) {
     var self = this;
     return new Promise<File | Blob>(function (final_resolve, final_reject) {
-      if (!self.checkIfFileIsImage(file)) {
+      if (self.checkIfFileIsDicom(file)) {
+        final_resolve(file);
+      } else if (!self.checkIfFileIsImage(file)) {
         final_resolve(file);
       } else if (self.checkIfFileIsTooBig(file)) {
         new Compressor(file, {
@@ -85,6 +100,21 @@ export class FileService
       "api/files/get-by-key?key=" +
       fileKey
     );
+  }
+
+  downloadFileArrayBuffer(fileKey: string): Promise<ArrayBuffer> {
+    return new Promise<ArrayBuffer>((resolve, reject) => {
+      this.axiosInstance
+        .get("api/files/get-by-key?key=" + encodeURIComponent(fileKey), {
+          responseType: "arraybuffer",
+        })
+        .then((response: any) => {
+          resolve(response.data);
+        })
+        .catch((e: any) => {
+          reject(e);
+        });
+    });
   }
 
   getPresignedUrl(fileKey: string): Promise<string> {

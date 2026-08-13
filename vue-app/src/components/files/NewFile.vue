@@ -46,7 +46,8 @@ const clearErrorMessages = () => {
     <v-card-title>Upload</v-card-title>
     <v-card-text>
       <v-file-input
-        label="File input"
+        label="Datei auswählen (Bilder, DICOM .dcm / .dicom)"
+        accept=".dcm,.dicom,application/dicom,image/*"
         multiple
         v-model="filesToUpload"
         @change="clearErrorMessages()"

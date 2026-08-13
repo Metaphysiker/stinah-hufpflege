@@ -2,6 +2,8 @@
 import { FileService } from "@/services/FileService";
 import { AxiosStatic } from "axios";
 import { computed, inject, ref, watch } from "vue";
+import DicomViewer from "./DicomViewer.vue";
+
 const emit = defineEmits(["removeFileKey"]);
 const axios: AxiosStatic | undefined = inject("axios");
 const fileService = new FileService(axios);
@@ -21,8 +23,21 @@ const validateImageExtension = (fileKey: string) => {
   return allowedExtensions.indexOf(extension) !== -1;
 };
 
+const validateDicomExtension = (fileKey: string) => {
+  var allowedExtensions = ["dcm", "dicom"];
+  var extension = fileKey.split(".")?.pop()?.toLowerCase();
+  if (!extension) {
+    return false;
+  }
+  return allowedExtensions.indexOf(extension) !== -1;
+};
+
 const isFileNameImage = computed(() => {
   return validateImageExtension(props.fileKey);
+});
+
+const isFileNameDicom = computed(() => {
+  return validateDicomExtension(props.fileKey);
 });
 
 const removeFileKeyDialog = ref(false);
@@ -46,6 +61,7 @@ watch(
     loading.value = true;
     fileService.getPresignedUrl(props.fileKey).then((response) => {
       presignedUrl.value = response;
+      loading.value = false;
     });
   },
   { immediate: true, deep: true }
@@ -54,7 +70,13 @@ watch(
 
 <template>
   <div>
-    <div class="text-center mb-3" v-if="isFileNameImage">
+    <!-- DICOM File Viewer -->
+    <div v-if="isFileNameDicom" class="mb-4">
+      <DicomViewer v-if="presignedUrl" :file-key="props.fileKey" :presigned-url="presignedUrl" />
+    </div>
+
+    <!-- Standard Image Viewer -->
+    <div class="text-center mb-3" v-else-if="isFileNameImage">
       <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
       <strong>{{ props.fileKey }}</strong>
       <v-img cover :src="presignedUrl" @load="imageLoaded()"></v-img>
@@ -78,6 +100,8 @@ watch(
         </v-btn>
       </div>
     </div>
+
+    <!-- Generic File Download -->
     <div v-else>
       <v-btn
         class="ma-2"

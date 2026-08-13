@@ -93,7 +93,15 @@
           "warn": true,
           "downloadDependencies": [
             {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.28, 8.0.28]"
+            },
+            {
               "name": "Microsoft.NETCore.App.Host.linux-x64",
+              "version": "[8.0.28, 8.0.28]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
               "version": "[8.0.28, 8.0.28]"
             }
           ],
