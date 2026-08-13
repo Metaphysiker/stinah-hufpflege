@@ -12,6 +12,7 @@ declare module 'vue' {
     AuthenticationManager: typeof import('./src/components/authentication/AuthenticationManager.vue')['default']
     ColorSelecter: typeof import('./src/components/ColorSelecter.vue')['default']
     DicomViewer: typeof import('./src/components/files/DicomViewer.vue')['default']
+    DicomViewer2: typeof import('./src/components/DicomViewer2.vue')['default']
     EditHorse: typeof import('./src/components/horses/EditHorse.vue')['default']
     EditRoutine: typeof import('./src/components/routines/EditRoutine.vue')['default']
     EditTreatment: typeof import('./src/components/treatments/EditTreatment.vue')['default']

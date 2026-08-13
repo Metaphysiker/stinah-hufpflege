@@ -2,7 +2,7 @@
 import { FileService } from "@/services/FileService";
 import { AxiosStatic } from "axios";
 import { computed, inject, ref, watch } from "vue";
-import DicomViewer from "./DicomViewer.vue";
+import DicomViewer2 from "../DicomViewer2.vue";
 
 const emit = defineEmits(["removeFileKey"]);
 const axios: AxiosStatic | undefined = inject("axios");
@@ -72,7 +72,11 @@ watch(
   <div>
     <!-- DICOM File Viewer -->
     <div v-if="isFileNameDicom" class="mb-4">
-      <DicomViewer v-if="presignedUrl" :file-key="props.fileKey" :presigned-url="presignedUrl" />
+      <DicomViewer2
+        v-if="presignedUrl"
+        :file-key="props.fileKey"
+        :presigned-url="presignedUrl"
+      />
     </div>
 
     <!-- Standard Image Viewer -->
@@ -81,21 +85,10 @@ watch(
       <strong>{{ props.fileKey }}</strong>
       <v-img cover :src="presignedUrl" @load="imageLoaded()"></v-img>
       <div class="d-flex justify-end">
-        <v-btn
-          class="ma-2"
-          outlined
-          :href="presignedUrl"
-          target="_blank"
-          download
-        >
+        <v-btn class="ma-2" outlined :href="presignedUrl" target="_blank" download>
           Download
         </v-btn>
-        <v-btn
-          v-if="false"
-          color="red"
-          class="ma-2"
-          @click="removeFileKeyDialog = true"
-        >
+        <v-btn v-if="false" color="red" class="ma-2" @click="removeFileKeyDialog = true">
           <v-icon> mdi-close-circle-outline </v-icon>
         </v-btn>
       </div>
@@ -103,21 +96,10 @@ watch(
 
     <!-- Generic File Download -->
     <div v-else>
-      <v-btn
-        class="ma-2"
-        outlined
-        :href="presignedUrl"
-        target="_blank"
-        download
-      >
+      <v-btn class="ma-2" outlined :href="presignedUrl" target="_blank" download>
         {{ props.fileKey }}
       </v-btn>
-      <v-btn
-        v-if="false"
-        color="red"
-        class="ma-2"
-        @click="removeFileKeyDialog = true"
-      >
+      <v-btn v-if="false" color="red" class="ma-2" @click="removeFileKeyDialog = true">
         <v-icon> mdi-close-circle-outline </v-icon>
       </v-btn>
     </div>
