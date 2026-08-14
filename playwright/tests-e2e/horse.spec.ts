@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "../../infrastructure/testing/auth";
 
 test.describe('Horse Management (CRUD)', () => {
   const horseName = `Testpferd ${Date.now()}`;
@@ -6,14 +6,13 @@ test.describe('Horse Management (CRUD)', () => {
   const horseColor = 'Rappe';
   const horseNote = 'This is a test horse for Playwright.';
 
-  test.beforeEach(async ({ page }) => {
-    // For each test, navigate to the horses list
-    // Assuming login is handled globally or not required for this page
-    await page.goto('/');
+  test.beforeEach(async ({ loggedInPage }) => { // Use the loggedInPage fixture
+    // The 'loggedInPage' fixture already handles user creation and login,
+    // navigating to the dashboard. Now, navigate from the dashboard to the horses list.
     // Assuming there is a navigation link to the horses page.
     // Using a more robust selector might be needed.
-    await page.getByRole('link', { name: 'Pferde' }).click();
-    await expect(page).toHaveURL(/.*\/horses/);
+    await loggedInPage.getByRole('link', { name: 'Pferde' }).click();
+    await expect(loggedInPage).toHaveURL(/.*\/horses/);
   });
 
   test('should allow a user to create a new horse and view its details', async ({ page }) => {
