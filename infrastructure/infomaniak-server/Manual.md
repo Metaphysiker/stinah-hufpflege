@@ -5,3 +5,7 @@ In production, you can apply migration with this command:
 Backup laptop
 
     ./create-backup-from-infomaniak-server.sh /home/sandro/backups/stinah-pflege
+
+Captiva Linux Backup
+
+    ./create-backup-from-infomaniak-server.sh /home/sandro/backups/stinah-pflege
