@@ -148,4 +148,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Lightweight health endpoint used by container healthchecks.
+app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
+
 app.Run();

@@ -1,26 +1,35 @@
 {
   "format": 1,
   "restore": {
-    "/home/sandro/workspace/stinah-hufpflege/WebApi/WebApi.csproj": {}
+    "C:\\Users\\sraes\\workspace\\stinah-hufpflege\\WebApi\\WebApi.csproj": {}
   },
   "projects": {
-    "/home/sandro/workspace/stinah-hufpflege/WebApi/WebApi.csproj": {
+    "C:\\Users\\sraes\\workspace\\stinah-hufpflege\\WebApi\\WebApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/sandro/workspace/stinah-hufpflege/WebApi/WebApi.csproj",
+        "projectUniqueName": "C:\\Users\\sraes\\workspace\\stinah-hufpflege\\WebApi\\WebApi.csproj",
         "projectName": "WebApi",
-        "projectPath": "/home/sandro/workspace/stinah-hufpflege/WebApi/WebApi.csproj",
-        "packagesPath": "/home/sandro/.nuget/packages/",
-        "outputPath": "/home/sandro/workspace/stinah-hufpflege/WebApi/obj/",
+        "projectPath": "C:\\Users\\sraes\\workspace\\stinah-hufpflege\\WebApi\\WebApi.csproj",
+        "packagesPath": "C:\\Users\\sraes\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\sraes\\workspace\\stinah-hufpflege\\WebApi\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\DevExpress 22.2\\Components\\Offline Packages",
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/sandro/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\sraes\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 22.2.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "/usr/lib/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\DevExpress 22.2\\Components\\System\\Components\\Packages": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -39,7 +48,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -91,20 +100,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.28, 8.0.28]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.linux-x64",
-              "version": "[8.0.28, 8.0.28]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.28, 8.0.28]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -113,7 +108,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.118/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

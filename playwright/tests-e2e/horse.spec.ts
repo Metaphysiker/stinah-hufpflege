@@ -1,4 +1,4 @@
-import { test, expect } from "../../infrastructure/testing/auth";
+import { test, expect } from "../auth";
 
 test.describe('Horse Management (CRUD)', () => {
   const horseName = `Testpferd ${Date.now()}`;
@@ -15,7 +15,7 @@ test.describe('Horse Management (CRUD)', () => {
     await expect(loggedInPage).toHaveURL(/.*\/horses/);
   });
 
-  test('should allow a user to create a new horse and view its details', async ({ page }) => {
+  test('should allow a user to create a new horse and view its details', async ({ loggedInPage: page }) => {
     // 1. Click the "New Horse" button
     await page.getByTestId('new-horse-button').click();
     await expect(page).toHaveURL(/.*\/horses\/new/);
@@ -44,7 +44,7 @@ test.describe('Horse Management (CRUD)', () => {
     await expect(page.getByTestId('horse-form-beschlagen-checkbox')).toBeChecked();
   });
 
-  test('should allow a user to update a horse', async ({ page }) => {
+  test('should allow a user to update a horse', async ({ loggedInPage: page }) => {
     // 1. Create a horse to update
     const horseToUpdateName = `UpdatePferd ${Date.now()}`;
     await page.getByTestId('new-horse-button').click();
@@ -84,7 +84,7 @@ test.describe('Horse Management (CRUD)', () => {
     await expect(page.getByTestId('horse-form-beschlagen-checkbox')).not.toBeChecked();
   });
 
-  test('should allow a user to delete a horse', async ({ page }) => {
+  test('should allow a user to delete a horse', async ({ loggedInPage: page }) => {
     // 1. Create a horse to delete
     const horseToDeleteName = `DeletePferd ${Date.now()}`;
     await page.getByTestId('new-horse-button').click();

@@ -14,6 +14,9 @@ ARG VITE_API_BASE_URL
 
 ENV VITE_API_BASE_URL $VITE_API_BASE_URL
 
+# Ensure `curl` is available for container healthchecks.
+RUN apk add --no-cache curl
+
 EXPOSE 8080
 
 RUN npm run build

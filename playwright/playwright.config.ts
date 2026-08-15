@@ -15,7 +15,11 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:8088',
+    baseURL: process.env.VUE_APP_BASE_URL || 'http://localhost:8088/',
+
+    // Custom environment variables for your tests
+    API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:8089/',
+    VUE_APP_BASE_URL: process.env.VUE_APP_BASE_URL || 'http://localhost:8088/',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
