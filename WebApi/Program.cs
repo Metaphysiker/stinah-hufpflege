@@ -106,6 +106,11 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 50 * 1024 * 1024; // 50 MB
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
