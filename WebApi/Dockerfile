@@ -1,23 +1,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
-
 WORKDIR /App
-
 COPY . ./
-
 RUN dotnet restore
-
 RUN dotnet publish -c Release -o out
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
-
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /App
-
-RUN dotnet nuget locals all --clear \
-	&& dotnet tool install --global dotnet-ef --version 8.0.0
-
-ENV PATH="$PATH:/root/.dotnet/tools"
-
-COPY --from=build-env /App .
-
+COPY --from=build-env /App/out .
 EXPOSE 8080
-ENTRYPOINT [ "dotnet", "out/WebApi.dll" ]
+ENTRYPOINT [ "dotnet", "WebApi.dll" ]
