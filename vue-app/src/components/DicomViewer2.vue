@@ -55,6 +55,11 @@ const meta = ref<IDicomMetaData>({
   transferSyntaxUid: "-",
 });
 
+// Pixel spacing (mm per pixel), used to convert measurements into real-world units.
+// Not part of IDicomMetaData to avoid touching the shared interface.
+const pixelSpacingRow = ref<number | null>(null); // mm per pixel, vertical
+const pixelSpacingCol = ref<number | null>(null); // mm per pixel, horizontal
+
 // Interactive state
 const currentFrame = ref(0);
 const totalFrames = ref(1);
@@ -72,6 +77,146 @@ let csImageId: string | null = null;
 let resizeObserver: ResizeObserver | null = null;
 let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
 
+// ---------------------------------------------------------------------------
+// Distance measurement tool
+// ---------------------------------------------------------------------------
+
+interface ImagePoint {
+  x: number;
+  y: number;
+}
+
+interface Measurement {
+  id: number;
+  start: ImagePoint; // stored in IMAGE pixel space, so it stays correct across pan/zoom
+  end: ImagePoint;
+}
+
+interface OverlayLine {
+  id: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  midX: number;
+  midY: number;
+  label: string;
+}
+
+const measureActive = ref(false);
+const measurements = ref<Measurement[]>([]);
+const overlayLines = ref<OverlayLine[]>([]);
+let nextMeasurementId = 1;
+let activeMeasurementId: number | null = null;
+
+const formatDistance = (start: ImagePoint, end: ImagePoint): string => {
+  const dxPx = end.x - start.x;
+  const dyPx = end.y - start.y;
+
+  if (pixelSpacingRow.value && pixelSpacingCol.value) {
+    const dxMm = dxPx * pixelSpacingCol.value;
+    const dyMm = dyPx * pixelSpacingRow.value;
+    const distMm = Math.sqrt(dxMm * dxMm + dyMm * dyMm);
+    return `${distMm.toFixed(1)} mm`;
+  }
+
+  const distPx = Math.sqrt(dxPx * dxPx + dyPx * dyPx);
+  return `${distPx.toFixed(0)} px`;
+};
+
+// Re-project all measurements (stored in image space) into current canvas space.
+// Must be called any time the viewport transform (pan/zoom/fit) changes.
+const updateOverlay = () => {
+  if (!csViewport.value || !csEnabled) {
+    overlayLines.value = [];
+    return;
+  }
+  try {
+    overlayLines.value = measurements.value.map((m) => {
+      const p1 = cornerstone.pixelToCanvas(csViewport.value as HTMLElement, m.start);
+      const p2 = cornerstone.pixelToCanvas(csViewport.value as HTMLElement, m.end);
+      return {
+        id: m.id,
+        x1: p1.x,
+        y1: p1.y,
+        x2: p2.x,
+        y2: p2.y,
+        midX: (p1.x + p2.x) / 2,
+        midY: (p1.y + p2.y) / 2,
+        label: formatDistance(m.start, m.end),
+      };
+    });
+  } catch {
+    // Cornerstone not ready yet (e.g. mid-teardown) - leave overlay as-is.
+  }
+};
+
+const eventToImagePoint = (e: MouseEvent | Touch): ImagePoint | null => {
+  if (!csViewport.value || !csEnabled) return null;
+  const rect = csViewport.value.getBoundingClientRect();
+  const canvasPoint = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  try {
+    return cornerstone.canvasToPixel(csViewport.value, canvasPoint) as ImagePoint;
+  } catch {
+    return null;
+  }
+};
+
+const startMeasurement = (e: MouseEvent | Touch) => {
+  const imgPoint = eventToImagePoint(e);
+  if (!imgPoint) return;
+
+  const id = nextMeasurementId++;
+  activeMeasurementId = id;
+  measurements.value.push({ id, start: imgPoint, end: { ...imgPoint } });
+  updateOverlay();
+};
+
+const updateActiveMeasurement = (e: MouseEvent | Touch) => {
+  if (activeMeasurementId === null) return;
+  const imgPoint = eventToImagePoint(e);
+  if (!imgPoint) return;
+
+  const measurement = measurements.value.find((m) => m.id === activeMeasurementId);
+  if (measurement) {
+    measurement.end = imgPoint;
+    updateOverlay();
+  }
+};
+
+const finishMeasurement = () => {
+  if (activeMeasurementId === null) return;
+  // Drop degenerate (essentially zero-length) measurements from a stray click.
+  const measurement = measurements.value.find((m) => m.id === activeMeasurementId);
+  if (measurement) {
+    const dx = measurement.end.x - measurement.start.x;
+    const dy = measurement.end.y - measurement.start.y;
+    if (Math.sqrt(dx * dx + dy * dy) < 2) {
+      measurements.value = measurements.value.filter((m) => m.id !== activeMeasurementId);
+      updateOverlay();
+    }
+  }
+  activeMeasurementId = null;
+};
+
+const removeMeasurement = (id: number) => {
+  measurements.value = measurements.value.filter((m) => m.id !== id);
+  updateOverlay();
+};
+
+const clearMeasurements = () => {
+  measurements.value = [];
+  activeMeasurementId = null;
+  updateOverlay();
+};
+
+const toggleMeasureMode = () => {
+  measureActive.value = !measureActive.value;
+  activeMeasurementId = null;
+};
+
+// ---------------------------------------------------------------------------
+
 const formatDate = (rawStr: string | undefined): string => {
   if (!rawStr || rawStr.length < 8) return rawStr || "-";
   return `${rawStr.substring(0, 4)}-${rawStr.substring(4, 6)}-${rawStr.substring(6, 8)}`;
@@ -83,6 +228,7 @@ const loadDicomData = async () => {
   isDownloading.value = true;
   downloadProgress.value = 0;
   errorMessage.value = "";
+  clearMeasurements();
 
   try {
     let buffer: ArrayBuffer;
@@ -171,6 +317,22 @@ const loadDicomData = async () => {
       windowWidth: getFloatString("x00281051", 256),
       transferSyntaxUid: getString("x00020010"),
     };
+
+    // PixelSpacing (0028,0030) is a multi-valued DS: "rowSpacing\colSpacing" in mm.
+    try {
+      const spacingStr = dataSet.string("x00280030");
+      if (spacingStr) {
+        const [rowSpacing, colSpacing] = spacingStr.split("\\").map(parseFloat);
+        pixelSpacingRow.value = Number.isFinite(rowSpacing) ? rowSpacing : null;
+        pixelSpacingCol.value = Number.isFinite(colSpacing) ? colSpacing : null;
+      } else {
+        pixelSpacingRow.value = null;
+        pixelSpacingCol.value = null;
+      }
+    } catch {
+      pixelSpacingRow.value = null;
+      pixelSpacingCol.value = null;
+    }
 
     windowCenter.value = meta.value.windowCenter || 128;
     windowWidth.value = meta.value.windowWidth || 256;
@@ -265,6 +427,7 @@ const displayCurrentFrame = async () => {
     } else {
       cornerstone.displayImage(csViewport.value, image);
     }
+    updateOverlay();
   } catch (err: any) {
     console.warn("Cornerstone display error:", err);
   }
@@ -332,6 +495,7 @@ const applyViewport = () => {
     viewport.translation.x = panX.value;
     viewport.translation.y = panY.value;
     cornerstone.setViewport(csViewport.value, viewport);
+    updateOverlay();
   } catch (err) {
     console.warn("Cornerstone update error:", err);
   }
@@ -391,12 +555,21 @@ let startX = 0;
 let startY = 0;
 
 const onMouseDown = (e: MouseEvent) => {
+  if (measureActive.value) {
+    startMeasurement(e);
+    return;
+  }
   isDragging = true;
   startX = e.clientX;
   startY = e.clientY;
 };
 
 const onMouseMove = (e: MouseEvent) => {
+  if (measureActive.value) {
+    if (activeMeasurementId !== null) updateActiveMeasurement(e);
+    return;
+  }
+
   if (!isDragging) return;
   const dx = e.clientX - startX;
   const dy = e.clientY - startY;
@@ -414,6 +587,10 @@ const onMouseMove = (e: MouseEvent) => {
 };
 
 const onMouseUp = () => {
+  if (measureActive.value) {
+    finishMeasurement();
+    return;
+  }
   isDragging = false;
 };
 
@@ -437,6 +614,11 @@ const onWheel = (e: WheelEvent) => {
 
 let touchStartDist = 0;
 const onTouchStart = (e: TouchEvent) => {
+  if (measureActive.value) {
+    if (e.touches.length === 1) startMeasurement(e.touches[0]);
+    return;
+  }
+
   if (e.touches.length === 1) {
     isDragging = true;
     startX = e.touches[0].clientX;
@@ -450,6 +632,13 @@ const onTouchStart = (e: TouchEvent) => {
 };
 
 const onTouchMove = (e: TouchEvent) => {
+  if (measureActive.value) {
+    if (e.touches.length === 1 && activeMeasurementId !== null) {
+      updateActiveMeasurement(e.touches[0]);
+    }
+    return;
+  }
+
   if (e.touches.length === 1 && isDragging) {
     const dx = e.touches[0].clientX - startX;
     const dy = e.touches[0].clientY - startY;
@@ -471,6 +660,10 @@ const onTouchMove = (e: TouchEvent) => {
 };
 
 const onTouchEnd = () => {
+  if (measureActive.value) {
+    finishMeasurement();
+    return;
+  }
   isDragging = false;
   touchStartDist = 0;
 };
@@ -629,6 +822,23 @@ onBeforeUnmount(() => {
 
           <div class="d-flex align-center ga-1">
             <v-btn
+              icon="mdi-ruler"
+              size="small"
+              :variant="measureActive ? 'flat' : 'text'"
+              :color="measureActive ? 'primary' : ''"
+              @click="toggleMeasureMode"
+              title="Distanz messen"
+            ></v-btn>
+            <v-btn
+              v-if="measurements.length > 0"
+              icon="mdi-ruler-square-compass"
+              size="small"
+              variant="text"
+              @click="clearMeasurements"
+              title="Messungen löschen"
+            ></v-btn>
+            <v-divider vertical class="mx-1" style="height: 24px"></v-divider>
+            <v-btn
               icon="mdi-magnify-plus-outline"
               size="small"
               variant="text"
@@ -723,7 +933,8 @@ onBeforeUnmount(() => {
 
       <div
         v-show="!loading && !errorMessage"
-        class="viewport-container cursor-grab flex-grow-1"
+        class="viewport-container flex-grow-1"
+        :class="measureActive ? 'cursor-crosshair' : 'cursor-grab'"
         @mousedown="onMouseDown"
         @mousemove="onMouseMove"
         @mouseup="onMouseUp"
@@ -745,6 +956,45 @@ onBeforeUnmount(() => {
           class="cornerstone-viewport"
           style="width: 100%; height: 100%; position: relative"
         ></div>
+
+        <svg
+          v-if="overlayLines.length > 0"
+          class="measurement-overlay"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g v-for="line in overlayLines" :key="line.id">
+            <line
+              :x1="line.x1"
+              :y1="line.y1"
+              :x2="line.x2"
+              :y2="line.y2"
+              stroke="#ffeb3b"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <circle :cx="line.x1" :cy="line.y1" r="3.5" fill="#ffeb3b" />
+            <circle :cx="line.x2" :cy="line.y2" r="3.5" fill="#ffeb3b" />
+
+            <g
+              class="measurement-label"
+              :transform="`translate(${line.midX}, ${line.midY - 10})`"
+              @mousedown.stop="removeMeasurement(line.id)"
+              @touchstart.stop="removeMeasurement(line.id)"
+            >
+              <rect
+                :x="-(line.label.length * 3.6 + 6)"
+                y="-11"
+                :width="line.label.length * 7.2 + 12"
+                height="18"
+                rx="3"
+                fill="rgba(0,0,0,0.7)"
+              />
+              <text text-anchor="middle" y="2" fill="#ffeb3b" font-size="12">
+                {{ line.label }}
+              </text>
+            </g>
+          </g>
+        </svg>
       </div>
     </v-card>
 
@@ -756,7 +1006,10 @@ onBeforeUnmount(() => {
         >W/C: {{ Math.round(windowCenter) }} | W/W: {{ Math.round(windowWidth) }} | Zoom:
         {{ Math.round(zoomScale * 100) }}%</span
       >
-      <span
+      <span v-if="measureActive"
+        >Messmodus: Ziehen zum Messen, Klick auf Label zum Löschen</span
+      >
+      <span v-else
         >Tipp: Mausrad für
         {{ totalFrames > 1 ? "Bildlauf, Shift+Mausrad für Zoom" : "Zoom" }}, Ziehen zum
         Verschieben, Shift+Ziehen für Helligkeit/Kontrast</span
@@ -775,6 +1028,9 @@ onBeforeUnmount(() => {
 .cursor-grab:active {
   cursor: grabbing;
 }
+.cursor-crosshair {
+  cursor: crosshair;
+}
 .cornerstone-viewport {
   position: relative;
   overflow: hidden;
@@ -782,5 +1038,16 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   min-height: 0;
+}
+.measurement-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.measurement-label {
+  pointer-events: auto;
+  cursor: pointer;
 }
 </style>
